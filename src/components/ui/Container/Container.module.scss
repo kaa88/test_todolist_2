@@ -1,0 +1,17 @@
+@import "../../../scss/variables.scss";
+
+.default, .flex {
+	width: 100%; //REQ!
+	min-width: $page-min-width; //REQ!
+	max-width: $container-padding * 2 + $container-desktop-width + px; //REQ!
+	margin: 0 auto; //REQ!
+	padding: 0 $container-padding+px;
+	@media (max-width: $media-m+px) {
+		padding: 0 rem(10);
+	}
+}
+.flex {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}

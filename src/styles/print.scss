@@ -1,0 +1,38 @@
+@media print {
+	// Перенос строк. Применяется к блочным эл-там. В Chrome работает только с body.children
+	// page-break-inside: avoid;
+	// page-break-before: always;
+	// page-break-after: auto;
+	// auto / always / avoid / left / right
+	a, img, pre, blockquote, table,
+	h1, h2, h3, h4, h5, h6 {
+		page-break-inside: avoid;
+	}
+	h1, h2, h3, h4, h5, h6 {
+		page-break-after: avoid;
+	}
+	* {
+		background: #fff;
+		color: #000;
+		fill: #000;
+	}
+	a {
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	body {
+		max-width: 297mm;
+		padding-top: 0;
+		margin: 0 auto;
+	}
+	.container {padding: 0;}
+
+	.breadcrumbs,
+	.form,
+	.up-button,
+	.loadscreen,
+	.rotation-alert,
+	.noscript-alert {
+		display: none;
+	}
+}

@@ -1,0 +1,51 @@
+// Colors //
+
+body { // theme-default
+	// Global
+	--color-primary: #fff;
+	--color-secondary: #161428;
+	--color-grayscale-01: #000;
+	--color-grayscale-02: #343F48;
+	--color-grayscale-03: #EDEDED;
+	--color-grayscale-04: #F5F5F5;
+	--color-accent-01: #00C8E8;
+	--color-accent-02: #3AEDBA;
+	--color-accent-03: #FED45C;
+	--color-accent-04: #FF8C52;
+	--color-accent-05: #FF3E6C;
+	--color-accent-06: #6E55FF;
+	--color-hover: #5906EE;
+	--color-focus: #30057D;
+	--color-error: #ff0000;
+	--color-success: #099205;
+	--color-shadow: #333;
+
+	// Elements
+	--color-bg-light: var(--color-primary);
+	--color-bg-dark: var(--color-secondary);
+
+	--color-text-default: var(--color-grayscale-02);
+	--color-text-dark: var(--color-secondary);
+	--color-text-black: #000;
+	--color-text-light: var(--color-primary);
+	--color-text-accent: var(--color-accent-05);
+
+	--color-button-dark: var(--color-accent-06);
+	--color-button-light: #F0EEFF;
+	--color-button-hover: var(--color-hover);
+	--color-button-focus: var(--color-focus);
+	--color-button-text: var(--color-primary);
+
+	--color-link-default: var(--color-accent-06);
+	--color-link-hover: var(--color-hover);
+	--color-link-focus: var(--color-focus);
+	
+	--color-scrollbar-track: var(--color-grayscale-03);
+	--color-scrollbar-thumb: var(--color-grayscale-02);
+
+	--color-discipline-fill: var(--color-grayscale-02);
+	--color-discipline-text: var(--color-primary);
+
+}
+
+// body.theme-dark {}

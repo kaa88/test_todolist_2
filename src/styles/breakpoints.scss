@@ -1,0 +1,32 @@
+// Media breakpoints //
+$media-offset: 2;
+
+// desktop
+$media-dxl: 3840 - $media-offset;
+$media-dl: 2560 - $media-offset;
+$media-d: 1920 - $media-offset;
+$media-ds: 1600 - $media-offset;
+$media-dxs: 1366 - $media-offset;
+
+// tablet
+$media-tl: 1280 - $media-offset;
+$media-t: 1024 - $media-offset;
+$media-ts: 960 - $media-offset; // mobile
+
+// mobile
+$media-mxl: 782 - $media-offset;
+$media-ml: 600 - $media-offset; // header menu // 630
+$media-m: 480 - $media-offset;
+$media-ms: 360 - $media-offset;
+
+$media-form: 1150 - $media-offset; // 1350
+$media-form2: $media-ts; // 1120
+
+
+// aspect ratio
+$media-ar11: concat-aspect-ratio(1, 1);
+$media-ar54: concat-aspect-ratio(5, 4);
+$media-ar149: concat-aspect-ratio(14, 9);
+$media-ar159: concat-aspect-ratio(15, 9);
+$media-ar169: concat-aspect-ratio(16, 9);
+$media-ar209: concat-aspect-ratio(20, 9);
