@@ -16,7 +16,7 @@ function Router() {
 				element: <HomePage />,
 			},
 			{
-				path: '/project',
+				path: '/project/:id',
 				element: <ProjectPage />,
 			},
 		],

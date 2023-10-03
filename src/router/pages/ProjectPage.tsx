@@ -1,9 +1,21 @@
-// import Account from '../../components/parts/Account/Account'
+import { useAppDispatch } from "../../hooks/typedReduxHooks"
+import PageTitle from "../PageTitle"
+import Container from "../../components/ui/Container/Container"
+import Todos from "../../components/parts/Todos/Todos"
+import { useParams } from "react-router"
 
 function ProjectPage() {
 
+	// const dispatch = useAppDispatch()
+	const {id} = useParams<{id: string}>()
+
 	return (
-			{/* <Account /> */}
+		<>
+			<PageTitle />
+			<Container>
+				<Todos project={Number(id)} />
+			</Container>
+		</>
 	)
 }
 

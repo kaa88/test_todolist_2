@@ -1,10 +1,10 @@
 
 function PageTitle({value}: {value?: string}) {
 
-	const siteName = 'ProSkills'
+	const siteName = 'TODOList'
 	const divider = ' | '
 
-	let title = siteName // TODO: translate
+	let title = siteName
 	if (value) title = value + divider + title
 
 	document.title = title

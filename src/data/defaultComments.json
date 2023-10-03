@@ -1,0 +1,14 @@
+[
+	{
+		"id": 1,
+		"author": "author",
+		"content": "content",
+		"subcommentIds": [2]
+	},
+	{
+		"id": 2,
+		"author": "author2",
+		"content": "content2",
+		"subcommentIds": []
+	}
+]

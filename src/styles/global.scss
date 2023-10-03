@@ -10,41 +10,41 @@ html {
 }
 body {
 	// Variables for JS manipulations:
-	--header-position: 0px; //REQ!
-	--header-offset: 0px; //REQ!
-	--header-height: 0px; //REQ!
-	--window-height: 100vh; //REQ!
+	// --header-position: 0px; //REQ!
+	// --header-offset: 0px; //REQ!
+	// --header-height: 0px; //REQ!
+	// --window-height: 100vh; //REQ!
 	--scrollbar-width: 0px; //REQ!
-	--marker-position: 0px; //REQ!
+	// --marker-position: 0px; //REQ!
 	--media-mobile: #{$media-mxl}; //REQ!
 	--media-tablet: #{$media-ts}; //REQ!
 	--timer-menu: #{$timer-menu}; //REQ!
 	--timer-modal: #{$timer-modal}; //REQ!
 	--timer-select: #{$timer-select}; //REQ!
 	--timer-popup: #{$timer-popup}; //REQ!
-	--compact-mode-offset: 25px;
-	@media (max-width: $media-ml+px) {
-		--compact-mode-offset: 0px;
-	}
+	// --compact-mode-offset: 25px;
+	// @media (max-width: $media-ml+px) {
+	// 	--compact-mode-offset: 0px;
+	// }
 	font-family: var(--font01);
 	font-size: inherit;
 	color: var(--color-text-default);
 	background-color: var(--color-bg-light);
-	&.scroll-is-locked, &.loadscreen--locked {
-		overflow: hidden;
-		padding-right: var(--scrollbar-width);
-	} //REQ!
+	// &.scroll-is-locked, &.loadscreen--locked {
+	// 	overflow: hidden;
+	// 	padding-right: var(--scrollbar-width);
+	// } //REQ!
 }
-#app {
-	position: relative;
-	display: grid; //REQ!
-	grid-template-columns: 100%;
-	grid-template-rows: 1fr auto; //REQ! if footer at the bottom
-	min-height: 100vh; //REQ! if footer at the bottom
-	max-width: $page-max-width+px;
-	margin: 0 auto; //REQ! if max-width
-	padding-top: calc(var(--header-offset) + var(--header-height));
-}
+// #app {
+// 	position: relative;
+// 	display: grid; //REQ!
+// 	grid-template-columns: 100%;
+// 	grid-template-rows: 1fr auto; //REQ! if footer at the bottom
+// 	min-height: 100vh; //REQ! if footer at the bottom
+// 	max-width: $page-max-width+px;
+// 	margin: 0 auto; //REQ! if max-width
+// 	padding-top: calc(var(--header-offset) + var(--header-height));
+// }
 
 // Window scrollbar
 // html { // Firefox scrollbar is setting up in 'html'
@@ -98,22 +98,6 @@ body {
 	@media (max-width: $media-ml+px) {
 		font-size: rem(24);
 	}
-}
-.color01 {
-	color: var(--color01);
-	fill: var(--color01);
-}
-.color02 {
-	color: var(--color02);
-	fill: var(--color02);
-}
-.color03 {
-	color: var(--color03);
-	fill: var(--color03);
-}
-.color04 {
-	color: var(--color04);
-	fill: var(--color04);
 }
 .tac {
 	text-align: center;

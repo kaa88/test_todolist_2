@@ -1,11 +1,14 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { applyMiddleware, combineReducers, createStore } from 'redux'
+import projectReducer from './reducers/projectReducer'
+import thunk from 'redux-thunk'
 
-export const store = configureStore({
-	reducer: {
 
-	},
-	middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck: false})
+const rootReducer = combineReducers({
+	project: projectReducer
 })
+
+export const store = createStore(rootReducer, applyMiddleware(thunk))
+
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch

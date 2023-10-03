@@ -1,0 +1,24 @@
+[
+	{
+		"id": 1,
+		"projectId": 128,
+		"title": "title",
+		"description": "description",
+		"createDate": 0,
+		"expireDate": 0,
+		"priority": "normal",
+		"status": "queue",
+		"subtasks": [
+			{
+				"title": "subtask1",
+				"isDone": true
+			},
+			{
+				"title": "subtask2",
+				"isDone": false
+			}
+		],
+		"commentIds": [1],
+		"attached": []
+	}
+]

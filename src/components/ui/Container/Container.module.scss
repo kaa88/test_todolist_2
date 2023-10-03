@@ -1,4 +1,4 @@
-@import "../../../scss/variables.scss";
+@use "/src/styles/variables" as *;
 
 .default, .flex {
 	width: 100%; //REQ!
