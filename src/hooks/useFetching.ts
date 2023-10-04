@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-// type IError = string | null
 
 export function useFetching(callback: () => Promise<void>) {
 	let [isLoading, setIsLoading] = useState(false)

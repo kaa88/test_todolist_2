@@ -1,0 +1,26 @@
+body .container {
+	background-color: lightseagreen;
+}
+.table {
+	margin: 0 auto;
+	max-width: 700px;
+	min-height: 50vh;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 3px;
+	padding: 3px;
+	background-color: #555;
+}
+.cell {
+	height: 100%;
+}
+.queue {
+	background-color: lightsalmon;
+}
+.dev {
+	background-color: lightblue;
+}
+.done {
+	background-color: lightgreen;
+}
+

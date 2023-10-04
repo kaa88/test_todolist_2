@@ -1,49 +1,55 @@
-import { ThunkAction } from "redux-thunk"
-import { projectService } from "../../services/projectService"
-import { IAction } from "../../types/reduxTypes"
+import { Reducer } from "redux"
+import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
 import { IProject } from "../../types/types"
-import { AppDispatch } from "../store"
+import { projectService } from "../../services/projectService"
 
-const SET_ACTIVE = 'SET_ACTIVE'
-const UPDATE_PROJECT_LIST = 'UPDATE_PROJECT_LIST'
+type CurrentProjectName = string
+type LoadingState = boolean
+type LoadError = string
 
-type ICurrent = string | null
-
-type ActionType = IAction<ICurrent | IProject[]>
-
-interface IState {
-	current: ICurrent
+interface ProjectState {
+	isLoading: LoadingState
+	loadError: LoadError
 	list: IProject[]
+	current: CurrentProjectName
 }
 
-const defaultState: IState = {
-	current: null,
-	list: []
+type Actions = CustomAction<CurrentProjectName> | CustomAction<IProject[]> | CustomAction<LoadingState>
+
+const initialState: ProjectState = {
+	isLoading: false,
+	loadError: '',
+	list: [],
+	current: ''
 }
 
-const projectReducer = (state = defaultState, action: ActionType) => {
-	switch (action.type) {
-		case UPDATE_PROJECT_LIST:
-			return {...state, list: action.payload || []}
-		case SET_ACTIVE:
-			let current = action.payload || null
-			return {...state, current}
+const SET_LOADING = 'SET_LOADING'
+const SET_LOAD_ERROR = 'SET_LOAD_ERROR'
+const UPDATE_PROJECTS = 'UPDATE_PROJECTS'
+const SET_CURRENT_PROJECT = 'SET_CURRENT_PROJECT'
+
+export const projectReducer: Reducer<ProjectState, Actions> = (state = initialState, action) => {
+	switch(action.type) {
+		case SET_LOADING:
+			return {...state, isLoading: action.payload as LoadingState}
+		case SET_LOAD_ERROR:
+			return {...state, loadError: action.payload as LoadError}
+		case UPDATE_PROJECTS:
+			return {...state, list: action.payload as IProject[]}
+		case SET_CURRENT_PROJECT:
+			return {...state, current: action.payload as CurrentProjectName}
 		default:
 			return state
 	}
 }
-export default projectReducer
 
+export const setActiveProject: CustomActionCreator<CurrentProjectName> = (payload) => ({type: SET_CURRENT_PROJECT, payload})
 
-export function setCurrentProject(payload: ICurrent) {
-	return {type: SET_ACTIVE, payload}
-}
-// export function updateProjectList(payload: IProject[]) {
-// 	return {type: UPDATE_PROJECT_LIST, payload}
-// }
-export function updateProjectList(): ThunkAction<Promise<void>, IState, unknown, ActionType> {
-	return async (dispatch) => {
-		let projects: IProject[] = await projectService.getProjects()
-		dispatch({type: UPDATE_PROJECT_LIST, payload: projects})
-	}
+export const updateProjectList = (): CustomThunkActionCreator<IProject[] | LoadingState | LoadError> => async (dispatch) => {
+	dispatch({type: SET_LOADING, payload: true})
+	dispatch({type: SET_LOAD_ERROR, payload: ''})
+	let payload = await projectService.getProjects()
+	if (payload instanceof Error) dispatch({type: SET_LOAD_ERROR, payload: payload.message})
+	else dispatch({type: UPDATE_PROJECTS, payload})
+	dispatch({type: SET_LOADING, payload: false})
 }

@@ -1,5 +1,4 @@
 import Projects from "../../components/parts/Projects/Projects"
-import Container from "../../components/ui/Container/Container"
 import PageTitle from "../PageTitle"
 
 function HomePage() {
@@ -7,9 +6,7 @@ function HomePage() {
 	return (
 		<>
 			<PageTitle />
-			<Container modif="flex">
-				<Projects />
-			</Container>
+			<Projects />
 		</>
 	)
 }

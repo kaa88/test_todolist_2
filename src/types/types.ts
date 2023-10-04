@@ -1,7 +1,7 @@
 export enum TaskPriority {
-	low = 'low',
 	normal = 'normal',
 	high = 'high',
+	top = 'top',
 }
 export enum TaskStatus {
 	queue = 'queue',

@@ -1,21 +1,31 @@
-import { useAppDispatch } from "../../hooks/typedReduxHooks"
 import PageTitle from "../PageTitle"
-import Container from "../../components/ui/Container/Container"
-import Todos from "../../components/parts/Todos/Todos"
+import Todos from "../../components/parts/TodosTable/TodosTable"
 import { useParams } from "react-router"
+import { useAppSelector } from "../../hooks/typedReduxHooks"
+import ErrorPage from "./ErrorPage"
 
 function ProjectPage() {
 
-	// const dispatch = useAppDispatch()
-	const {id} = useParams<{id: string}>()
+	let params = useParams<{id: string}>()
+	let id = Number(params.id)
+
+	let {isLoading, list: projects} = useAppSelector(state => state.project)
+	let currentProject = projects.length ? projects.find(p => p.id === id) : null
+	
+	let pageTitle = ''
+	let content = <ErrorPage />
+	if (currentProject) {
+		pageTitle = currentProject.name
+		content = <>
+			<PageTitle value={pageTitle} />
+			<Todos project={id} />
+		</>
+	}
 
 	return (
-		<>
-			<PageTitle />
-			<Container>
-				<Todos project={Number(id)} />
-			</Container>
-		</>
+		isLoading
+			? <p>LOADING</p>
+			: content
 	)
 }
 

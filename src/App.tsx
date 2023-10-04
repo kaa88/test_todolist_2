@@ -5,8 +5,7 @@ import './styles/index.scss'
 
 function App() {
 	const dispatch = useAppDispatch()
-	updateProjectList()
-	// dispatch(updateProjectList())
+	dispatch(updateProjectList())
 	return <Router />
 }
 
