@@ -1,0 +1,49 @@
+@import '/src/styles/variables.scss';
+
+.wrapper {
+	grid-column: span 2;
+	background-color: pink;
+	overflow: hidden;
+	&.hidden {
+		height: 0;
+	}
+	&.visible {
+		height: auto;
+	}
+}
+.list {
+	position: relative;
+}
+.subtask {
+	display: flex;
+}
+.subtaskStatusButton {
+	cursor: pointer;
+	svg {
+		width: 20px;
+		height: 20px;
+		fill: #aaa
+	}
+}
+.status_done {
+	svg {
+		fill: limegreen
+	}
+}
+.subtaskTitle {
+	
+}
+.deleteButton {
+	cursor: pointer;
+	svg {
+		width: 20px;
+		height: 20px;
+	}
+}
+.newSubtask {
+	display: flex;
+}
+.newSubtaskIcon {
+	width: 20px;
+	height: 20px;
+}

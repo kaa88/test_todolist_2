@@ -2,9 +2,9 @@ import { ComponentPropsWithoutRef, useEffect, useState } from 'react';
 import classes from './TodosTable.module.scss';
 import Container from '../../ui/Container/Container';
 import { useFetching } from '../../../hooks/useFetching';
-import { ITask } from '../../../types/types';
-import { taskService } from '../../../services/taskService';
-import Task from '../../ui/Task/Task';
+import { ITask, TaskStatus } from '../../../types/types';
+import { apiService } from '../../../services/apiService';
+import Task from '../Task/Task';
 
 interface TodosTableProps extends ComponentPropsWithoutRef<'div'> {
 	project: number
@@ -15,7 +15,7 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 	let [tasks, setTasks] = useState<ITask[]>([])
 
 	const getTasks = async () => {
-		let tasks = await taskService.getTasks(project)
+		let tasks = await apiService.tasks.get(project)
 		setTasks(tasks)
 	}
 
@@ -26,11 +26,13 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 	let {fetch, isLoading, error} = useFetching(getTasks)
 
 	const taskGroups: {[key: string]: ITask[]} = {
-		queue: [],
-		dev: [], // wrong name
-		done: [],
+		[TaskStatus.queue]: [],
+		[TaskStatus.dev]: [],
+		[TaskStatus.done]: [],
 	}
 	tasks.forEach(task => taskGroups[task.status].push(task))
+	console.log(taskGroups)
+	console.log(tasks)
 
 	const getTaskElements = (group: ITask[]) =>
 		group.map((task, index) =>
@@ -43,16 +45,26 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 
 	return (
 		<Container className={classes.container}>
-			<p>{`todos ${project} ${isLoading ? 'LOADING' : ''}`}</p>
+			<p>{`todos - ${project} - show all subtasks - sort by - search ${isLoading ? '- LOADING' : ''}`}</p>
+
 			<div className={`${className} ${classes.table}`}>
 				<div className={`${classes.cell} ${classes.queue}`}>
-					{getTaskElements(taskGroups.queue)}
+					<p className={classes.cellTitle}>Queue</p>
+					<div className={classes.tasks}>
+						{getTaskElements(taskGroups[TaskStatus.queue])}
+					</div>
 				</div>
 				<div className={`${classes.cell} ${classes.dev}`}>
-					{getTaskElements(taskGroups.dev)}
+					<p className={classes.cellTitle}>Development</p>
+					<div className={classes.tasks}>
+						{getTaskElements(taskGroups[TaskStatus.dev])}
+					</div>
 				</div>
 				<div className={`${classes.cell} ${classes.done}`}>
-					{getTaskElements(taskGroups.done)}
+					<p className={classes.cellTitle}>Done</p>
+					<div className={classes.tasks}>
+						{getTaskElements(taskGroups[TaskStatus.done])}
+					</div>
 				</div>
 			</div>
 		</Container>

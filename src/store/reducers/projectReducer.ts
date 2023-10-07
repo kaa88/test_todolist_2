@@ -1,7 +1,7 @@
 import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
 import { IProject } from "../../types/types"
-import { projectService } from "../../services/projectService"
+import { apiService } from "../../services/apiService"
 
 type CurrentProjectName = string
 type LoadingState = boolean
@@ -48,8 +48,8 @@ export const setActiveProject: CustomActionCreator<CurrentProjectName> = (payloa
 export const updateProjectList = (): CustomThunkActionCreator<IProject[] | LoadingState | LoadError> => async (dispatch) => {
 	dispatch({type: SET_LOADING, payload: true})
 	dispatch({type: SET_LOAD_ERROR, payload: ''})
-	let payload = await projectService.getProjects()
-	if (payload instanceof Error) dispatch({type: SET_LOAD_ERROR, payload: payload.message})
-	else dispatch({type: UPDATE_PROJECTS, payload})
+	let response = await apiService.projects.get()
+	if (response.error) dispatch({type: SET_LOAD_ERROR, payload: response.error.message})
+	else dispatch({type: UPDATE_PROJECTS, payload: response.data || []})
 	dispatch({type: SET_LOADING, payload: false})
 }

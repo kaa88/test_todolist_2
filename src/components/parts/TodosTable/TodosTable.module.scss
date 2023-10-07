@@ -4,7 +4,7 @@ body .container {
 .table {
 	margin: 0 auto;
 	max-width: 700px;
-	min-height: 50vh;
+	min-height: 80vh;
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 3px;
@@ -22,5 +22,10 @@ body .container {
 }
 .done {
 	background-color: lightgreen;
+}
+.cellTitle {
+	padding: 6px;
+	font-size: 20px;
+	text-align: center;
 }
 

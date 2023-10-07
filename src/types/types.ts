@@ -36,6 +36,6 @@ export interface ISubtask {
 export interface IComment {
 	id: Id
 	author: string
-	comment: string
+	content: string
 	subcommentIds?: number[]
 }

@@ -1,0 +1,32 @@
+@import '/src/styles/variables.scss';
+
+.box {
+	flex-grow: 0;
+	position: relative;
+}
+.input, .fakeInput {
+	// height & line-height are controlled by JS
+	box-sizing: content-box; // need this to compare 'height' & 'scrollHeight'
+	padding: 0 8px;
+	width: calc(100% - 18px); // padding + border
+	min-width: 30px;
+	font-size: 16px;
+	border: solid 1px transparent;
+	border-radius: 8px;
+	resize: none;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		width: 0;
+	}
+	&:focus {
+		border-color: blue;
+	}
+}
+.fakeInput {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: -1;
+	opacity: 0;
+	visibility: hidden;
+}
