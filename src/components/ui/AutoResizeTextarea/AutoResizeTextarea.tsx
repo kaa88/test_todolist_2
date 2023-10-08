@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, KeyboardEvent, ChangeEvent, useState, useRef } from 'react';
+import { ComponentProps, useEffect, KeyboardEvent, ChangeEvent, FocusEvent, useState, useRef } from 'react';
 import classes from './AutoResizeTextarea.module.scss';
 
 interface TextareaProps extends ComponentProps<'div'> {
@@ -18,20 +18,34 @@ const AutoResizeTextarea = function({content = '', basicHeight = 22, callback, i
 	})
 
 	let [value, setValue] = useState(content)
+	let [isComfirm, setIsConfirm] = useState(false)
 
-	function handleInputChange(e: ChangeEvent<HTMLTextAreaElement>) {
+	function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {
 		setValue(e.target.value)
 	}
 	function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
-		if (e.key === 'Enter' || e.key === 'Escape') e.currentTarget.blur()
-		if (isCreate) { //?
+		if (e.key === 'Enter') {
 			e.preventDefault()
-			e.currentTarget.focus()
+			if (value === content) return;
+			setIsConfirm(true)
+			if (!isCreate) e.currentTarget.blur()
+		}
+		if (e.key === 'Escape') {
+			setValue(content)
+			e.currentTarget.blur()
 		}
 	}
-	function updateTask() {
-		if (value !== content) callback(value)
+	function handleBlur() {
+		if (!isCreate && value !== content) setIsConfirm(true)
 	}
+	useEffect(() => {
+		if (isComfirm) {
+			let trimmedValue = value.trimEnd()
+			if (trimmedValue !== content) callback(trimmedValue)
+			setValue(isCreate ? '' : trimmedValue)
+			setIsConfirm(false)
+		}
+	}, [isComfirm])
 
 	return (
 		<div className={`${className} ${classes.box}`}>
@@ -39,9 +53,9 @@ const AutoResizeTextarea = function({content = '', basicHeight = 22, callback, i
 				className={classes.input}
 				style={{height: elemHeight + 'px', lineHeight: basicHeight + 'px'}}
 				value={value}
-				onChange={handleInputChange}
+				onChange={handleChange}
 				onKeyDown={handleKeyDown}
-				onBlur={updateTask}
+				onBlur={handleBlur}
 			></textarea>
 			<textarea
 				className={classes.fakeInput}

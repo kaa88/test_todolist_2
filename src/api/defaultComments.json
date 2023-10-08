@@ -1,14 +1,18 @@
 [
 	{
-		"id": 1,
-		"author": "author",
-		"content": "content",
-		"subcommentIds": [2]
+		"id": 0,
+		"date": 0,
+		"author": "comment author 1",
+		"content": "comment content 1",
+		"isSubcomment": false,
+		"parentId": 1
 	},
 	{
-		"id": 2,
-		"author": "author2",
-		"content": "content2",
-		"subcommentIds": []
+		"id": 1,
+		"date": 0,
+		"author": "comment author 2",
+		"content": "comment content 2",
+		"isSubcomment": true,
+		"parentId": 0
 	}
 ]

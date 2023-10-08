@@ -20,14 +20,13 @@ export interface ITask {
 	id: Id
 	projectId: Id
 	title: string
-	description?: string
+	description: string
 	createDate: number
 	expireDate: number
 	priority: TaskPriority
 	status: TaskStatus
-	subtasks?: ISubtask[]
-	commentIds?: Id[]
-	attached?: string[] //?
+	subtasks: ISubtask[]
+	attached: string[]
 }
 export interface ISubtask {
 	title: string
@@ -35,7 +34,10 @@ export interface ISubtask {
 }
 export interface IComment {
 	id: Id
+	date: number
 	author: string
 	content: string
-	subcommentIds?: number[]
+	isSubcomment: boolean
+	parentId: number
 }
+

@@ -1,46 +1,66 @@
 import { ChangeEvent, ComponentProps, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import classes from './Subtasks.module.scss';
 import Icon from '../../ui/Icon/Icon';
-import { ISubtask } from '../../../types/types';
+import { ISubtask, Id } from '../../../types/types';
 import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
+import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
+import { updateSubtasks } from '../../../store/reducers/taskReducer';
 
 interface SubtasksProps extends ComponentProps<'div'> {
 	isVisible: boolean
-	list?: ISubtask[]
+	parentId: Id
 }
+type UpdateSubtaskFunction = (id: Id, title: string, isDone: boolean) => void
+type CreateSubtaskFunction = (title: string) => void
+type DeleteSubtaskFunction = (id: Id) => void
 
-interface SubtaskCallbackProps {
-	index?: number
-	title?: string
-	isDone?: boolean
-	delete?: boolean
-}
 
-const Subtasks = function({isVisible, list: subtasks = [], className = ''}: SubtasksProps) {
+const Subtasks = function({isVisible, parentId, className = ''}: SubtasksProps) {
 
 	const stateClassName = isVisible ? 'visible' : 'hidden'
 
-	function subtaskCallback(props: SubtaskCallbackProps) {
-		console.log(props.index, props.title, props.isDone, props.delete)
-		// if (props.delete)
+	const dispatch = useAppDispatch()
+	const taskList = useAppSelector(state => state.task.list)
+	const parentTask = taskList.find(task => task.id === parentId)
+	let subtasks = parentTask ? parentTask.subtasks : []
+	
+	const updateSubtask: UpdateSubtaskFunction = (id, title, isDone) => {
+		let newSubtasks = [...subtasks]
+		newSubtasks[id].title = title
+		newSubtasks[id].isDone = isDone
+		dispatch(updateSubtasks({taskId: parentId, subtasks: newSubtasks}))
 	}
-
-	function createTask(value: string) {
-		console.log(value)
+	const createSubtask: CreateSubtaskFunction = (title) => {
+		let newSubtasks = [...subtasks]
+		let newSub = {title, isDone: false}
+		newSubtasks.push(newSub)
+		dispatch(updateSubtasks({taskId: parentId, subtasks: newSubtasks}))
+	}
+	const deleteSubtask: DeleteSubtaskFunction = (id) => {
+		let newSubtasks = [...subtasks]
+		newSubtasks.splice(id, 1)
+		dispatch(updateSubtasks({taskId: parentId, subtasks: newSubtasks}))
 	}
 
 	return (
 		<div className={`${className} ${classes.wrapper} ${classes[stateClassName]}`}>
 			<div className={classes.list}>
 				{subtasks.map(({title, isDone}, index) =>
-					<Subtask title={title} isDone={isDone} callback={subtaskCallback} key={index} index={index} />
+					<Subtask
+						title={title}
+						isDone={isDone}
+						updateCallback={updateSubtask}
+						deleteCallback={deleteSubtask}
+						index={index}
+						key={index}
+					/>
 				)}
 			</div>
 			<div className={classes.newSubtask}>
 				<Icon className={classes.newSubtaskIcon} name='icon-at' />
 				<AutoResizeTextarea
 					className={classes.subtaskTitle}
-					callback={createTask}
+					callback={createSubtask}
 					isCreate={true}
 				/>
 			</div>
@@ -54,23 +74,32 @@ export default Subtasks
 
 
 interface SubtaskProps extends ComponentProps<'div'> {
+	index: number
 	title: string
 	isDone?: boolean
-	callback: (props: SubtaskCallbackProps) => void
-	index?: number
+	updateCallback: UpdateSubtaskFunction
+	deleteCallback: DeleteSubtaskFunction
 }
 
-const Subtask = function({title = '', isDone = false, callback, index, className = '', ...props}: SubtaskProps) {
+const Subtask = function({
+	index,
+	title = '',
+	isDone = false,
+	updateCallback,
+	deleteCallback,
+	className = '',
+	...props
+}: SubtaskProps) {
 
 	function updateStatus() {
 		let status = isDone ? false : true
-		callback({index, isDone: status})
+		updateCallback(index, title, status)
 	}
-	function updateTask(value: string) {
-		if (value !== title) callback({index, title: value})
+	function updateValue(value: string) {
+		if (value !== title) updateCallback(index, value, isDone)
 	}
 	function deleteTask() {
-		callback({index, delete: true})
+		deleteCallback(index)
 	}
 
 	return (
@@ -84,7 +113,7 @@ const Subtask = function({title = '', isDone = false, callback, index, className
 			<AutoResizeTextarea
 				className={classes.subtaskTitle}
 				content={title}
-				callback={updateTask}
+				callback={updateValue}
 			/>
 			<div className={classes.deleteButton} onClick={deleteTask}>
 				<Icon name='icon-cross' />

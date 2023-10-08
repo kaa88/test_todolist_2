@@ -1,3 +1,5 @@
+// fake API through localStorage
+
 import { _waitServerResponse } from '../utilities/utilities'
 import defaultProjects from './defaultProjects.json'
 import defaultTasks from './defaultTasks.json'
@@ -32,7 +34,6 @@ interface Api {
 	get: <T>(request: ApiRequest) => Promise<ApiGetResponse<T>>
 }
 
-// fake API through localStorage
 export const api: Api = {
 
 	async get<T>(request: ApiRequest) {
@@ -43,6 +44,7 @@ export const api: Api = {
 			newData = defaults[request] as T[]
 			setData(request, newData)
 		}
+		else newData = data
 		return {ok: true, data: newData}
 	},
 

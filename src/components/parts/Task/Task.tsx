@@ -3,6 +3,8 @@ import classes from './Task.module.scss';
 import { ITask } from '../../../types/types';
 import Icon from '../../ui/Icon/Icon';
 import Subtasks from '../Subtasks/Subtasks';
+import { useAppDispatch } from '../../../hooks/typedReduxHooks';
+import { updateSubtasks } from '../../../store/reducers/taskReducer';
 
 interface TaskProps extends ComponentProps<'div'> {
 	taskObject: ITask
@@ -10,19 +12,20 @@ interface TaskProps extends ComponentProps<'div'> {
 
 const Task = function({taskObject: task, className = '', ...props}: TaskProps) {
 
+	const dispatch = useAppDispatch()
 	let [isSubtasksVisible, setIsSubtasksVisible] = useState(true) // false
 	function handleSubtaskSpoilerClick() {
 		setIsSubtasksVisible(isSubtasksVisible ? false : true)
 	}
 
 	const priority = 'priority_' + task.priority
-	console.log(priority)
+	// console.log(priority)
 	const subtasks = task.subtasks
-	const comments = task.commentIds
+	// const comments = task.commentIds
 	const attached = task.attached
 
-	function updateSubtasks() {
-
+	function updateSubs() {
+		dispatch(updateSubtasks({taskId: task.id, subtasks}))
 	}
 
 	return (
@@ -48,7 +51,7 @@ const Task = function({taskObject: task, className = '', ...props}: TaskProps) {
 				<Icon name='icon-arrow-short' />
 				<span className={classes.bubble}>1</span>
 			</div>
-			<Subtasks className={classes.subtasks} isVisible={isSubtasksVisible} list={task.subtasks} />
+			<Subtasks className={classes.subtasks} isVisible={isSubtasksVisible} parentId={task.id} />
 		</div>
 	)
 }

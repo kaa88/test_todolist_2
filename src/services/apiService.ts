@@ -1,4 +1,4 @@
-import { api, ApiData, ApiRequest } from '../api/api'
+import { api, ApiData, ApiGetResponse, ApiRequest } from '../api/api'
 import { Id, IComment, IProject, ITask } from '../types/types'
 import { _waitServerResponse } from '../utilities/utilities'
 
@@ -37,9 +37,13 @@ export const apiService = { // fake fetcher
 	// },
 	// // tasks
 	tasks: {
-		async get(projectId: Id) {
+		async get(projectId: Id | null) {
 			let tasks = await api.get<ITask>(ApiRequest.tasks)
-			return tasks.data ? tasks.data.filter(task => task.projectId === projectId) : []
+			if (projectId !== null) {
+				let data = tasks.data ? tasks.data.filter(task => task.projectId === projectId) : []
+				return {...tasks, data} as ApiGetResponse<ITask>
+			}
+			return tasks
 		},
 		// async getOne(taskId: Id) {
 		// 	return await api.get<ITask>(ApiRequest.tasks)

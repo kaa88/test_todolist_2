@@ -2,15 +2,20 @@ import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
 import { IProject } from "../../types/types"
 import { apiService } from "../../services/apiService"
+import { log } from "console"
 
 type CurrentProjectName = string
 type LoadingState = boolean
 type LoadError = string
 
+interface IProjectWithCount extends IProject {
+	taskCount: number
+}
+
 interface ProjectState {
 	isLoading: LoadingState
 	loadError: LoadError
-	list: IProject[]
+	list: IProjectWithCount[]
 	current: CurrentProjectName
 }
 
@@ -23,33 +28,44 @@ const initialState: ProjectState = {
 	current: ''
 }
 
-const SET_LOADING = 'SET_LOADING'
-const SET_LOAD_ERROR = 'SET_LOAD_ERROR'
+const SET_PROJECTS_LOADING = 'SET_PROJECTS_LOADING'
+const SET_PROJECTS_ERROR = 'SET_PROJECTS_ERROR'
 const UPDATE_PROJECTS = 'UPDATE_PROJECTS'
-const SET_CURRENT_PROJECT = 'SET_CURRENT_PROJECT'
+const UPDATE_CURRENT_PROJECT = 'UPDATE_CURRENT_PROJECT'
 
 export const projectReducer: Reducer<ProjectState, Actions> = (state = initialState, action) => {
 	switch(action.type) {
-		case SET_LOADING:
+		case SET_PROJECTS_LOADING:
 			return {...state, isLoading: action.payload as LoadingState}
-		case SET_LOAD_ERROR:
+		case SET_PROJECTS_ERROR:
 			return {...state, loadError: action.payload as LoadError}
 		case UPDATE_PROJECTS:
-			return {...state, list: action.payload as IProject[]}
-		case SET_CURRENT_PROJECT:
+			return {...state, list: action.payload as IProjectWithCount[]}
+		case UPDATE_CURRENT_PROJECT:
 			return {...state, current: action.payload as CurrentProjectName}
 		default:
 			return state
 	}
 }
 
-export const setActiveProject: CustomActionCreator<CurrentProjectName> = (payload) => ({type: SET_CURRENT_PROJECT, payload})
+// export const setActiveProject: CustomActionCreator<CurrentProjectName> = (payload) => ({type: UPDATE_CURRENT_PROJECT, payload})
 
 export const updateProjectList = (): CustomThunkActionCreator<IProject[] | LoadingState | LoadError> => async (dispatch) => {
-	dispatch({type: SET_LOADING, payload: true})
-	dispatch({type: SET_LOAD_ERROR, payload: ''})
-	let response = await apiService.projects.get()
-	if (response.error) dispatch({type: SET_LOAD_ERROR, payload: response.error.message})
-	else dispatch({type: UPDATE_PROJECTS, payload: response.data || []})
-	dispatch({type: SET_LOADING, payload: false})
+	dispatch({type: SET_PROJECTS_LOADING, payload: true})
+	dispatch({type: SET_PROJECTS_ERROR, payload: ''})
+
+	let projects = await apiService.projects.get()
+	if (projects.error) dispatch({type: SET_PROJECTS_ERROR, payload: projects.error.message})
+	else {
+		let tasks = await apiService.tasks.get(null)
+		if (projects.data) {
+			let projectsWithCount = projects.data.map(proj => {
+				let taskCount = tasks.data ? tasks.data.reduce((count, task) => task.projectId === proj.id ? count + 1 : count, 0) : 0
+				return {...proj, taskCount}
+			})
+			dispatch({type: UPDATE_PROJECTS, payload: projectsWithCount})
+		}
+	}
+
+	dispatch({type: SET_PROJECTS_LOADING, payload: false})
 }

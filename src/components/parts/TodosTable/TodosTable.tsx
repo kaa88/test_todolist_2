@@ -5,6 +5,8 @@ import { useFetching } from '../../../hooks/useFetching';
 import { ITask, TaskStatus } from '../../../types/types';
 import { apiService } from '../../../services/apiService';
 import Task from '../Task/Task';
+import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
+import { updateTaskList } from '../../../store/reducers/taskReducer';
 
 interface TodosTableProps extends ComponentPropsWithoutRef<'div'> {
 	project: number
@@ -12,18 +14,22 @@ interface TodosTableProps extends ComponentPropsWithoutRef<'div'> {
 
 const TodosTable = function({project, className = ''}: TodosTableProps) {
 
-	let [tasks, setTasks] = useState<ITask[]>([])
+	const dispatch = useAppDispatch()
 
-	const getTasks = async () => {
-		let tasks = await apiService.tasks.get(project)
-		setTasks(tasks)
-	}
+	let {isLoading, loadError, list: tasks} = useAppSelector(state => state.task)
+
+	// let [tasks, setTasks] = useState<ITask[]>([])
+
+	// const getTasks = async () => {
+	// 	let tasks = await apiService.tasks.get(project)
+	// 	setTasks(tasks)
+	// }
 
 	useEffect(() => {
-		fetch()
+		dispatch(updateTaskList(project))
 	}, [project])
 
-	let {fetch, isLoading, error} = useFetching(getTasks)
+	// let {fetch, isLoading, error} = useFetching(getTasks)
 
 	const taskGroups: {[key: string]: ITask[]} = {
 		[TaskStatus.queue]: [],
@@ -45,7 +51,7 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 
 	return (
 		<Container className={classes.container}>
-			<p>{`todos - ${project} - show all subtasks - sort by - search ${isLoading ? '- LOADING' : ''}`}</p>
+			<p>{`todos - ${project} - show all subtasks - sort by - search ${isLoading ? '- LOADING' : ''} ${loadError ? '- ' + loadError : ''}`}</p>
 
 			<div className={`${className} ${classes.table}`}>
 				<div className={`${classes.cell} ${classes.queue}`}>
