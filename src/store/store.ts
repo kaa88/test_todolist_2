@@ -4,12 +4,14 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import { projectReducer } from './reducers/projectReducer'
 import { taskReducer } from './reducers/taskReducer'
 // import { commentReducer } from './reducers/commentReducer'
+import { modalReducer } from './reducers/modalReducer'
 
 
 const rootReducer = combineReducers({
 	project: projectReducer,
 	task: taskReducer,
 	// comment: commentReducer,
+	modal: modalReducer,
 })
 
 export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)))

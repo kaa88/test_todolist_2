@@ -1,34 +1,32 @@
-// import { createSlice } from '@reduxjs/toolkit';
-// import type { PayloadAction } from '@reduxjs/toolkit'
+import { Reducer } from "redux"
+import { CustomAction, CustomActionCreator } from "../../types/reduxTypes"
 
-// interface State {
-// 	name: string,
-// 	content: any
-// }
+interface ModalState {
+	active: string,
+	content: any
+}
+type ModalPayload = {name: string, content?: any} | string | null | undefined
 
-// const initialState = {
-// 	active: '',
-// 	content: ''
-// }
+type Actions = CustomAction<ModalPayload>
 
-// export const modalSlice = createSlice({
-// 	name: 'modal',
-// 	initialState,
-// 	reducers: {
-// 		setActiveModal(state, action: PayloadAction<string | State>) {
-// 			if (!action.payload) state.active = state.content = ''
-// 			if (typeof action.payload === 'string') {
-// 				state.active = action.payload
-// 				state.content = ''
-// 			}
-// 			if (typeof action.payload === 'object' && !Array.isArray(action.payload)) {
-// 				state.active = action.payload.name || ''
-// 				state.content = action.payload.content || ''
-// 			}
-// 		}
-// 	}
-// })
+const initialState: ModalState = {
+	active: '',
+	content: null
+}
 
-// export const {setActiveModal} = modalSlice.actions
-// export default modalSlice.reducer
-export default true // temp
+const SET_ACTIVE_MODAL = 'SET_ACTIVE_MODAL'
+
+export const modalReducer: Reducer<ModalState, Actions> = (state = initialState, action) => {
+	switch(action.type) {
+		case SET_ACTIVE_MODAL:
+			if (!action.payload) return initialState
+			if (typeof action.payload === 'string') return {...state, active: action.payload, content: null}
+			if (typeof action.payload === 'object' && !Array.isArray(action.payload))
+				return {...state, active: action.payload.name || '', content: action.payload.content || null}
+			return state
+		default:
+			return state
+	}
+}
+
+export const setActiveModal: CustomActionCreator<ModalPayload> = (payload) => ({type: SET_ACTIVE_MODAL, payload})

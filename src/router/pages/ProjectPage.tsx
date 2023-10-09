@@ -3,6 +3,7 @@ import Todos from "../../components/parts/TodosTable/TodosTable"
 import { useParams } from "react-router"
 import { useAppSelector } from "../../hooks/typedReduxHooks"
 import ErrorPage from "./ErrorPage"
+import Modal from "../../components/ui/Modal/Modal"
 
 function ProjectPage() {
 
@@ -19,6 +20,7 @@ function ProjectPage() {
 		content = <>
 			<PageTitle value={pageTitle} />
 			<Todos project={id} />
+			<Modal />
 		</>
 	}
 
