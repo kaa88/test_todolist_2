@@ -5,8 +5,11 @@
 	position: relative;
 }
 .input, .fakeInput {
+	--basic-height: 22px;
 	// height & line-height are controlled by JS
 	box-sizing: content-box; // need this to compare 'height' & 'scrollHeight'
+	height: var(--basic-height);
+	line-height: var(--basic-height);
 	padding: 0 8px;
 	width: calc(100% - 18px); // padding + border
 	min-width: 30px;

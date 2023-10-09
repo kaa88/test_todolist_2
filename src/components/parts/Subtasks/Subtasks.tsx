@@ -1,7 +1,7 @@
-import { ChangeEvent, ComponentProps, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, ComponentProps, KeyboardEvent, useEffect, useState } from 'react';
 import classes from './Subtasks.module.scss';
 import Icon from '../../ui/Icon/Icon';
-import { ISubtask, Id } from '../../../types/types';
+import { Id } from '../../../types/types';
 import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
 import { updateSubtasks } from '../../../store/reducers/taskReducer';
@@ -56,14 +56,7 @@ const Subtasks = function({isVisible, parentId, className = ''}: SubtasksProps) 
 					/>
 				)}
 			</div>
-			<div className={classes.newSubtask}>
-				<Icon className={classes.newSubtaskIcon} name='icon-at' />
-				<AutoResizeTextarea
-					className={classes.subtaskTitle}
-					callback={createSubtask}
-					isCreate={true}
-				/>
-			</div>
+			<NewSubtask createCallback={createSubtask} />
 		</div>
 	)
 }
@@ -83,7 +76,7 @@ interface SubtaskProps extends ComponentProps<'div'> {
 
 const Subtask = function({
 	index,
-	title = '',
+	title,
 	isDone = false,
 	updateCallback,
 	deleteCallback,
@@ -91,33 +84,127 @@ const Subtask = function({
 	...props
 }: SubtaskProps) {
 
+	let [value, setValue] = useState(title)
+	let [isComfirm, setIsConfirm] = useState(false)
+
 	function updateStatus() {
 		let status = isDone ? false : true
 		updateCallback(index, title, status)
 	}
-	function updateValue(value: string) {
-		if (value !== title) updateCallback(index, value, isDone)
-	}
 	function deleteTask() {
 		deleteCallback(index)
 	}
+	function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {
+		setValue(e.target.value)
+	}
+	function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
+		if (e.key === 'Enter') {
+			e.preventDefault()
+			if (value !== title) {
+				setIsConfirm(true)
+				e.currentTarget.blur()
+			}
+		}
+		if (e.key === 'Escape') {
+			setValue(title)
+			e.currentTarget.blur()
+		}
+	}
+	function handleBlur() {
+		if (value !== title) setIsConfirm(true)
+	}
+	useEffect(() => {
+		if (isComfirm) {
+			let trimmedValue = value.trimEnd()
+			if (trimmedValue !== title) updateCallback(index, trimmedValue, isDone)
+			setValue(trimmedValue)
+			setIsConfirm(false)
+		}
+	}, [isComfirm])
 
 	return (
 		<div className={classes.subtask} {...props}>
-			<div
+			<button
 				className={`${classes.subtaskStatusButton} ${isDone ? classes.status_done : ''}`}
 				onClick={updateStatus}
 			>
 				<Icon name='icon-ok' />
+			</button>
+			<AutoResizeTextarea
+				className={classes.subtaskTitle}
+				value={value}
+				onChange={handleChange}
+				onKeyDown={handleKeyDown}
+				onBlur={handleBlur}
+			/>
+			<button
+				className={classes.deleteButton}
+				onClick={deleteTask}
+			>
+				<Icon name='icon-cross' />
+			</button>
+		</div>
+	)
+}
+
+
+
+
+
+interface NewSubtaskProps extends ComponentProps<'div'> {
+	createCallback: CreateSubtaskFunction
+}
+
+const NewSubtask = function({ createCallback, className = '', ...props }: NewSubtaskProps) {
+
+	const defaultValue = ''
+
+	let [value, setValue] = useState(defaultValue)
+	let [isComfirm, setIsConfirm] = useState(false)
+
+	function confirmUpdate() {
+		setIsConfirm(true)
+	}
+	function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {
+		setValue(e.target.value)
+	}
+	function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
+		if (e.key === 'Enter') {
+			e.preventDefault()
+			if (value !== defaultValue) confirmUpdate()
+		}
+		if (e.key === 'Escape') {
+			setValue(defaultValue)
+			e.currentTarget.blur()
+		}
+	}
+	useEffect(() => {
+		if (isComfirm) {
+			let trimmedValue = value.trimEnd()
+			if (trimmedValue !== defaultValue) createCallback(trimmedValue)
+			setValue(defaultValue)
+			setIsConfirm(false)
+		}
+	}, [isComfirm])
+
+	return (
+		<div className={`${className} ${classes.newSubtask}`} {...props}>
+			<div className={classes.newSubtaskIcon}>
+				<Icon name='icon-cross-bold' />
 			</div>
 			<AutoResizeTextarea
 				className={classes.subtaskTitle}
-				content={title}
-				callback={updateValue}
+				value={value}
+				onChange={handleChange}
+				onKeyDown={handleKeyDown}
 			/>
-			<div className={classes.deleteButton} onClick={deleteTask}>
-				<Icon name='icon-cross' />
-			</div>
+			<button
+				className={classes.confirmButton}
+				onClick={confirmUpdate}
+				disabled={value === defaultValue ? true : false}
+			>
+				<Icon name='icon-ok' />
+			</button>
 		</div>
 	)
 }

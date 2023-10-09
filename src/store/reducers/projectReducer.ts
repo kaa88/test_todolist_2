@@ -2,7 +2,6 @@ import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
 import { IProject } from "../../types/types"
 import { apiService } from "../../services/apiService"
-import { log } from "console"
 
 type CurrentProjectName = string
 type LoadingState = boolean
@@ -57,7 +56,7 @@ export const updateProjectList = (): CustomThunkActionCreator<IProject[] | Loadi
 	let projects = await apiService.projects.get()
 	if (projects.error) dispatch({type: SET_PROJECTS_ERROR, payload: projects.error.message})
 	else {
-		let tasks = await apiService.tasks.get(null)
+		let tasks = await apiService.tasks.getAll(null)
 		if (projects.data) {
 			let projectsWithCount = projects.data.map(proj => {
 				let taskCount = tasks.data ? tasks.data.reduce((count, task) => task.projectId === proj.id ? count + 1 : count, 0) : 0

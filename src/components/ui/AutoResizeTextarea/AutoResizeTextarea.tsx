@@ -1,65 +1,36 @@
-import { ComponentProps, useEffect, KeyboardEvent, ChangeEvent, FocusEvent, useState, useRef } from 'react';
+import { ComponentProps, useLayoutEffect, useState, useRef } from 'react';
 import classes from './AutoResizeTextarea.module.scss';
 
-interface TextareaProps extends ComponentProps<'div'> {
-	content?: string
-	basicHeight?: number
-	callback: (value: string) => void
-	isCreate?: boolean
-}
+const basicHeightCssVariableName = '--basic-height'
 
-const AutoResizeTextarea = function({content = '', basicHeight = 22, callback, isCreate = false, className = ''}: TextareaProps) {
+const AutoResizeTextarea = function({value = '', className = '', ...props}: ComponentProps<'textarea'>) {
 
-	let [elemHeight, setElemHeight] = useState(basicHeight)
+	let [basicHeight, setBasicHeight] = useState(0)
+	let [currentHeight, setCurrentHeight] = useState(0)
 	const fakeElRef = useRef<HTMLTextAreaElement>(null)
-	useEffect(() => {
+	useLayoutEffect(() => {
+		let height = 0
 		const fakeEl = fakeElRef.current
-		if (fakeEl && fakeEl.scrollHeight !== elemHeight) setElemHeight(fakeEl.scrollHeight)
+		if (fakeEl) height = parseFloat(getComputedStyle(fakeEl).getPropertyValue(basicHeightCssVariableName))
+		setBasicHeight(height)
+		setCurrentHeight(height)
+	}, [])
+	useLayoutEffect(() => {
+		const fakeEl = fakeElRef.current
+		if (fakeEl && fakeEl.scrollHeight !== currentHeight) setCurrentHeight(fakeEl.scrollHeight)
 	})
-
-	let [value, setValue] = useState(content)
-	let [isComfirm, setIsConfirm] = useState(false)
-
-	function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {
-		setValue(e.target.value)
-	}
-	function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
-		if (e.key === 'Enter') {
-			e.preventDefault()
-			if (value === content) return;
-			setIsConfirm(true)
-			if (!isCreate) e.currentTarget.blur()
-		}
-		if (e.key === 'Escape') {
-			setValue(content)
-			e.currentTarget.blur()
-		}
-	}
-	function handleBlur() {
-		if (!isCreate && value !== content) setIsConfirm(true)
-	}
-	useEffect(() => {
-		if (isComfirm) {
-			let trimmedValue = value.trimEnd()
-			if (trimmedValue !== content) callback(trimmedValue)
-			setValue(isCreate ? '' : trimmedValue)
-			setIsConfirm(false)
-		}
-	}, [isComfirm])
 
 	return (
 		<div className={`${className} ${classes.box}`}>
 			<textarea
 				className={classes.input}
-				style={{height: elemHeight + 'px', lineHeight: basicHeight + 'px'}}
+				style={{height: currentHeight + 'px'}}
 				value={value}
-				onChange={handleChange}
-				onKeyDown={handleKeyDown}
-				onBlur={handleBlur}
+				{...props}
 			></textarea>
 			<textarea
 				className={classes.fakeInput}
-				style={{height: basicHeight + 'px', lineHeight: basicHeight + 'px'}}
+				style={{height: basicHeight + 'px'}}
 				value={value}
 				ref={fakeElRef}
 				tabIndex={-1}
