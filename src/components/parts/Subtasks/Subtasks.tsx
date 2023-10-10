@@ -5,6 +5,7 @@ import { Id } from '../../../types/types';
 import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
 import { updateSubtasks } from '../../../store/reducers/taskReducer';
+import InteractiveInput, { InteractiveInputCallback } from '../../ui/InteractiveInput/InteractiveInput';
 
 interface SubtasksProps extends ComponentProps<'div'> {
 	isVisible: boolean
@@ -20,7 +21,7 @@ const Subtasks = function({isVisible, parentId, className = ''}: SubtasksProps) 
 	const stateClassName = isVisible ? 'visible' : 'hidden'
 
 	const dispatch = useAppDispatch()
-	const taskList = useAppSelector(state => state.task.list)
+	const taskList = useAppSelector(state => state.tasks.list)
 	const parentTask = taskList.find(task => task.id === parentId)
 	let subtasks = parentTask ? parentTask.subtasks : []
 	
@@ -85,42 +86,19 @@ const Subtask = function({
 }: SubtaskProps) {
 
 	let [value, setValue] = useState(title)
-	let [isComfirm, setIsConfirm] = useState(false)
 
-	function updateStatus() {
+	const updateStatus = () => {
 		let status = isDone ? false : true
 		updateCallback(index, title, status)
 	}
-	function deleteTask() {
+	const updateTitle: InteractiveInputCallback = (value) => {
+		value = value.toString()
+		setValue(value)
+		updateCallback(index, value, isDone)
+	}
+	const deleteTask = () => {
 		deleteCallback(index)
 	}
-	function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {
-		setValue(e.target.value)
-	}
-	function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
-		if (e.key === 'Enter') {
-			e.preventDefault()
-			if (value !== title) {
-				setIsConfirm(true)
-				e.currentTarget.blur()
-			}
-		}
-		if (e.key === 'Escape') {
-			setValue(title)
-			e.currentTarget.blur()
-		}
-	}
-	function handleBlur() {
-		if (value !== title) setIsConfirm(true)
-	}
-	useEffect(() => {
-		if (isComfirm) {
-			let trimmedValue = value.trimEnd()
-			if (trimmedValue !== title) updateCallback(index, trimmedValue, isDone)
-			setValue(trimmedValue)
-			setIsConfirm(false)
-		}
-	}, [isComfirm])
 
 	return (
 		<div className={classes.subtask} {...props}>
@@ -130,13 +108,9 @@ const Subtask = function({
 			>
 				<Icon name='icon-ok' />
 			</button>
-			<AutoResizeTextarea
-				className={classes.subtaskTitle}
-				value={value}
-				onChange={handleChange}
-				onKeyDown={handleKeyDown}
-				onBlur={handleBlur}
-			/>
+			<InteractiveInput value={value} confirmCallback={updateTitle}>
+				<AutoResizeTextarea className={classes.subtaskTitle} />
+			</InteractiveInput>
 			<button
 				className={classes.deleteButton}
 				onClick={deleteTask}
@@ -169,7 +143,7 @@ const NewSubtask = function({ createCallback, className = '', ...props }: NewSub
 		setValue(e.target.value)
 	}
 	function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
-		if (e.key === 'Enter') {
+		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault()
 			if (value !== defaultValue) confirmUpdate()
 		}

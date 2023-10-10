@@ -6,17 +6,19 @@
 }
 .input, .fakeInput {
 	--basic-height: 22px;
+	--basic-line-height: var(--basic-height);
 	// height & line-height are controlled by JS
-	box-sizing: content-box; // need this to compare 'height' & 'scrollHeight'
+	// box-sizing: content-box; // need this to compare 'height' & 'scrollHeight'
 	height: var(--basic-height);
-	line-height: var(--basic-height);
+	line-height: var(--basic-line-height);
 	padding: 0 8px;
-	width: calc(100% - 18px); // padding + border
-	min-width: 30px;
-	font-size: 16px;
+	width: 100%;
+	// width: calc(100% - 18px); // padding + border
+	min-width: 50px;
+	// font-size: inherit;
 	border: solid 1px transparent;
 	border-radius: 8px;
-	resize: none;
+	resize: none !important;
 	scrollbar-width: none;
 	&::-webkit-scrollbar {
 		width: 0;
@@ -26,10 +28,9 @@
 	}
 }
 .fakeInput {
-	position: absolute;
-	top: 100%;
-	left: 0;
-	z-index: -1;
-	opacity: 0;
-	visibility: hidden;
+	position: absolute !important;
+	top: 100% !important;
+	left: 0 !important;
+	z-index: -1 !important;
+	visibility: hidden !important;
 }

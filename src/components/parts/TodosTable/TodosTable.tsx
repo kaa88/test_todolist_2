@@ -16,7 +16,9 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 
 	const dispatch = useAppDispatch()
 
-	let {isLoading, loadError, list: tasks} = useAppSelector(state => state.task)
+	let {isLoading, loadError, list: tasks} = useAppSelector(state => state.tasks)
+
+	console.log(tasks)
 
 	// let [tasks, setTasks] = useState<ITask[]>([])
 
@@ -37,8 +39,8 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 		[TaskStatus.done]: [],
 	}
 	tasks.forEach(task => taskGroups[task.status].push(task))
-	console.log(taskGroups)
-	console.log(tasks)
+	// console.log(taskGroups)
+	// console.log(tasks)
 
 	const getTaskElements = (group: ITask[]) =>
 		group.map((task, index) =>

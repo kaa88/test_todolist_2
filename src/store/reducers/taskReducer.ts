@@ -47,13 +47,16 @@ export const taskReducer: Reducer<TaskState, Actions> = (state = initialState, a
 			return {...state, list: action.payload as ITask[]}
 		case UPDATE_CURRENT_TASK:
 			task = action.payload as ITask
+			taskIndex = state.list.findIndex(t => t.id === task.id)
+			if (taskIndex < 0) return state
 			newList = [...state.list]
-			newList.find(t => t = task)
+			newList[taskIndex] = task
 			apiService.tasks.edit(task)
 			return {...state, list: newList}
 		case UPDATE_SUBTASKS:
 			let {taskId, subtasks} = action.payload as SubtaskPayload
-			taskIndex = state.list.findIndex(task => task.id === taskId)
+			taskIndex = state.list.findIndex(t => t.id === taskId)
+			if (taskIndex < 0) return state
 			newList = [...state.list]
 			newList[taskIndex].subtasks = subtasks
 			apiService.tasks.edit(newList[taskIndex])

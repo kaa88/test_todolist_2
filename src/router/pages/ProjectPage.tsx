@@ -10,7 +10,7 @@ function ProjectPage() {
 	let params = useParams<{id: string}>()
 	let id = Number(params.id)
 
-	let {isLoading, list: projects} = useAppSelector(state => state.project)
+	let {isLoading, list: projects} = useAppSelector(state => state.projects)
 	let currentProject = projects.length ? projects.find(p => p.id === id) : null
 	
 	let pageTitle = ''

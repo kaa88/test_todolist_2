@@ -1,0 +1,20 @@
+.default {
+	position: relative;
+}
+.button {
+	padding: 5px;
+	border: 2px solid transparent;
+}
+.active {
+	border-color: red;
+	pointer-events: none;
+}
+.queue {
+	background-color: lightsalmon;
+}
+.dev {
+	background-color: lightblue;
+}
+.done {
+	background-color: lightgreen;
+}

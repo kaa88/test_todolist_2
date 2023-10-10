@@ -8,9 +8,9 @@ import { modalReducer } from './reducers/modalReducer'
 
 
 const rootReducer = combineReducers({
-	project: projectReducer,
-	task: taskReducer,
-	// comment: commentReducer,
+	projects: projectReducer,
+	tasks: taskReducer,
+	// comments: commentReducer,
 	modal: modalReducer,
 })
 

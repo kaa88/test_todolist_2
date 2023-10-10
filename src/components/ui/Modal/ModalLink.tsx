@@ -7,7 +7,7 @@ import { setActiveModal } from '../../../store/reducers/modalReducer';
 interface ModalLinkProps extends ComponentProps<'div'> {
 	name?: string
 	content?: any
-	children?: ReactElement | null
+	children?: ReactElement
 }
 
 const timeout = getCssVariable('timer-modal')*1000
