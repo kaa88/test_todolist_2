@@ -1,4 +1,4 @@
-import { ChangeEvent, ComponentProps, KeyboardEvent, useEffect, useState } from 'react';
+import { ChangeEvent, ComponentProps, KeyboardEvent, useEffect, useState, forwardRef } from 'react';
 import classes from './Subtasks.module.scss';
 import Icon from '../../ui/Icon/Icon';
 import { Id } from '../../../types/types';
@@ -6,6 +6,7 @@ import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
 import { updateSubtasks } from '../../../store/reducers/taskReducer';
 import InteractiveInput, { InteractiveInputCallback } from '../../ui/InteractiveInput/InteractiveInput';
+import { DragDropContext, Droppable, Draggable, OnDragEndResponder } from 'react-beautiful-dnd';
 
 interface SubtasksProps extends ComponentProps<'div'> {
 	isVisible: boolean
@@ -43,20 +44,54 @@ const Subtasks = function({isVisible, parentId, className = ''}: SubtasksProps) 
 		dispatch(updateSubtasks({taskId: parentId, subtasks: newSubtasks}))
 	}
 
+	const handleDragEnd: OnDragEndResponder = ({source, destination}) => {
+		// setIsDragging(false)
+		// setCurrentDraggedTaskID(null)
+		// if (!destination) return; // dropped outside the list
+		// if (source.droppableId === destination.droppableId) {
+		// 	return;
+		// } else {
+		// 	let prevStatus = source.droppableId as TaskStatus
+		// 	let newStatus = destination.droppableId as TaskStatus
+		// 	let droppableIndex = source.index
+		// 	let group = taskGroups.find(gr => gr.status === prevStatus)
+		// 	let currentTask = group?.list[droppableIndex]
+		// 	if (currentTask) changeTaskStatus(currentTask, newStatus)
+		// }
+	}
+
 	return (
 		<div className={`${className} ${classes.wrapper} ${classes[stateClassName]}`}>
-			<div className={classes.list}>
-				{subtasks.map(({title, isDone}, index) =>
-					<Subtask
-						title={title}
-						isDone={isDone}
-						updateCallback={updateSubtask}
-						deleteCallback={deleteSubtask}
-						index={index}
-						key={index}
-					/>
-				)}
-			</div>
+			<DragDropContext onDragEnd={handleDragEnd}>
+				<Droppable droppableId={`subtaskOfTask_${parentId}`}>
+					{(provided) => (
+						<div className={classes.list}>
+							{subtasks.map(({title, isDone}, index) =>
+								<Draggable
+									draggableId={getDraggableID(index)} //?
+									key={index}
+									index={index}
+								>
+									{(provided, snapshot) =>
+										<Subtask
+											title={title}
+											isDone={isDone}
+											updateCallback={updateSubtask}
+											deleteCallback={deleteSubtask}
+											index={index}
+											key={index}
+											ref={provided.innerRef}
+											{...provided.draggableProps}
+											{...provided.dragHandleProps}
+										/>
+									}
+								</Draggable>
+							)}
+							{provided.placeholder}
+						</div>
+					)}
+				</Droppable>
+				</DragDropContext>
 			<NewSubtask createCallback={createSubtask} />
 		</div>
 	)
@@ -75,7 +110,7 @@ interface SubtaskProps extends ComponentProps<'div'> {
 	deleteCallback: DeleteSubtaskFunction
 }
 
-const Subtask = function({
+const Subtask = forwardRef<HTMLDivElement, SubtaskProps>(function({
 	index,
 	title,
 	isDone = false,
@@ -83,7 +118,7 @@ const Subtask = function({
 	deleteCallback,
 	className = '',
 	...props
-}: SubtaskProps) {
+}: SubtaskProps, ref) {
 
 	let [value, setValue] = useState(title)
 
@@ -101,7 +136,7 @@ const Subtask = function({
 	}
 
 	return (
-		<div className={classes.subtask} {...props}>
+		<div className={classes.subtask} {...props} ref={ref}>
 			<button
 				className={`${classes.subtaskStatusButton} ${isDone ? classes.status_done : ''}`}
 				onClick={updateStatus}
@@ -117,9 +152,12 @@ const Subtask = function({
 			>
 				<Icon name='icon-cross' />
 			</button>
+			<div className={classes.dragButton}>
+				<Icon name='icon-drag' />
+			</div>
 		</div>
 	)
-}
+})
 
 
 
@@ -182,3 +220,17 @@ const NewSubtask = function({ createCallback, className = '', ...props }: NewSub
 		</div>
 	)
 }
+
+
+function getDraggableID(id: string | number) {
+	return 'draggableSubtask_' + id
+}
+function parseDraggableID(fullId: string) {
+	let id = fullId.split('_')[1]
+	return isNaN(Number(id)) ? id : Number(id)
+}
+
+
+
+
+

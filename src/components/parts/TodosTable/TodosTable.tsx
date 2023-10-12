@@ -1,12 +1,11 @@
 import { ComponentPropsWithoutRef, useEffect, useState } from 'react';
 import classes from './TodosTable.module.scss';
 import Container from '../../ui/Container/Container';
-import { useFetching } from '../../../hooks/useFetching';
-import { ITask, TaskStatus } from '../../../types/types';
-import { apiService } from '../../../services/apiService';
+import { ITask, Id, TaskStatus } from '../../../types/types';
 import Task from '../Task/Task';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
-import { updateTaskList } from '../../../store/reducers/taskReducer';
+import { updateCurrentTask, updateTaskList } from '../../../store/reducers/taskReducer';
+import { DragDropContext, Droppable, Draggable, OnDragEndResponder, OnDragUpdateResponder, OnDragStartResponder } from 'react-beautiful-dnd';
 
 interface TodosTableProps extends ComponentPropsWithoutRef<'div'> {
 	project: number
@@ -18,64 +17,124 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 
 	let {isLoading, loadError, list: tasks} = useAppSelector(state => state.tasks)
 
-	console.log(tasks)
-
-	// let [tasks, setTasks] = useState<ITask[]>([])
-
-	// const getTasks = async () => {
-	// 	let tasks = await apiService.tasks.get(project)
-	// 	setTasks(tasks)
-	// }
-
 	useEffect(() => {
 		dispatch(updateTaskList(project))
 	}, [project])
 
-	// let {fetch, isLoading, error} = useFetching(getTasks)
-
-	const taskGroups: {[key: string]: ITask[]} = {
-		[TaskStatus.queue]: [],
-		[TaskStatus.dev]: [],
-		[TaskStatus.done]: [],
-	}
-	tasks.forEach(task => taskGroups[task.status].push(task))
+	const taskGroups: {status: TaskStatus, header: string, list: ITask[]}[] = [
+		{
+			status: TaskStatus.queue,
+			header: 'Queue',
+			list: []
+		},
+		{
+			status: TaskStatus.dev,
+			header: 'Development',
+			list: []
+		},
+		{
+			status: TaskStatus.done,
+			header: 'Done',
+			list: []
+		},
+	]
+	tasks.forEach(task => {
+		let group = taskGroups.find(gr => gr.status === task.status)
+		group?.list.push(task)
+	})
 	// console.log(taskGroups)
 	// console.log(tasks)
 
+	const moveTasksOnDrag = false
+	
+	let [currentDraggedTaskID, setCurrentDraggedTaskID] = useState<Id | null>(null)
+
 	const getTaskElements = (group: ITask[]) =>
 		group.map((task, index) =>
-			<Task
-				className={classes.task}
-				taskObject={task}
+			<Draggable
+				draggableId={getDraggableID(task.id)}
 				key={index}
-			/>
+				index={index}
+			>
+				{(provided, snapshot) =>
+					<Task
+						className={`${classes.task} ${(!moveTasksOnDrag && task.id !== currentDraggedTaskID) ? classes.preventedDragMove : ''}`}
+						taskObject={task}
+						ref={provided.innerRef}
+						{...provided.draggableProps}
+						{...provided.dragHandleProps}
+					/>
+				}
+			</Draggable>
 		)
+
+
+	let [isDragging, setIsDragging] = useState(false)
+	let [dragHoveredCell, setDragHoveredCell] = useState<TaskStatus | null>(null)
+
+	const changeTaskStatus = (task: ITask, newStatus: TaskStatus) => {
+		dispatch(updateCurrentTask({...task, status: newStatus}))
+	}
+	const handleDragStart: OnDragStartResponder = (start) => {
+		setIsDragging(true)
+		let taskId = parseDraggableID(start.draggableId)
+		setCurrentDraggedTaskID(typeof taskId === 'number' ? taskId : null)
+	}
+	const handleDragUpdate: OnDragUpdateResponder = ({destination}) => {
+		let status = destination ? destination.droppableId as TaskStatus : null
+		setDragHoveredCell(status)
+	}
+	const handleDragEnd: OnDragEndResponder = ({source, destination}) => {
+		setIsDragging(false)
+		setCurrentDraggedTaskID(null)
+		if (!destination) return; // dropped outside the list
+		if (source.droppableId === destination.droppableId) {
+			return;
+		} else {
+			let prevStatus = source.droppableId as TaskStatus
+			let newStatus = destination.droppableId as TaskStatus
+			let droppableIndex = source.index
+			let group = taskGroups.find(gr => gr.status === prevStatus)
+			let currentTask = group?.list[droppableIndex]
+			if (currentTask) changeTaskStatus(currentTask, newStatus)
+		}
+	}
 
 	return (
 		<Container className={classes.container}>
 			<p>{`todos - ${project} - show all subtasks - sort by - search ${isLoading ? '- LOADING' : ''} ${loadError ? '- ' + loadError : ''}`}</p>
+			
+			<DragDropContext onDragStart={handleDragStart} onDragUpdate={handleDragUpdate} onDragEnd={handleDragEnd}>
+				<div className={`${className} ${classes.table} ${isDragging ? classes.isDragging : ''}`}>
+					{taskGroups.map((group, index) =>
+						<Droppable droppableId={group.status} key={index}>
+							{(provided) => (
+								<div className={`${classes.cell} ${classes[group.status]} ${dragHoveredCell === group.status ? classes.isDragHover : ''}`} ref={provided.innerRef}>
+									<p className={classes.cellTitle}>{group.header}</p>
+									<div className={`${classes.tasks}`}>
+										{getTaskElements(group.list)}
+									</div>
+									{provided.placeholder}
+								</div>
+							)}
+						</Droppable>
+					)}
+				</div>
+			</DragDropContext>
 
-			<div className={`${className} ${classes.table}`}>
-				<div className={`${classes.cell} ${classes.queue}`}>
-					<p className={classes.cellTitle}>Queue</p>
-					<div className={classes.tasks}>
-						{getTaskElements(taskGroups[TaskStatus.queue])}
-					</div>
-				</div>
-				<div className={`${classes.cell} ${classes.dev}`}>
-					<p className={classes.cellTitle}>Development</p>
-					<div className={classes.tasks}>
-						{getTaskElements(taskGroups[TaskStatus.dev])}
-					</div>
-				</div>
-				<div className={`${classes.cell} ${classes.done}`}>
-					<p className={classes.cellTitle}>Done</p>
-					<div className={classes.tasks}>
-						{getTaskElements(taskGroups[TaskStatus.done])}
-					</div>
-				</div>
-			</div>
 		</Container>
 	)
 }
 export default TodosTable
+
+
+
+function getDraggableID(id: string | number) {
+	return 'draggabletask_' + id
+}
+function parseDraggableID(fullId: string) {
+	let id = fullId.split('_')[1]
+	return isNaN(Number(id)) ? id : Number(id)
+}
+
+

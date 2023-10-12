@@ -1,4 +1,4 @@
-import { ComponentProps, useState } from 'react';
+import { ComponentPropsWithoutRef, forwardRef, useState } from 'react';
 import classes from './Task.module.scss';
 import { ITask } from '../../../types/types';
 import Icon from '../../ui/Icon/Icon';
@@ -7,11 +7,11 @@ import { useAppDispatch } from '../../../hooks/typedReduxHooks';
 import ModalLink from '../../ui/Modal/ModalLink';
 import FullTask from '../FullTask/FullTask';
 
-interface TaskProps extends ComponentProps<'div'> {
+interface TaskProps extends ComponentPropsWithoutRef<'div'> {
 	taskObject: ITask
 }
 
-const Task = function({taskObject: task, className = '', ...props}: TaskProps) {
+const Task = forwardRef<HTMLDivElement, TaskProps>(function({taskObject: task, className = '', ...props}: TaskProps, ref) {
 
 	const dispatch = useAppDispatch()
 	let [isSubtasksVisible, setIsSubtasksVisible] = useState(true) // false
@@ -25,7 +25,7 @@ const Task = function({taskObject: task, className = '', ...props}: TaskProps) {
 
 
 	return (
-		<div className={`${className} ${classes.wrapper}`} {...props}>
+		<div className={`${className} ${classes.wrapper}`} {...props} ref={ref}>
 			<div className={`${classes.priority} ${classes[priority]}`}></div>
 			<ModalLink name='task-modal' content={<FullTask taskObject={task} />}>
 				<button className={classes.title}>{task.title}</button>
@@ -53,5 +53,5 @@ const Task = function({taskObject: task, className = '', ...props}: TaskProps) {
 			<Subtasks className={classes.subtasks} isVisible={isSubtasksVisible} parentId={task.id} />
 		</div>
 	)
-}
+})
 export default Task

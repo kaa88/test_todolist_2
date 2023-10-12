@@ -9,13 +9,10 @@ const AutoResizeTextarea = function({value = '', className = '', style, ...props
 	let [currentHeight, setCurrentHeight] = useState(0)
 	const fakeElRef = useRef<HTMLTextAreaElement>(null)
 
-	console.log(value, currentHeight)
-
 	useLayoutEffect(() => {
 		let height = 0
 		const fakeEl = fakeElRef.current
 		if (fakeEl) height = parseFloat(getComputedStyle(fakeEl).getPropertyValue(basicHeightCssVariableName))
-		console.log(height)
 		setBasicHeight(height)
 		setCurrentHeight(height)
 

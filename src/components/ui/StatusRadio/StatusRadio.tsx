@@ -41,11 +41,12 @@ const StatusRadio = function({className = '', task, callback, ...props}: StatusR
 
 	return (
 		<div className={`${className} ${classes.default}`} {...props}>
-			{status.map(item =>
+			{status.map((item, index) =>
 				<button
 					className={`${classes.button} ${classes[item.id]} ${item.id === active ? classes.active : ''}`}
 					data-name={item.id}
 					onClick={handleClick}
+					key={index}
 				>
 					{item.textContent}
 				</button>
