@@ -2,7 +2,6 @@
 
 .wrapper {
 	grid-column: span 2;
-	background-color: pink;
 	overflow: hidden;
 	&.hidden {
 		height: 0;
@@ -15,49 +14,124 @@
 	position: relative;
 }
 .subtask {
+	position: relative;
+	margin-bottom: 6px;
+	padding: 5px;
 	display: flex;
+	background-color: var(--color-bg-main);
+	border: solid 1px var(--color-text-inactive);
+	border-radius: 8px;
+	// overflow: hidden;
+	& > * {
+		position: relative;
+		z-index: 2;
+	}
 }
 .subtaskStatusButton {
 	cursor: pointer;
+	background-color: transparent;
+	width: 25px;
+	flex-shrink: 0;
 	svg {
-		width: 20px;
-		height: 20px;
-		fill: #aaa
+		width: 25px;
+		height: 25px;
+		fill: var(--color-icons-inactive);
+		.status_done & {
+			fill: var(--color-success);
+		}
 	}
 }
-.status_done {
-	svg {
-		fill: limegreen
+.autoResizeTextareaWrapper {
+	flex-grow: 1;
+	margin: 0 6px;
+	font-size: 0;
+	position: relative;
+}
+body .subtaskTitle {
+	--basic-height: 22px;
+	line-height: 18px;
+	padding: 4px 10px;
+	font-size: 14px;
+	background-color: var(--color-textfield-bg);
+	transition: background-color $timer-hover, color $timer-hover;
+	&:focus {
+		border-color: var(--color-textfield-focus);
 	}
 }
-.subtaskTitle {
-	
+.status_done .subtaskTitle {
+	background-color: var(--color-textfield-done);
+	color: var(--color-text-inactive)
 }
 .deleteButton, .confirmButton {
+	width: 20px;
+	flex-shrink: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	cursor: pointer;
+	background-color: transparent;
+	fill: var(--color-icons-main);
 	svg {
 		width: 20px;
 		height: 20px;
 	}
 }
-.newSubtask {
-	display: flex;
-}
-.newSubtaskIcon {
+.deleteButton {
 	svg {
-		width: 20px;
-		height: 20px;
-		transform: rotate(45deg);
+		width: 15px;
+		height: 15px;
 	}
 }
 .confirmButton {
 	&:disabled {
-		opacity: 0;
+		visibility: hidden;
+	}
+}
+.newSubtask {
+	display: flex;
+	margin-left: 30px;
+	padding: 0 6px;
+	font-size: 0;
+}
+.newSubtaskIcon {
+	// background-color: orange;
+	flex-shrink: 0;
+	// margin-left: 6px;
+	width: 25px;
+	// height: 30px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	fill: var(--color-icons-main);
+	svg {
+		width: 10px;
+		height: 10px;
+		transform: rotate(45deg);
 	}
 }
 .dragButton {
+	flex: 0 0 24px;
+	margin-right: 6px;
+	flex-shrink: 0;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	// width: 24px;
+	// background-color: yellow;
+	fill: var(--color-icons-inactive);
 	svg {
-		width: 20px;
-		height: 20px;
+		width: 15px;
+		height: 15px;
 	}
+}
+.notDraggableArea {
+	position: absolute;
+	top: -1px;
+	right: -1px;
+	z-index: 1;
+	width: calc(100% - 22px);
+	height: calc(100% + 2px);
+	background-color: transparent;
+	// background-color: var(--color-bg-main);
+	cursor: default;
 }

@@ -1,7 +1,7 @@
 @import '/src/styles/variables.scss';
 
 .wrapper {
-	background-color: #fff;
+	background-color: var(--color-bg-main);
 	display: grid;
 	grid-template-columns: 20px 1fr 30px;
 	// grid-template-rows: repeat(4, auto);
@@ -11,26 +11,26 @@
 }
 .priority {
 	grid-row: 1/-1;
-	background-color: #999;
+	// background-color: #999;
 	width: 20px;
 	height: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	svg {
-		margin-bottom: 2px;
-		width: 80%;
-		height: 80%;
-		fill: #fff;
-	}
+	// svg {
+	// 	margin-bottom: 2px;
+	// 	width: 80%;
+	// 	height: 80%;
+	// 	fill: #fff;
+	// }
 	&_normal {
-		background-color: limegreen;
+		background-color: var(--color-priority-normal);
 	}
 	&_high {
-		background-color: gold;
+		background-color: var(--color-priority-high);
 	}
 	&_top {
-		background-color: red;
+		background-color: var(--color-priority-top);
 	}
 }
 .title {

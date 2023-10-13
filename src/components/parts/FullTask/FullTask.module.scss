@@ -1,99 +1,51 @@
 @import '/src/styles/variables.scss';
 
 .wrapper {
-	background-color: #fff;
-	width: 100vw;
+	position: relative;
+	background-color: var(--color-bg-main);
+	width: 100%;
 	max-width: 800px;
-	// display: grid;
-	// grid-template-columns: 20px 1fr 30px;
-	// grid-template-rows: repeat(4, auto);
-	// grid-template-rows: repeat(3, auto) 200px;
-	// grid-column-gap: 6px;
-	// grid-row-gap: 3px;
+	padding: 20px;
+	display: grid;
+	grid-template-columns: 50% 50%;
+	grid-column-gap: 6px;
+	grid-row-gap: 3px;
 }
-.priority {
-	grid-row: 1/-1;
-	background-color: #999;
-	width: 20px;
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	svg {
-		margin-bottom: 2px;
-		width: 80%;
-		height: 80%;
-		fill: #fff;
-	}
-	&_normal {
-		background-color: limegreen;
-	}
-	&_high {
-		background-color: gold;
-	}
-	&_top {
-		background-color: red;
-	}
-}
-body .title {
-	--basic-height: 24px;
-	background-color: yellow;
+.textBlock {
 	grid-column: span 2;
+}
+.textBlockTitle {
+	margin-left: 11px;
+	margin-bottom: 5px;
+}
+body .taskTitle, body .taskDescription {
+	background-color: var(--color-textfield-bg);
+	&:focus {
+		border-color: var(--color-textfield-focus);
+	}
+}
+body .taskTitle {
+	--basic-height: 34px;
+	line-height: 24px;
+	padding: 5px 10px;
 	font-size: 18px;
-	padding: 8px 0;
 }
-.description {
-	grid-row: 2;
-	grid-column: 2;
+body .taskDescription {
+	--basic-height: 26px;
+	line-height: 20px;
+	padding: 5px 10px;
 	font-size: 14px;
-	line-height: 1;
 }
-
 .taskDetails {
-	grid-row: 3;
-	grid-column: 2;
 	display: flex;
+	flex-direction: column;
 	background-color: skyblue;
 }
-.detailsItem {
-	display: inline-flex;
-	align-items: center;
-}
-.detailsIcon {
-	width: 10px;
-	height: 10px;
-}
-
-
-
-.spoilerButton {
-	grid-row: 2 / span 2;
-	background-color: lime;
-	svg {
-		width: 20px;
-		height: 20px;
-		transform: rotate(90deg);
-	}
-}
-.bubble {
-
-}
-
-
 
 .subtasks {
-	grid-column: span 2;
-	background-color: pink;
+	grid-column: 2;
 }
-.subtask {
-	display: flex;
-}
-.subtaskStatusButton {
-	svg {
-		width: 20px;
-		height: 20px;
-	}
-}
-.subtaskTitle {
-	font-size: 18px;
+
+.comments {
+
 }

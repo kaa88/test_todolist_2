@@ -1,5 +1,5 @@
 body .container {
-	background-color: lightseagreen;
+	background-color: var(--color-bg-todos);
 }
 .table {
 	margin: 0 auto;
@@ -30,13 +30,13 @@ body .container {
 	}
 }
 .queue {
-	background-color: lightsalmon;
+	background-color: var(--color-status-queue);
 }
 .development {
-	background-color: lightblue;
+	background-color: var(--color-status-dev);
 }
 .done {
-	background-color: lightgreen;
+	background-color: var(--color-status-done);
 }
 .cellTitle {
 	flex: 0 0 auto;
@@ -51,4 +51,7 @@ body .container {
 	&.preventedDragMove {
 		transform: none !important;
 	}
+}
+.taskClone {
+	background-color: yellow;
 }

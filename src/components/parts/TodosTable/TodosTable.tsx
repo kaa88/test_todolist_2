@@ -107,7 +107,20 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 			<DragDropContext onDragStart={handleDragStart} onDragUpdate={handleDragUpdate} onDragEnd={handleDragEnd}>
 				<div className={`${className} ${classes.table} ${isDragging ? classes.isDragging : ''}`}>
 					{taskGroups.map((group, index) =>
-						<Droppable droppableId={group.status} key={index}>
+						<Droppable
+							droppableId={group.status}
+							key={index}
+							renderClone={(provided) => (
+								<div
+									className={classes.taskClone}
+									{...provided.draggableProps}
+									{...provided.dragHandleProps}
+									ref={provided.innerRef}
+								>
+									CLONE
+								</div>
+							 )}
+						>
 							{(provided) => (
 								<div className={`${classes.cell} ${classes[group.status]} ${dragHoveredCell === group.status ? classes.isDragHover : ''}`} ref={provided.innerRef}>
 									<p className={classes.cellTitle}>{group.header}</p>

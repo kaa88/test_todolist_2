@@ -1,0 +1,33 @@
+.default, .status, .priority {
+	position: relative;
+}
+.button {
+	padding: 5px;
+	border: 2px solid transparent;
+	.status & {
+		&:nth-child(1) {
+			background-color: var(--color-status-queue);
+		}
+		&:nth-child(2) {
+			background-color: var(--color-status-dev);
+		}
+		&:nth-child(3) {
+			background-color: var(--color-status-done);
+		}
+	}
+	.priority & {
+		&:nth-child(1) {
+			background-color: var(--color-priority-normal);
+		}
+		&:nth-child(2) {
+			background-color: var(--color-priority-high);
+		}
+		&:nth-child(3) {
+			background-color: var(--color-priority-top);
+		}
+	}
+}
+.active {
+	border-color: var(--color-radio-btn-active);
+	pointer-events: none;
+}
