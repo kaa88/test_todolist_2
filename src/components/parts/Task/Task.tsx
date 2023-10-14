@@ -6,6 +6,7 @@ import Subtasks from '../Subtasks/Subtasks';
 import { useAppDispatch } from '../../../hooks/typedReduxHooks';
 import ModalLink from '../../ui/Modal/ModalLink';
 import FullTask from '../FullTask/FullTask';
+import { DateService } from '../../../services/DateService';
 
 interface TaskProps extends ComponentPropsWithoutRef<'div'> {
 	taskObject: ITask
@@ -23,6 +24,7 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({taskObject: task, c
 	// const comments = task.commentIds
 	const attached = task.attached
 
+	const remainingTime = DateService.getRemainingTime(task.createDate , task.expireDate)
 
 	return (
 		<div className={`${className} ${classes.wrapper}`} {...props} ref={ref}>
@@ -35,7 +37,7 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({taskObject: task, c
 			<div className={classes.taskDetails}>
 				<div className={classes.detailsItem} title='time'>
 					<Icon className={classes.detailsIcon} name='icon-clock' />
-					<span>{task.expireDate}</span>
+					<span>{remainingTime}</span>
 				</div>
 				<div className={classes.detailsItem} title='comments'>
 					<Icon className={classes.detailsIcon} name='icon-clock' />

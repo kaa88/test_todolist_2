@@ -14,9 +14,10 @@
 .textBlock {
 	grid-column: span 2;
 }
-.textBlockTitle {
+.blockTitle {
 	margin-left: 11px;
 	margin-bottom: 5px;
+	font-size: 15px;
 }
 body .taskTitle, body .taskDescription {
 	background-color: var(--color-textfield-bg);
@@ -37,13 +38,27 @@ body .taskDescription {
 	font-size: 14px;
 }
 .taskDetails {
+	padding: 10px;
 	display: flex;
 	flex-direction: column;
-	background-color: skyblue;
+	border: solid 1px var(--color-text-inactive);
+	border-radius: 8px;
+	.blockTitle {
+		margin-left: 0;
+	}
+}
+.dateTime {
+}
+.radioButtons {
+	width: 100%;
 }
 
 .subtasks {
 	grid-column: 2;
+}
+.radioButtonsWrapper {
+	margin-top: 10px;
+	width: 100%;
 }
 
 .comments {

@@ -1,7 +1,7 @@
 import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
 import { Id, ISubtask, ITask } from "../../types/types"
-import { apiService } from "../../services/apiService"
+import { ApiService } from "../../services/ApiService"
 
 type CurrentTaskName = string
 type LoadingState = boolean
@@ -51,7 +51,7 @@ export const taskReducer: Reducer<TaskState, Actions> = (state = initialState, a
 			if (taskIndex < 0) return state
 			newList = [...state.list]
 			newList[taskIndex] = task
-			apiService.tasks.edit(task)
+			ApiService.tasks.edit(task)
 			return {...state, list: newList}
 		case UPDATE_SUBTASKS:
 			let {taskId, subtasks} = action.payload as SubtaskPayload
@@ -59,7 +59,7 @@ export const taskReducer: Reducer<TaskState, Actions> = (state = initialState, a
 			if (taskIndex < 0) return state
 			newList = [...state.list]
 			newList[taskIndex].subtasks = subtasks
-			apiService.tasks.edit(newList[taskIndex])
+			ApiService.tasks.edit(newList[taskIndex])
 			return {...state, list: newList}
 		default:
 			return state
@@ -75,7 +75,7 @@ export const updateTaskList = (projectId: Id): CustomThunkActionCreator<ITask[] 
 	dispatch({type: SET_TASKS_ERROR, payload: ''})
 	dispatch({type: UPDATE_PROJECT_TASKS, payload: []})
 
-	let response = await apiService.tasks.getAll(projectId)
+	let response = await ApiService.tasks.getAll(projectId)
 	if (response.error) dispatch({type: SET_TASKS_ERROR, payload: response.error.message})
 	else if (response.data) dispatch({type: UPDATE_PROJECT_TASKS, payload: response.data})
 

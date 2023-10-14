@@ -9,19 +9,21 @@
 		"@types/jest": "^27.5.2",
 		"@types/node": "^16.18.55",
 		"@types/react": "^18.2.24",
+		"@types/react-datepicker": "^4.19.0",
 		"@types/react-dom": "^18.2.8",
 		"@types/react-redux": "^7.1.27",
 		"@types/react-router": "^5.1.20",
+		"dayjs": "^1.11.10",
 		"react": "^18.2.0",
 		"react-beautiful-dnd": "^13.1.1",
+		"react-datepicker": "^4.20.0",
 		"react-dom": "^18.2.0",
 		"react-redux": "^8.1.3",
 		"react-router-dom": "^6.16.0",
 		"react-scripts": "5.0.1",
 		"redux": "^4.2.1",
 		"redux-thunk": "^2.4.2",
-		"typescript": "^4.9.5",
-		"web-vitals": "^2.1.4"
+		"typescript": "^4.9.5"
 	},
 	"scripts": {
 		"start": "react-scripts start",

@@ -21,7 +21,7 @@ class Actions<T extends ApiData> {
 }
 
 
-export const apiService = { // fake fetcher
+export const ApiService = { // fake fetcher
 	projects: new Actions<IProject>(PROJECTS_PATH),
 	// tasks: new Actions<ITask>(ApiRequest.tasks),
 	comments: new Actions<IComment>(COMMENTS_PATH),

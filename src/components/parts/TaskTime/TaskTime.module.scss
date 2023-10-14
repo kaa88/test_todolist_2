@@ -1,0 +1,31 @@
+@import '/src/styles/variables.scss';
+
+.wrapper {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	grid-column-gap: 10px;
+	font-size: 15px;
+	align-items: center;
+}
+.blockTitle {
+}
+.content {
+	span {
+		margin-left: 6px;
+		display: inline-block;
+		height: 22px;
+		line-height: 22px;
+	}
+}
+.customInput {
+	max-width: 129px;
+	height: 22px;
+	padding: 0 0 0 6px;
+	border-radius: 8px;
+	font-size: 15px;
+	background-color: var(--color-textfield-bg);
+}
+body .popup {
+	z-index: 30;
+}
+

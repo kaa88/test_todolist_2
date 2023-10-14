@@ -1,13 +1,13 @@
 import { ComponentProps, useState } from 'react';
 import classes from './FullTask.module.scss';
 import { ITask, TaskPriority, TaskStatus } from '../../../types/types';
-import Icon from '../../ui/Icon/Icon';
 import Subtasks from '../Subtasks/Subtasks';
 import { useAppDispatch } from '../../../hooks/typedReduxHooks';
 import InteractiveInput, { InteractiveInputCallback } from '../../ui/InteractiveInput/InteractiveInput';
 import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
 import { updateCurrentTask } from '../../../store/reducers/taskReducer';
 import RadioButtons from '../../ui/RadioButtons/RadioButtons';
+import TaskTime, { Dates } from '../TaskTime/TaskTime';
 
 interface TaskProps extends ComponentProps<'div'> {
 	taskObject: ITask
@@ -41,38 +41,55 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 	const updatePriority = (value: TaskPriority) => {
 		dispatch(updateCurrentTask({...task, priority: value}))
 	}
-	console.log(task.priority)
+
+
+	let [dates, setDates] = useState<Dates>({create: task.createDate, expire: task.expireDate})
+	const updateDates = function(dates: Dates) {
+		setDates(dates)
+		dispatch(updateCurrentTask({...task, createDate: dates.create, expireDate: dates.expire}))
+	}
 
 	return (
 		<div className={`${className} ${classes.wrapper}`}>
 			<div className={classes.textBlock}>
-				<p className={classes.textBlockTitle}>Title:</p>
+				<p className={classes.blockTitle}>Title:</p>
 				<InteractiveInput value={title} confirmCallback={updateTitle}>
 					<AutoResizeTextarea className={classes.taskTitle} />
 				</InteractiveInput>
 			</div>
 			<div className={classes.textBlock}>
-				<p className={classes.textBlockTitle}>Description:</p>
+				<p className={classes.blockTitle}>Description:</p>
 				<InteractiveInput value={description} confirmCallback={updateDescription}>
 					<AutoResizeTextarea className={classes.taskDescription} />
 				</InteractiveInput>
 			</div>
 
 			<div className={classes.taskDetails}>
-				<div className="">createDate</div>
-				<div className="">expireDate</div>
-				<RadioButtons<TaskStatus>
-					modif='status'
-					buttons={statusRadioButtons}
-					active={task.status}
-					callback={updateStatus}
+				<TaskTime
+					className={classes.dateTime}
+					dates={dates}
+					callback={updateDates}
 				/>
-				<RadioButtons<TaskPriority>
-					modif='priority'
-					buttons={priorityRadioButtons}
-					active={task.priority}
-					callback={updatePriority}
-				/>
+				<div className={classes.radioButtonsWrapper}>
+					<p className={classes.blockTitle}>Status:</p>
+					<RadioButtons<TaskStatus>
+						className={classes.radioButtons}
+						modif='status'
+						buttons={statusRadioButtons}
+						active={task.status}
+						callback={updateStatus}
+					/>
+				</div>
+				<div className={classes.radioButtonsWrapper}>
+					<p className={classes.blockTitle}>Priority:</p>
+					<RadioButtons<TaskPriority>
+						className={classes.radioButtons}
+						modif='priority'
+						buttons={priorityRadioButtons}
+						active={task.priority}
+						callback={updatePriority}
+					/>
+				</div>
 			</div>
 			<Subtasks className={classes.subtasks} isVisible={true} parentId={task.id} />
 			<div className={classes.comments}>comments:</div>
