@@ -8,6 +8,7 @@ import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
 import { updateCurrentTask } from '../../../store/reducers/taskReducer';
 import RadioButtons from '../../ui/RadioButtons/RadioButtons';
 import TaskTime, { Dates } from '../TaskTime/TaskTime';
+import Comments from '../Comments/Comments';
 
 interface TaskProps extends ComponentProps<'div'> {
 	taskObject: ITask
@@ -92,7 +93,7 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 				</div>
 			</div>
 			<Subtasks className={classes.subtasks} isVisible={true} parentId={task.id} />
-			<div className={classes.comments}>comments:</div>
+			<Comments className={classes.comments} taskId={task.id} />
 			<div className="">attachments:</div>
 		</div>
 	)

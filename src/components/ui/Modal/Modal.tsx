@@ -7,9 +7,10 @@ import { transitionIsLocked } from '../../../utilities/transitionLock';
 import { setActiveModal } from '../../../store/reducers/modalReducer';
 import Icon from '../Icon/Icon';
 
-const timeout = getCssVariable('timer-modal') * 1000
+let timeout = 0
 
 const Modal = function({className = ''}: ComponentProps<'div'>) {
+	timeout = getCssVariable('timer-modal') * 1000
 
 	const dispatch = useAppDispatch()
 	const modalStore = useAppSelector(state => state.modal)

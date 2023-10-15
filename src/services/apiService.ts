@@ -24,7 +24,7 @@ class Actions<T extends ApiData> {
 export const ApiService = { // fake fetcher
 	projects: new Actions<IProject>(PROJECTS_PATH),
 	// tasks: new Actions<ITask>(ApiRequest.tasks),
-	comments: new Actions<IComment>(COMMENTS_PATH),
+	// comments: new Actions<IComment>(COMMENTS_PATH),
 
 	// // projects
 	// async getProjects() {
@@ -39,7 +39,6 @@ export const ApiService = { // fake fetcher
 	// async deleteProject(project: IProject) {
 	// 	return await api.delete(ApiRequest.projects, {data: project})
 	// },
-	// // tasks
 	tasks: {
 		async getAll(projectId: Id | null) {
 			let tasks = await api.get<ITask>(TASKS_PATH)
@@ -61,30 +60,24 @@ export const ApiService = { // fake fetcher
 		async delete(taskId: Id) {
 			return await api.delete(`${TASKS_PATH}?id=${taskId}`)
 		},
-		// async get(taskId: Id) {
-		// 	return await api.get<ITask>(ApiRequest.tasks)
-		// },
-		// async add(task: ITask) {
-		// 	return await api.post(ApiRequest.tasks, {data: task})
-		// },
-		// async edit(task: ITask) {
-		// 	return await api.put(ApiRequest.tasks, {data: task})
-		// },
-		// async delete(task: ITask) {
-		// 	return await api.delete(ApiRequest.tasks, {data: task})
-		// },
+	},
+	comments: {
+		async get(taskId: Id | null) {
+			let comments = await api.get<IComment>(COMMENTS_PATH)
+			if (taskId !== null) {
+				let data = comments.data ? comments.data.filter(comment => comment.taskId === taskId) : []
+				return {...comments, data} as ApiGetResponse<IComment>
+			}
+			return comments
+		},
+		async add(comment: IComment) {
+			return await api.post(COMMENTS_PATH, {data: comment})
+		},
+		async edit(comment: IComment) {
+			return await api.put(COMMENTS_PATH, {data: comment})
+		},
+		async delete(commentId: Id) {
+			return await api.delete(`${COMMENTS_PATH}?id=${commentId}`)
+		},
 	}
-	// // comments
-	// async getComments() {
-	// 	return await api.get(ApiRequest.comments)
-	// },
-	// async addComment(comment: IComment) {
-	// 	return await api.post(ApiRequest.comments, {data: comment})
-	// },
-	// async editComment(comment: IComment) {
-	// 	return await api.put(ApiRequest.comments, {data: comment})
-	// },
-	// async deleteComment(comment: IComment) {
-	// 	return await api.delete(ApiRequest.comments, {data: comment})
-	// },
 }

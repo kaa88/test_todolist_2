@@ -3,7 +3,6 @@ import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../
 import { Id, ISubtask, ITask } from "../../types/types"
 import { ApiService } from "../../services/ApiService"
 
-type CurrentTaskName = string
 type LoadingState = boolean
 type LoadError = string
 
@@ -18,10 +17,11 @@ interface SubtaskPayload {
 	subtasks: ISubtask[]
 }
 
-type Actions = CustomAction<CurrentTaskName>
+type Actions =
+	  CustomAction<LoadingState>
+	| CustomAction<LoadError>
 	| CustomAction<ITask>
 	| CustomAction<ITask[]>
-	| CustomAction<LoadingState>
 	| CustomAction<SubtaskPayload>
 
 const initialState: TaskState = {

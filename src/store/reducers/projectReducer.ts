@@ -18,7 +18,11 @@ interface ProjectState {
 	current: CurrentProjectName
 }
 
-type Actions = CustomAction<CurrentProjectName> | CustomAction<IProject[]> | CustomAction<LoadingState>
+type Actions =
+	  CustomAction<LoadingState>
+	| CustomAction<LoadError>
+	| CustomAction<CurrentProjectName>
+	| CustomAction<IProjectWithCount[]>
 
 const initialState: ProjectState = {
 	isLoading: false,

@@ -63,8 +63,10 @@ export const api = {
 		let data = getData(endpoint)
 		if (data === null) return {error: INTERNAL_ERROR}
 
-		let IDs = data.map(item => item.id)
-		let newItem = {...body.data, id: Math.max(...IDs) + 1}
+		let maxID = data.reduce((result, item) => (
+			item.id > result ? item.id : result
+		), 0)
+		let newItem = {...body.data, id: maxID + 1}
 		data.push(newItem)
 		if (setData(endpoint, data)) return {ok: true}
 		else return {error: INTERNAL_ERROR}

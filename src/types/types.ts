@@ -34,10 +34,11 @@ export interface ISubtask {
 }
 export interface IComment {
 	id: Id
+	taskId: Id
 	date: number
 	author: string
 	content: string
-	isSubcomment: boolean
-	parentId: number
+	isSub: boolean
+	subcomments: Id[]
+	rating: number
 }
-

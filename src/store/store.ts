@@ -3,14 +3,14 @@ import thunk from 'redux-thunk'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { projectReducer } from './reducers/projectReducer'
 import { taskReducer } from './reducers/taskReducer'
-// import { commentReducer } from './reducers/commentReducer'
+import { commentReducer } from './reducers/commentReducer'
 import { modalReducer } from './reducers/modalReducer'
 
 
 const rootReducer = combineReducers({
 	projects: projectReducer,
 	tasks: taskReducer,
-	// comments: commentReducer,
+	comments: commentReducer,
 	modal: modalReducer,
 })
 
