@@ -22,6 +22,6 @@ yarn-error.log*
 
 # other
 *[а-яА-ЯёЁ]*
-*copy.*
+* copy*
 /temp
 TODO.md
