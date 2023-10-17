@@ -6,6 +6,8 @@ import Task from '../Task/Task';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
 import { updateCurrentTask, updateTaskList } from '../../../store/reducers/taskReducer';
 import { DragDropContext, Droppable, Draggable, OnDragEndResponder, OnDragUpdateResponder, OnDragStartResponder } from 'react-beautiful-dnd';
+import LoadError from '../../ui/Loader/LoadError';
+import Loader from '../../ui/Loader/Loader';
 
 interface TodosTableProps extends ComponentPropsWithoutRef<'div'> {
 	project: number
@@ -102,10 +104,15 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 
 	return (
 		<Container className={classes.container}>
+
 			<p>{`todos - ${project} - show all subtasks - sort by - search ${isLoading ? '- LOADING' : ''} ${loadError ? '- ' + loadError : ''}`}</p>
 			
 			<DragDropContext onDragStart={handleDragStart} onDragUpdate={handleDragUpdate} onDragEnd={handleDragEnd}>
 				<div className={`${className} ${classes.table} ${isDragging ? classes.isDragging : ''}`}>
+					
+					{isLoading && <Loader className={classes.loader} />}
+					{!!loadError && <LoadError className={classes.loadError} message={loadError} />}
+
 					{taskGroups.map((group, index) =>
 						<Droppable
 							droppableId={group.status}

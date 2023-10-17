@@ -32,28 +32,37 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({taskObject: task, c
 			<div className={`${classes.priority} ${classes[priority]}`}></div>
 
 			<ModalLink name='task-modal' content={<FullTask taskObject={task} />}>
-				<button className={classes.title}>{task.title}</button>
+				<button className={classes.title} title='edit task'>{task.title}</button>
+			</ModalLink>
+			<ModalLink name='task-modal' content={<FullTask taskObject={task} />}>
+				<button className={classes.description} title='edit task'>{task.description}</button>
 			</ModalLink>
 
-			<p className={classes.description}>{task.description}</p>
-			<div className={classes.taskDetails}>
-				<div className={classes.detailsItem} title='time'>
+			<button className={classes.taskDetails}>
+				<div className={classes.detailsItem} title='comments'>
+					<Icon className={classes.detailsIcon} name='icon-comment' />
+					<span>C</span>
+				</div>
+				<div className={classes.detailsItem} title='attachments'>
+					<Icon className={classes.detailsIcon} name='icon-file' />
+					<span>0</span>
+				</div>
+				<div className={classes.detailsItem} title='time remaining'>
 					<Icon className={classes.detailsIcon} name='icon-clock' />
 					<span>{remainingTime}</span>
 				</div>
-				<div className={classes.detailsItem} title='comments'>
-					<Icon className={classes.detailsIcon} name='icon-clock' />
-					<span>c</span>
-				</div>
-				<div className={classes.detailsItem} title='attach'>
-					<Icon className={classes.detailsIcon} name='icon-clock' />
-					<span>a</span>
-				</div>
+			</button>
+			<div className={classes.dragButton}>
+				<Icon name='icon-drag' />
 			</div>
-			<div className={classes.spoilerButton} onClick={handleSubtaskSpoilerClick}>
-				<Icon name='icon-arrow-short' />
-				<span className={classes.bubble}>{task.subtasks.length}</span>
-			</div>
+			<button className={classes.spoilerButton} onClick={handleSubtaskSpoilerClick} title='subtasks'>
+				<span className={classes.spoilerButtonIconBox}>
+					<Icon name='icon-arrow-short' />
+					{!!task.subtasks.length &&
+						<span className={classes.bubble}>{task.subtasks.length}</span>
+					}
+				</span>
+			</button>
 			<Subtasks className={classes.subtasks} isVisible={isSubtasksVisible} parentId={task.id} />
 		</div>
 	)
