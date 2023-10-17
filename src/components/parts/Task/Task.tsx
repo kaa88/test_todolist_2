@@ -7,7 +7,6 @@ import { useAppDispatch } from '../../../hooks/typedReduxHooks';
 import ModalLink from '../../ui/Modal/ModalLink';
 import FullTask from '../FullTask/FullTask';
 import { DateService } from '../../../services/DateService';
-// import Modal from '../../ui/Modal/Modal';
 
 interface TaskProps extends ComponentPropsWithoutRef<'div'> {
 	taskObject: ITask
@@ -27,16 +26,6 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({taskObject: task, c
 
 	const remainingTime = DateService.getRemainingTime(task.createDate , task.expireDate)
 
-	// Modal link
-	// const modalContent = <FullTask taskObject={task} />
-	// let [isModalActive, setIsModalActive] = useState(false)
-	// const openModal = () => {
-	// 	setIsModalActive(true)
-	// }
-	// const closeModal = () => {
-	// 	setIsModalActive(false)
-	// }
-	// /Modal link
 
 	return (
 		<div className={`${className} ${classes.wrapper}`} {...props} ref={ref}>
@@ -45,11 +34,6 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({taskObject: task, c
 			<ModalLink name='task-modal' content={<FullTask taskObject={task} />}>
 				<button className={classes.title}>{task.title}</button>
 			</ModalLink>
-			{/* <button className={classes.title} onClick={openModal}>{task.title}</button>
-			<Modal onClose={closeModal}>
-				{isModalActive ? modalContent : null}
-			</Modal> */}
-
 
 			<p className={classes.description}>{task.description}</p>
 			<div className={classes.taskDetails}>

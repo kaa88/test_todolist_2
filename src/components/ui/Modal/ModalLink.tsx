@@ -1,4 +1,4 @@
-import { ComponentProps, ReactElement, cloneElement } from 'react';
+import { ComponentProps, ReactElement, cloneElement, useEffect } from 'react';
 import { getCssVariable } from '../../../utilities/utilities';
 import { transitionIsLocked } from '../../../utilities/transitionLock';
 import { useAppDispatch } from '../../../hooks/typedReduxHooks';
@@ -10,12 +10,16 @@ interface ModalLinkProps extends ComponentProps<'div'> {
 	children?: ReactElement
 }
 
-const timeout = getCssVariable('timer-modal')*1000
+let timeout = 0
 
 
 const ModalLink = function({name = '', content, children}: ModalLinkProps) {
 
 	const dispatch = useAppDispatch()
+	
+	useEffect(() => {
+		if (!timeout) timeout = getCssVariable('timer-modal') * 1000
+	}, []) // eslint-disable-line react-hooks/exhaustive-deps
 	
 	if (!children) return null
 

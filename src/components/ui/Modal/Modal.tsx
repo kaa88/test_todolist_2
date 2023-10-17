@@ -10,7 +10,6 @@ import Icon from '../Icon/Icon';
 let timeout = 0
 
 const Modal = function({className = ''}: ComponentProps<'div'>) {
-	timeout = getCssVariable('timer-modal') * 1000
 
 	const dispatch = useAppDispatch()
 	const modalStore = useAppSelector(state => state.modal)
@@ -21,6 +20,10 @@ const Modal = function({className = ''}: ComponentProps<'div'>) {
 		content: '',
 	}
 	let [modal, setModal] = useState(defaultModal)
+
+	useEffect(() => {
+		if (!timeout) timeout = getCssVariable('timer-modal') * 1000
+	}, []) // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
 		if (modalStore.active) openModal()
