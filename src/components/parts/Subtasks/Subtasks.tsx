@@ -203,6 +203,7 @@ const NewSubtask = function({ createCallback, className = '', ...props }: NewSub
 				className={classes.subtaskTitle}
 				wrapperClassName={classes.autoResizeTextareaWrapper}
 				value={value}
+				placeholder='Add subtask'
 				onChange={handleChange}
 				onKeyDown={handleKeyDown}
 			/>

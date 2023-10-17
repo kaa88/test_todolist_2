@@ -26,8 +26,8 @@ interface ParsedUrl {
 // }
 export type ApiData = IProject | ITask | IComment
 
-export interface ApiBody {
-	data: ApiData
+export interface ApiBody<T> {
+	data: T//ApiData
 }
 export interface ApiResponse {
 	ok?: boolean
@@ -56,11 +56,11 @@ export const api = {
 		return {ok: true, data: dataItem ? [dataItem] : data}
 	},
 
-	async post(url: Url, body: ApiBody): Promise<ApiResponse> {
+	async post<T extends ApiData>(url: Url, body: ApiBody<T>): Promise<ApiGetResponse<T>> {
 		await _waitServerResponse()
 		if (!body?.data) return {error: getError('post', '"data" is missing')}
 		const {endpoint} = parseUrl(url)
-		let data = getData(endpoint)
+		let data = getData<T>(endpoint)
 		if (data === null) return {error: INTERNAL_ERROR}
 
 		let maxID = data.reduce((result, item) => (
@@ -68,15 +68,15 @@ export const api = {
 		), 0)
 		let newItem = {...body.data, id: maxID + 1}
 		data.push(newItem)
-		if (setData(endpoint, data)) return {ok: true}
+		if (setData(endpoint, data)) return {ok: true, data: [newItem]}
 		else return {error: INTERNAL_ERROR}
 	},
 
-	async put(url: Url, body: ApiBody): Promise<ApiResponse> {
+	async put<T extends ApiData>(url: Url, body: ApiBody<T>): Promise<ApiGetResponse<T>> {
 		await _waitServerResponse()
 		if (!body?.data) return {error: getError('put', '"data" is missing')}
 		const {endpoint} = parseUrl(url)
-		let data = getData(endpoint)
+		let data = getData<T>(endpoint)
 		if (data === null) return {error: INTERNAL_ERROR}
 
 		const updatedItemIndex = data.findIndex(item => item.id === body.data.id)
@@ -84,7 +84,7 @@ export const api = {
 			return {error: getError('put', `item with "id=${body.data.id}" not found`)}
 		}
 		data[updatedItemIndex] = body.data
-		if (setData(endpoint, data)) return {ok: true}
+		if (setData(endpoint, data)) return {ok: true, data: [data[updatedItemIndex]]}
 		else return {error: INTERNAL_ERROR}
 	},
 

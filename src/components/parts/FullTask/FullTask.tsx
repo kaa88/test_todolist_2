@@ -93,8 +93,10 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 				</div>
 			</div>
 			<Subtasks className={classes.subtasks} isVisible={true} parentId={task.id} />
+			<div className={classes.attachments}>
+				<p className={classes.blockTitle}>Attachments:</p>
+			</div>
 			<Comments className={classes.comments} taskId={task.id} />
-			<div className="">attachments:</div>
 		</div>
 	)
 }

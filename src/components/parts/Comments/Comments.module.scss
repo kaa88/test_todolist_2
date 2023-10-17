@@ -1,13 +1,13 @@
 @import '/src/styles/variables.scss';
 
 .wrapper {
-
+	position: relative;
 }
 .header {
 	margin-bottom: 10px;
 }
 .comments {
-
+	padding: 0 10px;
 }
 .subcomments {
 	margin-top: 5px;
@@ -96,15 +96,15 @@
 }
 
 
-.newComment {
-}
+// .newComment {
+// }
 
 .newCommentContainer {
-	height: 0;
+	height: auto;
 	overflow: hidden;
-	transition: height $timer-new-comment;
 }
 .newCommentWrapper {
+	margin-top: 5px;
 	padding: 5px 8px;
 	display: flex;
 	border: solid 1px var(--color-text-inactive);
@@ -171,3 +171,12 @@
 		fill: var(--color-error);
 	}
 }
+
+
+body .loader, .loadError {
+	position: absolute;
+	top: 0;
+	left: 0;
+	justify-content: flex-start;
+}
+
