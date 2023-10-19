@@ -1,13 +1,12 @@
 import { ChangeEvent, ComponentProps, KeyboardEvent, useEffect, useState, forwardRef } from 'react';
 import classes from './Subtasks.module.scss';
 import Icon from '../../ui/Icon/Icon';
-import { ISubtask, Id } from '../../../types/types';
-import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
+import { Id } from '../../../types/types';
+import { DragDropContext, Droppable, Draggable, OnDragEndResponder, DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
 import { updateSubtasks } from '../../../store/reducers/taskReducer';
 import InteractiveInput, { InteractiveInputCallback } from '../../ui/InteractiveInput/InteractiveInput';
-import { DragDropContext, Droppable, Draggable, OnDragEndResponder } from 'react-beautiful-dnd';
-import { log } from 'console';
+import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
 
 interface SubtasksProps extends ComponentProps<'div'> {
 	isVisible: boolean
@@ -46,8 +45,6 @@ const Subtasks = function({isVisible, parentId, className = ''}: SubtasksProps) 
 	}
 
 	const handleDragEnd: OnDragEndResponder = ({source, destination}) => {
-		// setIsDragging(false)
-		// setCurrentDraggedTaskID(null)
 		if (!destination) return; // dropped outside the list
 		const newSubtasks = [...subtasks]
 		const [removed] = newSubtasks.splice(source.index, 1)
@@ -76,7 +73,7 @@ const Subtasks = function({isVisible, parentId, className = ''}: SubtasksProps) 
 											index={index}
 											ref={provided.innerRef}
 											{...provided.draggableProps}
-											{...provided.dragHandleProps}
+											dragHandleProps={provided.dragHandleProps}
 										/>
 									}
 								</Draggable>
@@ -102,6 +99,7 @@ interface SubtaskProps extends ComponentProps<'div'> {
 	isDone?: boolean
 	updateCallback: UpdateSubtaskFunction
 	deleteCallback: DeleteSubtaskFunction
+	dragHandleProps?: DraggableProvidedDragHandleProps | null
 }
 
 const Subtask = forwardRef<HTMLDivElement, SubtaskProps>(function({
@@ -111,6 +109,7 @@ const Subtask = forwardRef<HTMLDivElement, SubtaskProps>(function({
 	updateCallback,
 	deleteCallback,
 	className = '',
+	dragHandleProps,
 	...props
 }: SubtaskProps, ref) {
 
@@ -131,10 +130,9 @@ const Subtask = forwardRef<HTMLDivElement, SubtaskProps>(function({
 
 	return (
 		<div className={`${classes.subtask} ${isDone ? classes.status_done : ''}`} {...props} ref={ref}>
-			<div className={classes.dragButton}>
+			<div className={classes.dragButton} {...dragHandleProps}>
 				<Icon name='icon-drag' />
 			</div>
-			<button className={classes.notDraggableArea} onClick={()=>{}}></button>
 			<button
 				className={`${classes.subtaskStatusButton}`}
 				onClick={updateStatus}
@@ -224,9 +222,9 @@ const NewSubtask = function({ createCallback, className = '', ...props }: NewSub
 function getDraggableID(id: string | number) {
 	return 'draggableSubtask_' + id
 }
-function parseDraggableID(fullId: string) {
-	let id = fullId.split('_')[1]
-	return isNaN(Number(id)) ? id : Number(id)
-}
+// function parseDraggableID(fullId: string) {
+// 	let id = fullId.split('_')[1]
+// 	return isNaN(Number(id)) ? id : Number(id)
+// }
 
 

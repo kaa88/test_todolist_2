@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, forwardRef, useState } from 'react';
+import { ComponentPropsWithRef, forwardRef, useState } from 'react';
 import classes from './Task.module.scss';
 import { ITask } from '../../../types/types';
 import Icon from '../../ui/Icon/Icon';
@@ -7,12 +7,19 @@ import { useAppDispatch } from '../../../hooks/typedReduxHooks';
 import ModalLink from '../../ui/Modal/ModalLink';
 import FullTask from '../FullTask/FullTask';
 import { DateService } from '../../../services/DateService';
+import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 
-interface TaskProps extends ComponentPropsWithoutRef<'div'> {
+interface TaskProps extends ComponentPropsWithRef<'div'> {
 	taskObject: ITask
+	dragHandleProps?: DraggableProvidedDragHandleProps | null
 }
 
-const Task = forwardRef<HTMLDivElement, TaskProps>(function({taskObject: task, className = '', ...props}: TaskProps, ref) {
+const Task = forwardRef<HTMLDivElement, TaskProps>(function({
+	taskObject: task,
+	className = '',
+	dragHandleProps,
+	...props
+}: TaskProps, ref) {
 
 	const dispatch = useAppDispatch()
 	let [isSubtasksVisible, setIsSubtasksVisible] = useState(true) // false
@@ -26,19 +33,22 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({taskObject: task, c
 
 	const remainingTime = DateService.getRemainingTime(task.createDate , task.expireDate)
 
+	// DnD
+	// /DnD
+
 
 	return (
 		<div className={`${className} ${classes.wrapper}`} {...props} ref={ref}>
-			<div className={`${classes.priority} ${classes[priority]}`}></div>
+			<div className={`${classes.priority} ${classes[priority]}`} {...dragHandleProps}></div>
 
 			<ModalLink name='task-modal' content={<FullTask taskObject={task} />}>
-				<button className={classes.title} title='edit task'>{task.title}</button>
+				<p className={classes.title} title='edit task'>{task.title}</p>
 			</ModalLink>
 			<ModalLink name='task-modal' content={<FullTask taskObject={task} />}>
-				<button className={classes.description} title='edit task'>{task.description}</button>
+				<p className={classes.description} title='edit task'>{task.description}</p>
 			</ModalLink>
 
-			<button className={classes.taskDetails}>
+			<div className={classes.taskDetails}>
 				<div className={classes.detailsItem} title='comments'>
 					<Icon className={classes.detailsIcon} name='icon-comment' />
 					<span>C</span>
@@ -51,8 +61,8 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({taskObject: task, c
 					<Icon className={classes.detailsIcon} name='icon-clock' />
 					<span>{remainingTime}</span>
 				</div>
-			</button>
-			<div className={classes.dragButton}>
+			</div>
+			<div className={classes.dragButton} {...dragHandleProps}>
 				<Icon name='icon-drag' />
 			</div>
 			<button className={classes.spoilerButton} onClick={handleSubtaskSpoilerClick} title='subtasks'>

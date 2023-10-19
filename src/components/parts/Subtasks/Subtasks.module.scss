@@ -16,12 +16,11 @@
 .subtask {
 	position: relative;
 	margin-bottom: 6px;
-	padding: 5px;
+	padding: 5px 5px 5px 0;
 	display: flex;
 	background-color: var(--color-bg-main);
 	border: solid 1px var(--color-text-inactive);
 	border-radius: 8px;
-	// overflow: hidden;
 	& > * {
 		position: relative;
 		z-index: 2;
@@ -94,11 +93,8 @@ body .subtaskTitle {
 	font-size: 0;
 }
 .newSubtaskIcon {
-	// background-color: orange;
 	flex-shrink: 0;
-	// margin-left: 6px;
 	width: 25px;
-	// height: 30px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -110,28 +106,15 @@ body .subtaskTitle {
 	}
 }
 .dragButton {
-	flex: 0 0 24px;
+	flex: 0 0 29px; // width=24 + padding=5
 	margin-right: 6px;
 	flex-shrink: 0;
 	display: flex;
-	justify-content: flex-start;
+	justify-content: center;
 	align-items: center;
-	// width: 24px;
-	// background-color: yellow;
 	fill: var(--color-icons-inactive);
 	svg {
 		width: 15px;
 		height: 15px;
 	}
-}
-.notDraggableArea {
-	position: absolute;
-	top: -1px;
-	right: -1px;
-	z-index: 1;
-	width: calc(100% - 22px);
-	height: calc(100% + 2px);
-	background-color: transparent;
-	// background-color: var(--color-bg-main);
-	cursor: default;
 }

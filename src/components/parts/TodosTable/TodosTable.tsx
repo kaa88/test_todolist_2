@@ -64,7 +64,7 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 						taskObject={task}
 						ref={provided.innerRef}
 						{...provided.draggableProps}
-						{...provided.dragHandleProps}
+						dragHandleProps={provided.dragHandleProps}
 					/>
 				}
 			</Draggable>
