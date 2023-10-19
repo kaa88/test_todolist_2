@@ -1,9 +1,9 @@
 import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
-import { IProject } from "../../types/types"
+import { IProject, Id } from "../../types/types"
 import { ApiService } from "../../services/ApiService"
 
-type CurrentProjectName = string
+type CurrentProject = Id | null
 type LoadingState = boolean
 type LoadError = string
 
@@ -15,26 +15,26 @@ interface ProjectState {
 	isLoading: LoadingState
 	loadError: LoadError
 	list: IProjectWithCount[]
-	current: CurrentProjectName
+	current: CurrentProject
 }
 
 type Actions =
 	  CustomAction<LoadingState>
 	| CustomAction<LoadError>
-	| CustomAction<CurrentProjectName>
+	| CustomAction<CurrentProject>
 	| CustomAction<IProjectWithCount[]>
 
 const initialState: ProjectState = {
 	isLoading: false,
 	loadError: '',
 	list: [],
-	current: ''
+	current: null
 }
 
 const SET_PROJECTS_LOADING = 'SET_PROJECTS_LOADING'
 const SET_PROJECTS_ERROR = 'SET_PROJECTS_ERROR'
 const UPDATE_PROJECTS = 'UPDATE_PROJECTS'
-const UPDATE_CURRENT_PROJECT = 'UPDATE_CURRENT_PROJECT'
+const SET_CURRENT_PROJECT = 'SET_CURRENT_PROJECT'
 
 export const projectReducer: Reducer<ProjectState, Actions> = (state = initialState, action) => {
 	switch(action.type) {
@@ -44,14 +44,14 @@ export const projectReducer: Reducer<ProjectState, Actions> = (state = initialSt
 			return {...state, loadError: action.payload as LoadError}
 		case UPDATE_PROJECTS:
 			return {...state, list: action.payload as IProjectWithCount[]}
-		case UPDATE_CURRENT_PROJECT:
-			return {...state, current: action.payload as CurrentProjectName}
+		case SET_CURRENT_PROJECT:
+			return {...state, current: action.payload as CurrentProject}
 		default:
 			return state
 	}
 }
 
-// export const setActiveProject: CustomActionCreator<CurrentProjectName> = (payload) => ({type: UPDATE_CURRENT_PROJECT, payload})
+export const setCurrentProject: CustomActionCreator<CurrentProject> = (payload) => ({type: SET_CURRENT_PROJECT, payload})
 
 export const updateProjectList = (): CustomThunkActionCreator<IProject[] | LoadingState | LoadError> => async (dispatch) => {
 	dispatch({type: SET_PROJECTS_LOADING, payload: true})

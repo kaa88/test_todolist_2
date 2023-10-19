@@ -1,31 +1,28 @@
 @import '/src/styles/variables.scss';
 
+$col-gap: 4px;
+
 .wrapper {
 	background-color: var(--color-bg-main);
 	display: grid;
-	grid-template-columns: 20px 1fr 30px;
-	// grid-template-rows: repeat(4, auto);
-	grid-template-rows: repeat(3, auto) 20px;
-	// grid-column-gap: 6px;
-	// grid-row-gap: 3px;
-	border: solid 1px var(--color-icons-inactive);
-	// border-radius: 10px;
+	grid-template-columns: 20px 1fr 34px;
+	grid-template-rows: repeat(4, auto);
+	grid-column-gap: $col-gap;
+	grid-row-gap: 3px;
+	border-top: solid 1px var(--color-bg-secondary);
+	border-bottom: solid 1px var(--color-bg-secondary);
 	overflow: hidden;
+	&:first-child {
+		border-top-width: 0;
+	}
 }
 .priority {
 	grid-row: 1/-1;
-	// background-color: #999;
 	width: 20px;
 	height: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	// svg {
-	// 	margin-bottom: 2px;
-	// 	width: 80%;
-	// 	height: 80%;
-	// 	fill: #fff;
-	// }
 	&_normal {
 		background-color: var(--color-priority-normal);
 	}
@@ -37,38 +34,43 @@
 	}
 }
 .title {
-	// grid-column: span 2;
-	padding: 5px 8px;
+	padding: 5px $col-gap;
 	background-color: var(--color-bg-main);
 	word-break: break-word;
 	text-align: left;
 	font-size: 18px;
 	line-height: 1.3;
+	transition: color $timer-hover;
+	&:hover {
+		color: var(--color-hover);
+	}
 }
 .description {
-	// @include text-max-lines(3);
+	@include text-max-lines(3);
 	grid-row: 2;
 	grid-column: 2 / span 2;
-	padding: 1px 8px;
+	margin-right: $col-gap;
+	padding: 1px $col-gap;
 	background-color: var(--color-bg-main);
 	word-break: break-word;
 	text-align: left;
 	font-size: 14px;
 	line-height: 18px;
 	min-height: 18px;
-	max-height: calc((3 * 18px) + 2px);
+	// max-height: calc((3 * 18px) + 2px);
 	color: var(--color-text-inactive);
 }
 
 .taskDetails {
 	grid-row: 3;
 	grid-column: 2;
-	padding: 4px 0 2px 10px;
+	padding: 2px $col-gap;
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	row-gap: 3px;
-	background-color: skyblue;
+	// background-color: skyblue;
+	cursor: default;
 }
 .detailsItem {
 	margin-right: 10px;
@@ -91,7 +93,6 @@
 	background-color: var(--color-bg-main);
 	display: flex;
 	justify-content: center;
-	// align-items: center;
 	padding-top: 6px;
 	svg {
 		width: 20px;
@@ -100,7 +101,9 @@
 	}
 }
 .spoilerButton {
+	margin-right: $col-gap;
 	height: auto;
+	background-color: var(--color-bg-main);
 }
 .spoilerButtonIconBox {
 	width: 30px;
@@ -109,15 +112,18 @@
 	display: flex;
 	justify-content: center;
 	align-items: flex-end;
-	background-color: var(--color-bg-main);
 	svg {
 		width: 20px;
 		height: 20px;
 		fill: var(--color-icons-main);
 		transform: rotate(90deg);
+		transition: transform $timer-spoiler;
+		.spoilerButton.active & {
+			transform: rotate(270deg);
+		}
 	}
 }
-.bubble {
+.spoilerButtonBubble {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -130,24 +136,19 @@
 	justify-content: center;
 	align-items: center;
 	border-radius: 50%;
-	background-color: orange;
+	background-color: var(--color-accent-03);
 }
 
 
 
-.subtasks {
+.subtasksWrapper {
 	grid-column: span 2;
-	background-color: pink;
+	margin-right: $col-gap;
+	height: 0;
+	overflow: hidden;
+	transition: height $timer-spoiler;
+	background-color: var(--color-bg-main);
 }
-.subtask {
-	display: flex;
-}
-.subtaskStatusButton {
-	svg {
-		width: 20px;
-		height: 20px;
-	}
-}
-.subtaskTitle {
-	font-size: 18px;
+.subtasks {
+	margin: 5px 0;
 }

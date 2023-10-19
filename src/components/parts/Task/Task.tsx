@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef, forwardRef, useState } from 'react';
+import { ComponentPropsWithRef, forwardRef, useEffect, useRef, useState } from 'react';
 import classes from './Task.module.scss';
 import { ITask } from '../../../types/types';
 import Icon from '../../ui/Icon/Icon';
@@ -8,11 +8,15 @@ import ModalLink from '../../ui/Modal/ModalLink';
 import FullTask from '../FullTask/FullTask';
 import { DateService } from '../../../services/DateService';
 import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
+import { getCssVariable, getPlural } from '../../../utilities/utilities';
 
 interface TaskProps extends ComponentPropsWithRef<'div'> {
 	taskObject: ITask
 	dragHandleProps?: DraggableProvidedDragHandleProps | null
 }
+
+let spoilerTimeout = 0
+
 
 const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 	taskObject: task,
@@ -21,20 +25,54 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 	...props
 }: TaskProps, ref) {
 
+	if (!spoilerTimeout) spoilerTimeout = getCssVariable('timer-spoiler') * 1000
+
 	const dispatch = useAppDispatch()
-	let [isSubtasksVisible, setIsSubtasksVisible] = useState(true) // false
+
+	const isSubtasksVisible = true // outer option
+
+	const subtasksWrapperRef = useRef<HTMLDivElement>(null)
+	const subtasksRef = useRef<HTMLDivElement>(null)
+	const defaultSubtasksHeight = '0'
+	const subtasksAutoHeight = 'auto'
+	let [subtasksHeight, setSubtasksHeight] = useState(isSubtasksVisible ? subtasksAutoHeight : defaultSubtasksHeight)
+	let [isSubtasksRender, setIsSubtasksRender] = useState(false)
+	// TODO: make it as hook
+
+	const spoilerButtonActiveClassName = subtasksHeight === defaultSubtasksHeight ? '' : classes.active
+
 	function handleSubtaskSpoilerClick() {
-		setIsSubtasksVisible(isSubtasksVisible ? false : true)
+		const wrapperEl = subtasksWrapperRef.current
+		const subtasksEl = subtasksRef.current
+		if (wrapperEl && subtasksEl) {
+			let style = getComputedStyle(subtasksEl)
+			let height = parseFloat(style.marginTop) + parseFloat(style.marginBottom) + subtasksEl.offsetHeight
+			setSubtasksHeight(height + 'px')
+			if (subtasksHeight === defaultSubtasksHeight) {
+				setTimeout(() => {
+					setSubtasksHeight(subtasksAutoHeight)
+				}, spoilerTimeout)
+			}
+			else {
+				setIsSubtasksRender(true)
+			}
+		}
 	}
 
-	const priority = 'priority_' + task.priority
-	// const comments = task.commentIds
-	const attached = task.attached
+	useEffect(() => {
+		if (isSubtasksRender) {
+			setIsSubtasksRender(false)
+			setSubtasksHeight(defaultSubtasksHeight)
+		}
+	}, [isSubtasksRender])
 
+
+	const priority = 'priority_' + task.priority
+
+	const comments = 99
+	const attachments = 1
 	const remainingTime = DateService.getRemainingTime(task.createDate , task.expireDate)
 
-	// DnD
-	// /DnD
 
 
 	return (
@@ -42,22 +80,22 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 			<div className={`${classes.priority} ${classes[priority]}`} {...dragHandleProps}></div>
 
 			<ModalLink name='task-modal' content={<FullTask taskObject={task} />}>
-				<p className={classes.title} title='edit task'>{task.title}</p>
+				<button className={classes.title} title='edit task'>{task.title}</button>
 			</ModalLink>
-			<ModalLink name='task-modal' content={<FullTask taskObject={task} />}>
-				<p className={classes.description} title='edit task'>{task.description}</p>
-			</ModalLink>
+			{/* <ModalLink name='task-modal' content={<FullTask taskObject={task} />}> */}
+				<p className={classes.description} title={task.description}>{task.description}</p>
+			{/* </ModalLink> */}
 
 			<div className={classes.taskDetails}>
-				<div className={classes.detailsItem} title='comments'>
+				<div className={classes.detailsItem} title={getPlural(comments, 'comment')}>
 					<Icon className={classes.detailsIcon} name='icon-comment' />
-					<span>C</span>
+					<span>{comments}</span>
 				</div>
-				<div className={classes.detailsItem} title='attachments'>
+				<div className={classes.detailsItem} title={getPlural(attachments, 'attachment')}>
 					<Icon className={classes.detailsIcon} name='icon-file' />
-					<span>0</span>
+					<span>{attachments}</span>
 				</div>
-				<div className={classes.detailsItem} title='time remaining'>
+				<div className={classes.detailsItem} title={`time remaining`}>
 					<Icon className={classes.detailsIcon} name='icon-clock' />
 					<span>{remainingTime}</span>
 				</div>
@@ -65,15 +103,21 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 			<div className={classes.dragButton} {...dragHandleProps}>
 				<Icon name='icon-drag' />
 			</div>
-			<button className={classes.spoilerButton} onClick={handleSubtaskSpoilerClick} title='subtasks'>
+			<button
+				className={`${classes.spoilerButton} ${spoilerButtonActiveClassName}`}
+				onClick={handleSubtaskSpoilerClick}
+				title={getPlural(task.subtasks.length, 'subtask')}
+			>
 				<span className={classes.spoilerButtonIconBox}>
 					<Icon name='icon-arrow-short' />
 					{!!task.subtasks.length &&
-						<span className={classes.bubble}>{task.subtasks.length}</span>
+						<span className={classes.spoilerButtonBubble}>{task.subtasks.length}</span>
 					}
 				</span>
 			</button>
-			<Subtasks className={classes.subtasks} isVisible={isSubtasksVisible} parentId={task.id} />
+			<div className={classes.subtasksWrapper} ref={subtasksWrapperRef} style={{height: subtasksHeight}}>
+				<Subtasks className={classes.subtasks} parentId={task.id} ref={subtasksRef} />
+			</div>
 		</div>
 	)
 })

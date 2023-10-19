@@ -1,17 +1,41 @@
+@import '/src/styles/variables.scss';
+
 body .container {
-	background-color: var(--color-bg-todos);
+	padding: 0;
+	max-width: 1240px;
+	height: 100vh;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+.header {
+	flex: 0 0 50px;
+}
+.footer {
+	flex: 0 0 30px;
+	padding: 0 10px;
+	display: flex;
+	// justify-content: space-between;
+	align-items: center;
+	column-gap: 30px;
+	row-gap: 5px;
+}
+.footerItem {
+	color: var(--color-text-negative);
 }
 .table {
+	flex: 1 1 auto;
 	position: relative;
 	margin: 0 auto;
-	max-width: 960px;
-	min-height: 80vh;
+	width: 100%;
 	display: grid;
 	grid-template-columns: repeat(3, 33%);
 	grid-gap: 3px;
-	padding: 3px;
+	// padding: 3px;
 	justify-content: space-around;
-	background-color: #555;
+	background-color: var(--color-bg-secondary);
+	border-radius: 10px;
+	overflow: hidden;
 }
 .cell {
 	position: relative;
@@ -19,6 +43,7 @@ body .container {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
 	.isDragging &.isDragHover {
 		&:after {
 			content: '';
@@ -28,7 +53,7 @@ body .container {
 			display: inline-block;
 			width: 100%;
 			height: 100%;
-			background-color: rgba(255,255,255,0.5);
+			background-color: var(--color-bg-main-alpha);
 		}
 	}
 }
@@ -46,9 +71,23 @@ body .container {
 	padding: 6px;
 	font-size: 20px;
 	text-align: center;
+	border-bottom: solid 2px var(--color-bg-secondary);
 }
 .tasks {
 	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	scrollbar-width: thin; // = 8px
+	scrollbar-color: var(--color-icons-inactive) transparent; // thumb track
+	&::-webkit-scrollbar {
+		width: 8px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: var(--color-icons-inactive);
+	}
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
 }
 .task {
 	&.preventedDragMove {
@@ -56,7 +95,13 @@ body .container {
 	}
 }
 .taskClone {
-	background-color: yellow;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 10px;
+	font-size: 25px;
+	color: var(--color-text-inactive);
+	background-color: var(--color-bg-main-alpha);
 }
 
 body .loader, .loadError {

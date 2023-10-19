@@ -9,7 +9,6 @@ import InteractiveInput, { InteractiveInputCallback } from '../../ui/Interactive
 import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
 
 interface SubtasksProps extends ComponentProps<'div'> {
-	isVisible: boolean
 	parentId: Id
 }
 type UpdateSubtaskFunction = (id: Id, title: string, isDone: boolean) => void
@@ -17,9 +16,7 @@ type CreateSubtaskFunction = (title: string) => void
 type DeleteSubtaskFunction = (id: Id) => void
 
 
-const Subtasks = function({isVisible, parentId, className = ''}: SubtasksProps) {
-
-	const stateClassName = isVisible ? 'visible' : 'hidden'
+const Subtasks = forwardRef<HTMLDivElement, SubtasksProps>(function({parentId, className = ''}: SubtasksProps, ref) {
 
 	const dispatch = useAppDispatch()
 	const taskList = useAppSelector(state => state.tasks.list)
@@ -53,7 +50,7 @@ const Subtasks = function({isVisible, parentId, className = ''}: SubtasksProps) 
 	}
 
 	return (
-		<div className={`${className} ${classes.wrapper} ${classes[stateClassName]}`}>
+		<div className={`${className} ${classes.wrapper}`} ref={ref}>
 			<DragDropContext onDragEnd={handleDragEnd}>
 				<Droppable droppableId={`subtaskOfTask_${parentId}`}>
 					{(provided) => (
@@ -87,6 +84,7 @@ const Subtasks = function({isVisible, parentId, className = ''}: SubtasksProps) 
 		</div>
 	)
 }
+)
 export default Subtasks
 
 

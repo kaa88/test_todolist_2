@@ -3,12 +3,12 @@
 .wrapper {
 	grid-column: span 2;
 	overflow: hidden;
-	&.hidden {
-		height: 0;
-	}
-	&.visible {
-		height: auto;
-	}
+	// &.hidden {
+	// 	height: 0;
+	// }
+	// &.visible {
+	// 	height: auto;
+	// }
 }
 .list {
 	position: relative;

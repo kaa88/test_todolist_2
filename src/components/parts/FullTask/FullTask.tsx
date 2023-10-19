@@ -5,49 +5,59 @@ import Subtasks from '../Subtasks/Subtasks';
 import { useAppDispatch } from '../../../hooks/typedReduxHooks';
 import InteractiveInput, { InteractiveInputCallback } from '../../ui/InteractiveInput/InteractiveInput';
 import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
-import { updateCurrentTask } from '../../../store/reducers/taskReducer';
+import { deleteTask, updateCurrentTask } from '../../../store/reducers/taskReducer';
 import RadioButtons from '../../ui/RadioButtons/RadioButtons';
 import TaskTime, { Dates } from '../TaskTime/TaskTime';
 import Comments from '../Comments/Comments';
+import { setActiveModal } from '../../../store/reducers/modalReducer';
 
 interface TaskProps extends ComponentProps<'div'> {
 	taskObject: ITask
 }
 
 const FullTask = function({className = '', taskObject: task}: TaskProps) {
-
-
 	const dispatch = useAppDispatch()
-	const priority = 'priority_' + task.priority
+
+	// const priority = 'priority_' + task.priority
 	// const comments = task.commentIds
-	const attached = task.attached
+	// const attached = task.attached
+
 
 	let [title, setTitle] = useState(task.title)
+	let [isTitleError, setIsTitleError] = useState(false)
 	const updateTitle: InteractiveInputCallback = (value) => {
+		if (!value) return setIsTitleError(true)
 		value = value.toString()
 		setTitle(value)
-		dispatch(updateCurrentTask({...task, title: value}))
+		setIsTitleError(false)
+		if (task) dispatch(updateCurrentTask({...task, title: value}))
 	}
 	let [description, setDescription] = useState(task.description)
 	const updateDescription: InteractiveInputCallback = (value) => {
 		value = value.toString()
 		setDescription(value)
-		dispatch(updateCurrentTask({...task, description: value}))
+		if (task) dispatch(updateCurrentTask({...task, description: value}))
 	}
-
 
 	const updateStatus = (value: TaskStatus) => {
-		dispatch(updateCurrentTask({...task, status: value}))
+		if (task) dispatch(updateCurrentTask({...task, status: value}))
 	}
 	const updatePriority = (value: TaskPriority) => {
-		dispatch(updateCurrentTask({...task, priority: value}))
+		if (task) dispatch(updateCurrentTask({...task, priority: value}))
 	}
-
 
 	let [dates, setDates] = useState<Dates>({create: task.createDate, expire: task.expireDate})
 	const updateDates = function(dates: Dates) {
 		setDates(dates)
-		dispatch(updateCurrentTask({...task, createDate: dates.create, expireDate: dates.expire}))
+		if (task) dispatch(updateCurrentTask({...task, createDate: dates.create, expireDate: dates.expire}))
+	}
+
+	const deleteCurrentTask = () => {
+		let confirm = window.confirm('Are you sure you want to delete this task?')
+		if (confirm) {
+			dispatch(deleteTask(task))
+			dispatch(setActiveModal(''))
+		}
 	}
 
 	return (
@@ -55,7 +65,7 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 			<div className={classes.textBlock}>
 				<p className={classes.blockTitle}>Title:</p>
 				<InteractiveInput value={title} confirmCallback={updateTitle}>
-					<AutoResizeTextarea className={classes.taskTitle} />
+					<AutoResizeTextarea className={`${classes.taskTitle} ${isTitleError ? classes.inputError : ''}`} />
 				</InteractiveInput>
 			</div>
 			<div className={classes.textBlock}>
@@ -72,16 +82,6 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 					callback={updateDates}
 				/>
 				<div className={classes.radioButtonsWrapper}>
-					<p className={classes.blockTitle}>Status:</p>
-					<RadioButtons<TaskStatus>
-						className={classes.radioButtons}
-						modif='status'
-						buttons={statusRadioButtons}
-						active={task.status}
-						callback={updateStatus}
-					/>
-				</div>
-				<div className={classes.radioButtonsWrapper}>
 					<p className={classes.blockTitle}>Priority:</p>
 					<RadioButtons<TaskPriority>
 						className={classes.radioButtons}
@@ -91,8 +91,21 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 						callback={updatePriority}
 					/>
 				</div>
+				<div className={classes.radioButtonsWrapper}>
+					<p className={classes.blockTitle}>Status:</p>
+					<RadioButtons<TaskStatus>
+						className={classes.radioButtons}
+						modif='status'
+						buttons={statusRadioButtons}
+						active={task.status}
+						callback={updateStatus}
+					/>
+				</div>
 			</div>
-			<Subtasks className={classes.subtasks} isVisible={true} parentId={task.id} />
+			<Subtasks className={classes.subtasks} parentId={task.id} />
+			<button className={classes.deleteTaskButton} onClick={deleteCurrentTask}>
+				Delete task
+			</button>
 			<div className={classes.attachments}>
 				<p className={classes.blockTitle}>Attachments:</p>
 			</div>

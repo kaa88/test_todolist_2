@@ -10,7 +10,7 @@ interface ProjectsProps extends ComponentPropsWithoutRef<'div'> {}
 
 const Projects = function({className = '', children, ...props}: ProjectsProps) {
 	
-	let {isLoading, loadError, list: projects, current} = useAppSelector(state => state.projects)
+	let {isLoading, loadError, list: projects} = useAppSelector(state => state.projects)
 
 	return (
 		<Container modif="flex">

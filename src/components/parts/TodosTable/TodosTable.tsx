@@ -8,6 +8,8 @@ import { updateCurrentTask, updateTaskList } from '../../../store/reducers/taskR
 import { DragDropContext, Droppable, Draggable, OnDragEndResponder, OnDragUpdateResponder, OnDragStartResponder } from 'react-beautiful-dnd';
 import LoadError from '../../ui/Loader/LoadError';
 import Loader from '../../ui/Loader/Loader';
+import Icon from '../../ui/Icon/Icon';
+import Header from '../Header/Header';
 
 interface TodosTableProps extends ComponentPropsWithoutRef<'div'> {
 	project: number
@@ -17,6 +19,8 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 
 	const dispatch = useAppDispatch()
 
+	let projects = useAppSelector(state => state.projects.list)
+	const currentProject = projects.find(p => p.id === project)
 	let {isLoading, loadError, list: tasks} = useAppSelector(state => state.tasks)
 
 	useEffect(() => {
@@ -50,27 +54,6 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 	const moveTasksOnDrag = false
 	
 	let [currentDraggedTaskID, setCurrentDraggedTaskID] = useState<Id | null>(null)
-
-	const getTaskElements = (group: ITask[]) =>
-		group.map((task, index) =>
-			<Draggable
-				draggableId={getDraggableID(task.id)}
-				key={index}
-				index={index}
-			>
-				{(provided, snapshot) =>
-					<Task
-						className={`${classes.task} ${(!moveTasksOnDrag && task.id !== currentDraggedTaskID) ? classes.preventedDragMove : ''}`}
-						taskObject={task}
-						ref={provided.innerRef}
-						{...provided.draggableProps}
-						dragHandleProps={provided.dragHandleProps}
-					/>
-				}
-			</Draggable>
-		)
-
-
 	let [isDragging, setIsDragging] = useState(false)
 	let [dragHoveredCell, setDragHoveredCell] = useState<TaskStatus | null>(null)
 
@@ -102,10 +85,29 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 		}
 	}
 
+	const getTaskElements = (group: ITask[]) =>
+		group.map((task, index) =>
+			<Draggable
+				draggableId={getDraggableID(task.id)}
+				key={index}
+				index={index}
+			>
+				{(provided, snapshot) =>
+					<Task
+						className={`${classes.task} ${(!moveTasksOnDrag && task.id !== currentDraggedTaskID) ? classes.preventedDragMove : ''}`}
+						taskObject={task}
+						ref={provided.innerRef}
+						{...provided.draggableProps}
+						dragHandleProps={provided.dragHandleProps}
+					/>
+				}
+			</Draggable>
+		)
+
 	return (
 		<Container className={classes.container}>
 
-			<p>{`todos - ${project} - show all subtasks - sort by - search ${isLoading ? '- LOADING' : ''} ${loadError ? '- ' + loadError : ''}`}</p>
+			<Header className={classes.header} />
 			
 			<DragDropContext onDragStart={handleDragStart} onDragUpdate={handleDragUpdate} onDragEnd={handleDragEnd}>
 				<div className={`${className} ${classes.table} ${isDragging ? classes.isDragging : ''}`}>
@@ -124,7 +126,7 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 									{...provided.dragHandleProps}
 									ref={provided.innerRef}
 								>
-									CLONE
+									Drop it!
 								</div>
 							 )}
 						>
@@ -141,6 +143,18 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 					)}
 				</div>
 			</DragDropContext>
+
+			<footer className={classes.footer}>
+				<p className={classes.footerItem}>
+					{`Project: ${currentProject?.name}`}
+				</p>
+				<p className={classes.footerItem}>
+					{`Total tasks: ${tasks.length}`}
+				</p>
+				<p className={classes.footerItem}>
+					{`empty`}
+				</p>
+			</footer>
 
 		</Container>
 	)

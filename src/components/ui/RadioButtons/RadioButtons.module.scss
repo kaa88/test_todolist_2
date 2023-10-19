@@ -1,14 +1,31 @@
+@import '/src/styles/variables.scss';
+
 .default, .status, .priority {
 	position: relative;
 	display: flex;
+	border-radius: 8px;
+	overflow: hidden;
 }
 .button {
 	flex: 1 1 auto;
 	padding: 5px;
 	border-top: 3px solid transparent;
 	border-bottom: 3px solid transparent;
-	&:hover {
-		border-bottom-color: var(--color-radio-btn-active);
+	position: relative;
+	&:before {
+		content: '';
+		position: absolute;
+		top: -5px;
+		left: 0;
+		display: inline-block;
+		width: 100%;
+		height: calc(100% + 10px);
+		background-color: var(--color-bg-main);
+		opacity: 0;
+		transition: opacity $timer-hover;
+	}
+	&:hover::before {
+		opacity: 0.5;
 	}
 	.status & {
 		&:nth-child(1) {

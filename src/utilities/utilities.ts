@@ -19,3 +19,9 @@ export function getCssVariable(name: string) {
 	}
 	return value
 }
+
+export function getPlural(num: number, text: string) {
+	let str = `${num} ${text}`
+	if (num !== 1) str = str.replace(/y$/, 'ie') + 's'
+	return str
+}
