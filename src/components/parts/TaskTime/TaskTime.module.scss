@@ -30,3 +30,8 @@ body .popup {
 	z-index: 30;
 }
 
+.expired {
+	color: var(--color-error);
+	fill: var(--color-error);
+}
+

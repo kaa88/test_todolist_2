@@ -2,6 +2,7 @@ import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
 import { Id, IComment } from "../../types/types"
 import { ApiService } from "../../services/ApiService"
+import { updateCommentCount, CommentCountPayload } from "./taskReducer"
 
 type LoadingState = boolean
 type LoadError = string
@@ -72,14 +73,16 @@ export const commentReducer: Reducer<CommentState, Actions> = (state = initialSt
 export const clearCommentList: CustomActionCreator = () => ({type: CLEAR_COMMENT_LIST, payload: null})
 export const updateComment: CustomActionCreator<IComment> = (payload) => ({type: UPDATE_COMMENT, payload})
 
-export const createComment = (newComment: IComment): CustomThunkActionCreator<IComment[] | LoadingState | LoadError> => async (dispatch) => {
+export const createComment = (newComment: IComment): CustomThunkActionCreator<IComment[] | LoadingState | LoadError | CommentCountPayload> => async (dispatch) => {
 	dispatch({type: SET_COMMENTS_LOADING, payload: true})
 	dispatch({type: SET_COMMENTS_ERROR, payload: ''})
 
 	let response = await ApiService.comments.add(newComment)
 	if (response.error) dispatch({type: SET_COMMENTS_ERROR, payload: response.error.message})
-	else if (response.data) dispatch({type: ADD_COMMENT, payload: response.data})
-
+	else if (response.data) {
+		dispatch({type: ADD_COMMENT, payload: response.data})
+		dispatch(updateCommentCount({taskId: response.data[0].taskId, increment: true}))
+	}
 	dispatch({type: SET_COMMENTS_LOADING, payload: false})
 }
 export const updateCommentList = (taskId: Id): CustomThunkActionCreator<IComment[] | LoadingState | LoadError | Id> => async (dispatch) => {

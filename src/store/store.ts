@@ -5,6 +5,7 @@ import { projectReducer } from './reducers/projectReducer'
 import { taskReducer } from './reducers/taskReducer'
 import { commentReducer } from './reducers/commentReducer'
 import { modalReducer } from './reducers/modalReducer'
+import { userReducer } from './reducers/userReducer'
 
 
 const rootReducer = combineReducers({
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
 	tasks: taskReducer,
 	comments: commentReducer,
 	modal: modalReducer,
+	user: userReducer,
 })
 
 export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)))

@@ -1,15 +1,17 @@
 // fake API through localStorage
 
 import { _waitServerResponse } from '../utilities/utilities'
-import { IComment, IProject, ITask } from '../types/types'
+import { IComment, IProject, ITask, IUserSettings } from '../types/types'
 import defaultProjects from './defaultProjects.json'
 import defaultTasks from './defaultTasks.json'
 import defaultComments from './defaultComments.json'
+import defaultUserSettings from './defaultUserSettings.json'
 
 const defaults: {[key: string]: ApiData[]} = {
 	projects: defaultProjects as IProject[],
 	tasks: defaultTasks as ITask[],
 	comments: defaultComments as IComment[],
+	settings: defaultUserSettings as IUserSettings[],
 }
 
 export type Url = string
@@ -24,7 +26,7 @@ interface ParsedUrl {
 // 	tasks = 'tasks',
 // 	comments = 'comments'
 // }
-export type ApiData = IProject | ITask | IComment
+export type ApiData = IProject | ITask | IComment | IUserSettings
 
 export interface ApiBody<T> {
 	data: T//ApiData

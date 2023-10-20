@@ -1,0 +1,12 @@
+[
+	{
+		"id": 0,
+		"showSubtasks": false,
+		"sortBy": "id",
+		"taskGroupAscendingOrder": {
+			"queue": false,
+			"development": false,
+			"done": false
+		}
+	}
+]

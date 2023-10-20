@@ -8,6 +8,12 @@ export enum TaskStatus {
 	dev = 'development',
 	done = 'done',
 }
+export enum TaskSort {
+	id = 'id',
+	creation = 'creation',
+	expiration = 'expiration',
+	priority = 'priority',
+}
 
 export type Id = number
 
@@ -27,6 +33,7 @@ export interface ITask {
 	status: TaskStatus
 	subtasks: ISubtask[]
 	attached: string[]
+	commentsCount?: number
 }
 export interface ISubtask {
 	title: string
@@ -44,4 +51,10 @@ export interface IComment extends INewComment {
 	taskId: Id
 	// subcomments: Id[]
 	rating: number
+}
+export interface IUserSettings {
+	id: Id
+	showSubtasks?: boolean
+	sortBy?: TaskSort
+	taskGroupAscendingOrder?: {[key: string]: boolean}
 }

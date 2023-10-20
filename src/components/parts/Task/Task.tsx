@@ -1,9 +1,9 @@
 import { ComponentPropsWithRef, forwardRef, useEffect, useRef, useState } from 'react';
 import classes from './Task.module.scss';
-import { ITask } from '../../../types/types';
+import { ITask, TaskStatus } from '../../../types/types';
 import Icon from '../../ui/Icon/Icon';
 import Subtasks from '../Subtasks/Subtasks';
-import { useAppDispatch } from '../../../hooks/typedReduxHooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
 import ModalLink from '../../ui/Modal/ModalLink';
 import FullTask from '../FullTask/FullTask';
 import { DateService } from '../../../services/DateService';
@@ -29,7 +29,7 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 
 	const dispatch = useAppDispatch()
 
-	const isSubtasksVisible = true // outer option
+	const isSubtasksVisible = useAppSelector(state => state.user.showSubtasks)
 
 	const subtasksWrapperRef = useRef<HTMLDivElement>(null)
 	const subtasksRef = useRef<HTMLDivElement>(null)
@@ -37,7 +37,11 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 	const subtasksAutoHeight = 'auto'
 	let [subtasksHeight, setSubtasksHeight] = useState(isSubtasksVisible ? subtasksAutoHeight : defaultSubtasksHeight)
 	let [isSubtasksRender, setIsSubtasksRender] = useState(false)
-	// TODO: make it as hook
+	// TODO: make it as a hook
+
+	useEffect(() => {
+		setSubtasksHeight(isSubtasksVisible ? subtasksAutoHeight : defaultSubtasksHeight)
+	}, [isSubtasksVisible])
 
 	const spoilerButtonActiveClassName = subtasksHeight === defaultSubtasksHeight ? '' : classes.active
 
@@ -69,22 +73,28 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 
 	const priority = 'priority_' + task.priority
 
-	const comments = 99
-	const attachments = 1
-	const remainingTime = DateService.getRemainingTime(task.createDate , task.expireDate)
+	const comments = task.commentsCount || 0
+	const attachments = 99
+	const remainingTime = DateService.getRemainingTime(Date.now(), task.expireDate)
 
+	const expiredClassName = task.expireDate - Date.now() <= 0 ? classes.expired : ''
 
 
 	return (
 		<div className={`${className} ${classes.wrapper}`} {...props} ref={ref}>
 			<div className={`${classes.priority} ${classes[priority]}`} {...dragHandleProps}></div>
 
+			<div className={classes.header} {...dragHandleProps}>
+				<div className={classes.taskId}>#{task.id}</div>
+				<div className={classes.dragButton}>
+					<Icon name='icon-drag' />
+				</div>
+			</div>
+
 			<ModalLink name='task-modal' content={<FullTask taskObject={task} />}>
 				<button className={classes.title} title='edit task'>{task.title}</button>
 			</ModalLink>
-			{/* <ModalLink name='task-modal' content={<FullTask taskObject={task} />}> */}
-				<p className={classes.description} title={task.description}>{task.description}</p>
-			{/* </ModalLink> */}
+			<p className={classes.description} title={task.description}>{task.description}</p>
 
 			<div className={classes.taskDetails}>
 				<div className={classes.detailsItem} title={getPlural(comments, 'comment')}>
@@ -95,13 +105,12 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 					<Icon className={classes.detailsIcon} name='icon-file' />
 					<span>{attachments}</span>
 				</div>
-				<div className={classes.detailsItem} title={`time remaining`}>
-					<Icon className={classes.detailsIcon} name='icon-clock' />
-					<span>{remainingTime}</span>
-				</div>
-			</div>
-			<div className={classes.dragButton} {...dragHandleProps}>
-				<Icon name='icon-drag' />
+				{task.status !== TaskStatus.done &&
+					<div className={classes.detailsItem} title={`time remaining`}>
+						<Icon className={`${classes.detailsIcon} ${expiredClassName}`} name='icon-clock' />
+						<span className={expiredClassName}>{remainingTime}</span>
+					</div>
+				}
 			</div>
 			<button
 				className={`${classes.spoilerButton} ${spoilerButtonActiveClassName}`}

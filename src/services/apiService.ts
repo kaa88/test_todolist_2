@@ -1,10 +1,11 @@
 import { api, ApiData, ApiGetResponse } from '../api/api'
-import { Id, IComment, IProject, ITask } from '../types/types'
+import { Id, IComment, IProject, ITask, IUserSettings } from '../types/types'
 import { _waitServerResponse } from '../utilities/utilities'
 
 const PROJECTS_PATH = '/api/projects'
 const TASKS_PATH = '/api/tasks'
 const COMMENTS_PATH = '/api/comments'
+const SETTINGS_PATH = '/api/settings'
 
 
 class Actions<T extends ApiData> {
@@ -78,6 +79,14 @@ export const ApiService = { // fake fetcher
 		},
 		async delete(commentId: Id) {
 			return await api.delete(`${COMMENTS_PATH}?id=${commentId}`)
+		},
+	},
+	settings: {
+		async get(userId: Id) {
+			return await api.get<IUserSettings>(`${SETTINGS_PATH}?id=${userId}`)
+		},
+		async edit(settings: IUserSettings) {
+			return await api.put(SETTINGS_PATH, {data: settings})
 		},
 	}
 }

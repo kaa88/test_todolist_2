@@ -18,6 +18,7 @@
 				"isDone": false
 			}
 		],
+		"commentsCount": 6,
 		"attached": []
 	},
 	{
@@ -39,6 +40,7 @@
 				"isDone": false
 			}
 		],
+		"commentsCount": 0,
 		"attached": []
 	},
 	{
@@ -56,6 +58,7 @@
 				"isDone": true
 			}
 		],
+		"commentsCount": 0,
 		"attached": []
 	},
 	{
@@ -68,6 +71,7 @@
 		"priority": "top",
 		"status": "development",
 		"subtasks": [],
+		"commentsCount": 0,
 		"attached": []
 	}
 ]

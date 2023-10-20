@@ -28,7 +28,8 @@ const TaskTime = function({dates, callback, className = ''}: TaskTimeProps) {
 	// /
 
 	const createDate = DateService.getDate(dates.create, textDateTimeFormat)
-	const remainingTime = DateService.getRemainingTime(dates.create, dates.expire)
+	const remainingTime = DateService.getRemainingTime(Date.now(), dates.expire)
+	const expiredClassName = dates.expire - Date.now() <= 0 ? classes.expired : ''
 
 	const updateDate = (date: Date | null) => {
 		if (callback && date) callback({
@@ -53,7 +54,7 @@ const TaskTime = function({dates, callback, className = ''}: TaskTimeProps) {
 				/>
 			</div>
 			<div className={classes.blockTitle}>Time remaining:</div>
-			<div className={classes.content}><span>{remainingTime}</span></div>
+			<div className={classes.content}><span className={expiredClassName}>{remainingTime}</span></div>
 		</div>
 	)
 }
