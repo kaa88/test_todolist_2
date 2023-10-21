@@ -25,3 +25,11 @@ export function getPlural(num: number, text: string) {
 	if (num !== 1) str = str.replace(/y$/, 'ie') + 's'
 	return str
 }
+
+export function objectIsEmpty(obj: object) {
+	if (Array.isArray(obj)) return !obj.length
+	for (let prop in obj) {
+		if (Object.hasOwn(obj, prop)) return false
+	}
+	return true
+}

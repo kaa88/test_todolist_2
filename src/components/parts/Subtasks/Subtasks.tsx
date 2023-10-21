@@ -4,7 +4,7 @@ import Icon from '../../ui/Icon/Icon';
 import { Id } from '../../../types/types';
 import { DragDropContext, Droppable, Draggable, OnDragEndResponder, DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
-import { updateSubtasks } from '../../../store/reducers/taskReducer';
+import { updateTask } from '../../../store/reducers/taskReducer';
 import InteractiveInput, { InteractiveInputCallback } from '../../ui/InteractiveInput/InteractiveInput';
 import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
 
@@ -27,18 +27,18 @@ const Subtasks = forwardRef<HTMLDivElement, SubtasksProps>(function({parentId, c
 		let newSubtasks = [...subtasks]
 		newSubtasks[id].title = title
 		newSubtasks[id].isDone = isDone
-		dispatch(updateSubtasks({taskId: parentId, subtasks: newSubtasks}))
+		dispatch(updateTask({taskId: parentId, values: {subtasks: newSubtasks}}))
 	}
 	const createSubtask: CreateSubtaskFunction = (title) => {
 		let newSubtasks = [...subtasks]
 		let newSub = {title, isDone: false}
 		newSubtasks.push(newSub)
-		dispatch(updateSubtasks({taskId: parentId, subtasks: newSubtasks}))
+		dispatch(updateTask({taskId: parentId, values: {subtasks: newSubtasks}}))
 	}
 	const deleteSubtask: DeleteSubtaskFunction = (id) => {
 		let newSubtasks = [...subtasks]
 		newSubtasks.splice(id, 1)
-		dispatch(updateSubtasks({taskId: parentId, subtasks: newSubtasks}))
+		dispatch(updateTask({taskId: parentId, values: {subtasks: newSubtasks}}))
 	}
 
 	const handleDragEnd: OnDragEndResponder = ({source, destination}) => {
@@ -46,7 +46,7 @@ const Subtasks = forwardRef<HTMLDivElement, SubtasksProps>(function({parentId, c
 		const newSubtasks = [...subtasks]
 		const [removed] = newSubtasks.splice(source.index, 1)
 		newSubtasks.splice(destination.index, 0, removed)
-		dispatch(updateSubtasks({taskId: parentId, subtasks: newSubtasks}))
+		dispatch(updateTask({taskId: parentId, values: {subtasks: newSubtasks}}))
 	}
 
 	return (

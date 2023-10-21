@@ -4,7 +4,7 @@ import Container from '../../ui/Container/Container';
 import { ITask, Id, TaskPriority, TaskSort, TaskStatus } from '../../../types/types';
 import Task from '../Task/Task';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
-import { updateCurrentTask, updateTaskList } from '../../../store/reducers/taskReducer';
+import { updateTask, updateTaskList } from '../../../store/reducers/taskReducer';
 import { DragDropContext, Droppable, Draggable, OnDragEndResponder, OnDragUpdateResponder, OnDragStartResponder } from 'react-beautiful-dnd';
 import LoadError from '../../ui/Loader/LoadError';
 import Loader from '../../ui/Loader/Loader';
@@ -106,7 +106,7 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 	let [dragHoveredCell, setDragHoveredCell] = useState<TaskStatus | null>(null)
 
 	const changeTaskStatus = (task: ITask, newStatus: TaskStatus) => {
-		dispatch(updateCurrentTask({...task, status: newStatus}))
+		dispatch(updateTask({taskId: task.id, values: {status: newStatus}}))
 	}
 	const handleDragStart: OnDragStartResponder = (start) => {
 		setIsDragging(true)

@@ -5,7 +5,7 @@ import Subtasks from '../Subtasks/Subtasks';
 import { useAppDispatch } from '../../../hooks/typedReduxHooks';
 import InteractiveInput, { InteractiveInputCallback } from '../../ui/InteractiveInput/InteractiveInput';
 import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
-import { deleteTask, updateCurrentTask } from '../../../store/reducers/taskReducer';
+import { deleteTask, updateTask } from '../../../store/reducers/taskReducer';
 import RadioButtons from '../../ui/RadioButtons/RadioButtons';
 import TaskTime, { Dates } from '../TaskTime/TaskTime';
 import Comments from '../Comments/Comments';
@@ -30,26 +30,26 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 		value = value.toString()
 		setTitle(value)
 		setIsTitleError(false)
-		if (task) dispatch(updateCurrentTask({...task, title: value}))
+		if (task) dispatch(updateTask({taskId: task.id, values: {title: value}}))
 	}
 	let [description, setDescription] = useState(task.description)
 	const updateDescription: InteractiveInputCallback = (value) => {
 		value = value.toString()
 		setDescription(value)
-		if (task) dispatch(updateCurrentTask({...task, description: value}))
+		if (task) dispatch(updateTask({taskId: task.id, values: {description: value}}))
 	}
 
 	const updateStatus = (value: TaskStatus) => {
-		if (task) dispatch(updateCurrentTask({...task, status: value}))
+		if (task) dispatch(updateTask({taskId: task.id, values: {status: value}}))
 	}
 	const updatePriority = (value: TaskPriority) => {
-		if (task) dispatch(updateCurrentTask({...task, priority: value}))
+		if (task) dispatch(updateTask({taskId: task.id, values: {priority: value}}))
 	}
 
 	let [dates, setDates] = useState<Dates>({create: task.createDate, expire: task.expireDate})
 	const updateDates = function(dates: Dates) {
 		setDates(dates)
-		if (task) dispatch(updateCurrentTask({...task, createDate: dates.create, expireDate: dates.expire}))
+		if (task) dispatch(updateTask({taskId: task.id, values: {expireDate: dates.expire}}))
 	}
 
 	const deleteCurrentTask = () => {
