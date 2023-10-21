@@ -9,7 +9,7 @@ import { deleteTask, updateCurrentTask } from '../../../store/reducers/taskReduc
 import RadioButtons from '../../ui/RadioButtons/RadioButtons';
 import TaskTime, { Dates } from '../TaskTime/TaskTime';
 import Comments from '../Comments/Comments';
-import { setActiveModal } from '../../../store/reducers/modalReducer';
+import { closeAllModals } from '../../../store/reducers/modalReducer';
 
 interface TaskProps extends ComponentProps<'div'> {
 	taskObject: ITask
@@ -56,7 +56,7 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 		let confirm = window.confirm('Are you sure you want to delete this task?')
 		if (confirm) {
 			dispatch(deleteTask(task))
-			dispatch(setActiveModal(''))
+			dispatch(closeAllModals())
 		}
 	}
 

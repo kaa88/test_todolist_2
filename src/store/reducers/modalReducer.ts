@@ -2,31 +2,25 @@ import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator } from "../../types/reduxTypes"
 
 interface ModalState {
-	active: string,
-	content: any
+	closeTrigger: number,
 }
-type ModalPayload = {name: string, content?: any} | string | null | undefined
+type ModalPayload = void
 
 type Actions = CustomAction<ModalPayload>
 
 const initialState: ModalState = {
-	active: '',
-	content: null
+	closeTrigger: 0
 }
 
-const SET_ACTIVE_MODAL = 'SET_ACTIVE_MODAL'
+const UPDATE_MODAL_CLOSE_TRIGGER_ID = 'UPDATE_MODAL_CLOSE_TRIGGER_ID'
 
 export const modalReducer: Reducer<ModalState, Actions> = (state = initialState, action) => {
 	switch(action.type) {
-		case SET_ACTIVE_MODAL:
-			if (!action.payload) return initialState
-			if (typeof action.payload === 'string') return {...state, active: action.payload, content: null}
-			if (typeof action.payload === 'object' && !Array.isArray(action.payload))
-				return {...state, active: action.payload.name || '', content: action.payload.content || null}
-			return state
+		case UPDATE_MODAL_CLOSE_TRIGGER_ID:
+			return {...state, closeTrigger: state.closeTrigger + 1}
 		default:
 			return state
 	}
 }
 
-export const setActiveModal: CustomActionCreator<ModalPayload> = (payload) => ({type: SET_ACTIVE_MODAL, payload})
+export const closeAllModals: CustomActionCreator<ModalPayload> = (payload) => ({type: UPDATE_MODAL_CLOSE_TRIGGER_ID, payload})

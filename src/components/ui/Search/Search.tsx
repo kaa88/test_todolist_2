@@ -1,43 +1,54 @@
-import { ComponentProps, ChangeEvent, useEffect, useState, MouseEvent, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
+import { ComponentProps, ChangeEvent, useEffect, useState, useRef } from 'react';
 import classes from './Search.module.scss';
 import Icon from '../Icon/Icon';
-import ModalLink from '../Modal/ModalLink';
 import { ITask } from '../../../types/types';
 import { useFetching } from '../../../hooks/useFetching';
 import Loader from '../Loader/Loader';
 import LoadError from '../Loader/LoadError';
 import { ApiService } from '../../../services/ApiService';
+import { Modal, ModalLink } from '../Modal/Modal';
 
 interface SearchProps extends ComponentProps<'div'> {}
 
 
 const Search = function({className = '', ...props}: SearchProps) {
 
-	// const dispatch = useAppDispatch()
-	// const userSettings = useAppSelector(state => state.user)
-
-	let [isLoadData, setIsLoadData] = useState(false)
 	const loadData = async () => {
 		let response = await ApiService.tasks.getAll(null)
 		if (response.data) allFetchedTasks = response.data
 	}
 	let {fetch, isLoading, error: loadError} = useFetching(loadData)
-	useEffect(() => {
-		if (isLoadData) {
-			setIsLoadData(false)
-			fetch()
-		}
-	}, [isLoadData])
+
 
 	const inputRef = useRef<HTMLInputElement>(null)
 	let [inputValue, setInputValue] = useState('')
 	let [result, setResult] = useState<ITask[]>([])
 
 	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		if (isLoading) return;
 		setInputValue(e.target.value)
 		setResult(searchTasks(e.target.value))
 	}
+
+	let [isModalActive, setIsModalActive] = useState(false)
+	const handleModalOpen = () => {
+		setIsModalActive(true)
+	}
+	const handleModalClose = () => {
+		setIsModalActive(false)
+		setInputValue('')
+		setResult([])
+	}
+	useEffect(() => {
+		if (isModalActive) {
+			fetch()
+			setTimeout(() => {
+				const inputEl = inputRef.current
+				if (inputEl) inputEl.focus()
+			}, 100)
+		}
+	}, [isModalActive])
+
 
 	const modalContent =
 		<div className={classes.modalContent}>
@@ -65,12 +76,15 @@ const Search = function({className = '', ...props}: SearchProps) {
 
 	return (
 		<div className={`${className} ${classes.wrapper}`} {...props}>
-			<ModalLink name='search' content={modalContent} onOpen={loadData}>
-				<button className={classes.mainButton}>
+			<ModalLink>
+				<button className={classes.mainButton} onClick={handleModalOpen}>
 					<Icon name='icon-search' />
 					<span>Search tasks</span>
 				</button>
 			</ModalLink>
+			<Modal isActive={isModalActive} onClose={handleModalClose}>
+				{modalContent}
+			</Modal>
 		</div>
 	)
 }
@@ -80,8 +94,10 @@ export default Search
 let allFetchedTasks: ITask[] = []
 
 const searchTasks = (value: string) => {
-	let matchedTasks = allFetchedTasks.filter(item =>
-		new RegExp(value, 'i').test(item.id.toString()) || new RegExp(value, 'i').test(item.title)
+	if (!value) return []
+	let matchedTasks = allFetchedTasks.filter(item =>{
+		return new RegExp(value, 'i').test(item.id.toString()) || new RegExp(value, 'i').test(item.title)
+	}
 	)
 	return matchedTasks
 }

@@ -1,81 +1,85 @@
-import { ComponentProps, useEffect, useRef, useState } from 'react';
+import { ComponentProps, useEffect, useState, MouseEvent, cloneElement, ReactElement } from 'react';
+import { createPortal } from 'react-dom';
 import classes from './Modal.module.scss';
 import { getCssVariable } from '../../../utilities/utilities';
-import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
-import { lockScroll, unlockScroll } from '../../../utilities/scrollLock';
-import { transitionIsLocked } from '../../../utilities/transitionLock';
-import { setActiveModal } from '../../../store/reducers/modalReducer';
+// import { lockScroll, unlockScroll } from '../../../utilities/scrollLock';
 import Icon from '../Icon/Icon';
+import { transitionIsLocked } from '../../../utilities/transitionLock';
+import { useAppSelector } from '../../../hooks/typedReduxHooks';
 
+interface ModalProps extends ComponentProps<'div'> {
+	variant?: 'default'
+	isActive: boolean
+	onClose: () => void
+}
+
+const modalContainerEl = document.getElementById('modal')
 let timeout = 0
 
-const Modal = function({className = ''}: ComponentProps<'div'>) {
 
-	const dispatch = useAppDispatch()
-	const modalStore = useAppSelector(state => state.modal)
+export const Modal = function({variant = 'default', className = '', children, isActive, onClose}: ModalProps) {
 
-	const defaultModal = {
-		isActive: false,
-		name: '',
-		content: '',
-	}
-	let [modal, setModal] = useState(defaultModal)
+	if (!timeout) timeout = getCssVariable('timer-modal') * 1000
+
+	let modalCloseTrigger = useAppSelector(state => state.modal.closeTrigger)
+	useEffect(() => onClose(), [modalCloseTrigger])
+
+	let [isContentVisible, setIsContentVisible] = useState(false)
 
 	useEffect(() => {
-		if (!timeout) timeout = getCssVariable('timer-modal') * 1000
-	}, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-	useEffect(() => {
-		if (modalStore.active) openModal()
-		else closeModal(null, true)
-	}, [modalStore]) // eslint-disable-line react-hooks/exhaustive-deps
-
-	const contentRef = useRef<HTMLDivElement>(null)
-
-	function openModal() {
-		lockScroll()
-		setModal({
-			isActive: true,
-			name: modalStore.active,
-			content: modalStore.content || getStaticContent()
-		})
-		if (contentRef.current) contentRef.current.scrollTo({top: 0})
-	}
-	function closeModal(e?: React.MouseEvent | null, linkEvent?: boolean) {
-		if (!linkEvent && transitionIsLocked(timeout)) return;
-		unlockScroll(timeout)
-		dispatch(setActiveModal(''))
-		setModal({...modal, isActive: false})
-		setTimeout(() => {
-			setModal(defaultModal)
-		}, timeout)
-	}
-
-	function getStaticContent() {
-		// if (modalStore.content) return modalStore.content
-		// if (Object.keys(staticNames).includes(modalStore.active))
-		// 	return <ModalStaticContent name={modalStore.active}/>
-	}
-
-	// useEffect(() => {
-		// scriptManager.registerFunctions('modal', {close: closeModal.bind(null, null, true)})
-	// }, []) // eslint-disable-line react-hooks/exhaustive-deps
+		if (isActive) {
+			// lockScroll()
+			setIsContentVisible(true)
+		}
+		else {
+			// unlockScroll(timeout)
+			setTimeout(() => {
+				setIsContentVisible(false)
+			}, timeout)
+		}
+	}, [isActive])
 	
-	return (
-		// <TranslateHandler>
-			<div className={`${className} ${classes.default} ${modal.isActive ? classes.active : ''}`} data-name={modal.name}>
+
+	const closeModal = () => {
+		if (!transitionIsLocked(timeout)) onClose()
+	}
+
+	if (!modalContainerEl) {
+		console.error('Modal container not found')
+		return null
+	}
+
+	const modal =
+		<div className={`${className} ${classes[variant]} ${isActive ? classes.active : ''}`}>
+			{isContentVisible && <>
 				<div className={classes.closeArea} onClick={closeModal}></div>
 				<div className={classes.wrapper}>
 					<div className={classes.closeButton} onClick={closeModal}>
 						<Icon name='icon-cross' />
 					</div>
-					<div className={classes.content} ref={contentRef}>
-						{modal.content}
+					<div className={classes.content}>
+						{children}
 					</div>
 				</div>
-			</div>
-		// </TranslateHandler>
-	)
-}
-export default Modal
+			</>}
+		</div>
 
+	return createPortal(modal, modalContainerEl)
+}
+
+
+
+interface ModalLinkProps extends ComponentProps<'div'> {
+	children: ReactElement
+}
+
+export const ModalLink = function({children}: ModalLinkProps) {
+
+	const toggleModal = (e: MouseEvent<HTMLInputElement | HTMLButtonElement>) => {
+		if (transitionIsLocked(timeout)) return;
+		if (children?.props?.onClick) children.props.onClick(e)
+	}
+	const newProps = {...children.props, onClick: toggleModal}
+	const updatedChild = cloneElement(children, newProps)
+	return updatedChild
+}

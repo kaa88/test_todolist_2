@@ -4,15 +4,15 @@ import { ITask, TaskStatus } from '../../../types/types';
 import Icon from '../../ui/Icon/Icon';
 import Subtasks from '../Subtasks/Subtasks';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
-import ModalLink from '../../ui/Modal/ModalLink';
-import FullTask from '../FullTask/FullTask';
 import { DateService } from '../../../services/DateService';
 import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 import { getCssVariable, getPlural } from '../../../utilities/utilities';
+import { ModalLink } from '../../ui/Modal/Modal';
 
 interface TaskProps extends ComponentPropsWithRef<'div'> {
 	taskObject: ITask
 	dragHandleProps?: DraggableProvidedDragHandleProps | null
+	onFullTaskOpen: (taskObject: ITask) => void
 }
 
 let spoilerTimeout = 0
@@ -22,6 +22,7 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 	taskObject: task,
 	className = '',
 	dragHandleProps,
+	onFullTaskOpen,
 	...props
 }: TaskProps, ref) {
 
@@ -79,6 +80,9 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 
 	const expiredClassName = task.expireDate - Date.now() <= 0 ? classes.expired : ''
 
+	const openFullTask = () => {
+		onFullTaskOpen(task)
+	}
 
 	return (
 		<div className={`${className} ${classes.wrapper}`} {...props} ref={ref}>
@@ -91,8 +95,8 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 				</div>
 			</div>
 
-			<ModalLink name='task-modal' content={<FullTask taskObject={task} />}>
-				<button className={classes.title} title='edit task'>{task.title}</button>
+			<ModalLink>
+				<button className={classes.title} onClick={openFullTask} title='edit task'>{task.title}</button>
 			</ModalLink>
 			<p className={classes.description} title={task.description}>{task.description}</p>
 

@@ -4,7 +4,7 @@ import Todos from "../../components/parts/TodosTable/TodosTable"
 import { useParams } from "react-router"
 import { useAppDispatch, useAppSelector } from "../../hooks/typedReduxHooks"
 import ErrorPage from "./ErrorPage"
-import Modal from "../../components/ui/Modal/Modal"
+// import Modal from "../../components/ui/Modal/Modal"
 import { setCurrentProject } from "../../store/reducers/projectReducer"
 
 function ProjectPage() {
@@ -24,7 +24,7 @@ function ProjectPage() {
 		content = <>
 			<PageTitle value={pageTitle} />
 			<Todos project={id} />
-			<Modal />
+			{/* <Modal /> */}
 		</>
 	}
 

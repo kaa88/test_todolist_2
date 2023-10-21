@@ -11,6 +11,8 @@ import Loader from '../../ui/Loader/Loader';
 import Icon from '../../ui/Icon/Icon';
 import Header from '../Header/Header';
 import { updateSettings } from '../../../store/reducers/userReducer';
+import { Modal } from '../../ui/Modal/Modal';
+import FullTask from '../FullTask/FullTask';
 
 interface TodosTableProps extends ComponentPropsWithoutRef<'div'> {
 	project: number
@@ -131,6 +133,18 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 		}
 	}
 
+	// Modal
+	let [currentTask, setCurrentTask] = useState<ITask | null>(null)
+	let [isModalActive, setIsModalActive] = useState(false)
+	const handleModalOpen = (taskObject: ITask) => {
+		setCurrentTask(taskObject)
+		setIsModalActive(true)
+	}
+	const handleModalClose = () => {
+		setIsModalActive(false)
+	}
+	// /Modal
+
 	const getTaskElements = (group: ITask[]) =>
 		group.map((task, index) =>
 			<Draggable
@@ -145,6 +159,7 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 						ref={provided.innerRef}
 						{...provided.draggableProps}
 						dragHandleProps={provided.dragHandleProps}
+						onFullTaskOpen={handleModalOpen}
 					/>
 				}
 			</Draggable>
@@ -210,6 +225,10 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 					{`empty`}
 				</p>
 			</footer>
+
+			<Modal isActive={isModalActive} onClose={handleModalClose}>
+				{currentTask && <FullTask taskObject={currentTask} />}
+			</Modal>
 
 		</Container>
 	)
