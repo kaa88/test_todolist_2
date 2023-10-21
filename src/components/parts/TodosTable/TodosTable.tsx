@@ -185,7 +185,6 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 											onClick={changeGroupOrder}
 											data-status={group.status}
 										>
-											{group.isAscending.toString()}
 											<Icon name='icon-caret' />
 										</button>
 									</div>

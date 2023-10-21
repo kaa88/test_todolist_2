@@ -8,12 +8,13 @@ interface ModalLinkProps extends ComponentProps<'div'> {
 	name?: string
 	content?: any
 	children?: ReactElement
+	onOpen?: (...args: any) => any
 }
 
 let timeout = 0
 
 
-const ModalLink = function({name = '', content, children}: ModalLinkProps) {
+const ModalLink = function({name = '', content, children, onOpen}: ModalLinkProps) {
 
 	const dispatch = useAppDispatch()
 	
@@ -37,6 +38,7 @@ const ModalLink = function({name = '', content, children}: ModalLinkProps) {
 		if (transitionIsLocked(timeout)) return;
 		dispatch(setActiveModal({name, content: getContent()}))
 		if (children?.props?.onClick) children.props.onClick(e)
+		if (onOpen) onOpen()
 	}
 
 	const newProps = {...children.props, onClick: showModal}

@@ -8,7 +8,8 @@ import Loader from '../../ui/Loader/Loader';
 import FullTask from '../FullTask/FullTask';
 import LoadError from '../../ui/Loader/LoadError';
 import { updateSettings } from '../../../store/reducers/userReducer';
-import { TaskSort } from '../../../types/types';
+import SortSwitch from '../../ui/SortSwitch/SortSwitch';
+import Search from '../../ui/Search/Search';
 
 interface HeaderProps extends ComponentProps<'header'> {}
 
@@ -50,24 +51,6 @@ const Header = function({className = ''}: HeaderProps) {
 	}
 	// /Show subtasks
 
-	// Sort
-	let [isSortPopupVisible, setIsSortPopupVisible] = useState(false)
-	const toggleSortVisibility = function(e: MouseEvent<HTMLButtonElement | Window>) {
-		e.stopPropagation()
-		let newState = isSortPopupVisible ? false : true
-		if (e.currentTarget === window) newState = false
-		setIsSortPopupVisible(newState)
-	}
-	const updateSortSettings = (e: ChangeEvent<HTMLInputElement>) => {
-		const isAdd = e.currentTarget.checked
-		const currentSortType = e.currentTarget.dataset.type as TaskSort
-		if (isAdd) dispatch(updateSettings({...userSettings, sortBy: currentSortType}))
-	}
-	useEffect(() => {
-		window.addEventListener('click', toggleSortVisibility as any)
-		return () => window.removeEventListener('click', toggleSortVisibility as any)
-	}, [])
-	// /Sort
 
 	return (
 		<header className={`${className} ${classes.header}`}>
@@ -83,50 +66,10 @@ const Header = function({className = ''}: HeaderProps) {
 					}
 				</span>
 			</button>
-			<div className={classes.sortWrapper}>
-				<button className={classes.sortButton} onClick={toggleSortVisibility}>
-					<span>Sort by</span>
-				</button>
-				<div className={`${classes.sortPopup} ${isSortPopupVisible ? classes.visible: ''}`} onClick={(e) => e.stopPropagation()}>
-					{sortItems.map((item, index) =>
-						<label className={classes.sortInput} key={index}>
-							<input
-								type="radio"
-								name='sort-radio'
-								onChange={updateSortSettings}
-								data-type={item.id}
-								checked={userSettings.sortBy === item.id}
-							/>
-							<span>{item.textContent}</span>
-						</label>
-					)}
-				</div>
-			</div>
-			<div className={classes.headerItem}>
-				search task
-			</div>
+			<SortSwitch className={classes.sortSwitch} />
+			<Search />
 		</header>
 )
 }
 export default Header
-
-
-const sortItems = [
-	{
-		id: TaskSort.id,
-		textContent: 'ID',
-	},
-	{
-		id: TaskSort.creation,
-		textContent: 'Creation time',
-	},
-	{
-		id: TaskSort.expiration,
-		textContent: 'Expiration time',
-	},
-	{
-		id: TaskSort.priority,
-		textContent: 'Priority',
-	},
-]
 

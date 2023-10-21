@@ -1,0 +1,51 @@
+@import '/src/styles/variables.scss';
+
+
+.wrapper {
+	position: relative;
+	min-width: 150px;
+}
+
+.mainButton {
+	height: 40px;
+	border-radius: 10px;
+	padding: 0 15px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 20px;
+	background-color: var(--color-bg-main);
+	transition: background-color $timer-hover;
+	&:hover {
+		background-color: var(--color-textfield-bg);
+	}
+	svg {
+		margin-bottom: 2px;
+		margin-right: 10px;
+		width: 24px;
+		height: 24px;
+	}
+}
+
+.modalContent {
+	padding: 20px;
+}
+.input {
+	background-color: yellow;
+}
+.results {
+	display: flex;
+	flex-direction: column;
+}
+.resultItem {
+	background-color: #ddd;
+	&:not(:last-child) {
+		margin-bottom: 5px;
+	}
+}
+
+.loader, .loadError {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
