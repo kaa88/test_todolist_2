@@ -1,9 +1,10 @@
 @import '/src/styles/variables.scss';
 
 body .container {
+	flex: 1 1 auto;
 	padding: 0;
 	max-width: 1240px;
-	height: 100vh;
+	// height: 100vh;
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;

@@ -1,13 +1,19 @@
 @import '/src/styles/variables.scss';
 
 .header {
+	flex: 0 0 50px;
 	padding: 0 10px;
+	// height: 50px;
 	display: flex;
-	align-items: center;
 	column-gap: 30px;
+	align-items: center;
 	background-color: var(--color-bg-secondary);
 	color: var(--color-text-main);
 	fill: var(--color-icons-main);
+}
+.part {
+	display: flex;
+	column-gap: 30px;
 }
 .headerItem {
 	background-color: var(--color-bg-main);
@@ -51,4 +57,7 @@
 	flex-grow: 1;
 	display: flex;
 	justify-content: flex-end;
+}
+.logo {
+	color: var(--color-text-negative);
 }

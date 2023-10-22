@@ -1,0 +1,32 @@
+@import '/src/styles/variables.scss';
+
+.default {
+	position: relative;
+	font-size: 16px;
+	background-color: var(--color-bg-secondary);
+	height: em(40);
+	overflow: hidden;
+}
+.big {
+	height: em(30);
+	line-height: 0.8;
+	font-family: Verdana;
+	font-size: em(44);
+	letter-spacing: em(-1);
+	text-transform: uppercase;
+	color: var(--color-text-negative);
+}
+.small {
+	position: absolute;
+	bottom: 0;
+	right: em(-1);
+	padding: em(1.5) em(8);
+	font-size: em(12);
+	font-weight: bold;
+	letter-spacing: em(2);
+	display: inline-block;
+	background-color: var(--color-text-negative);
+	border-radius: em(10);
+	border: solid em(4) var(--color-bg-secondary);
+	color: var(--color-bg-secondary);
+}

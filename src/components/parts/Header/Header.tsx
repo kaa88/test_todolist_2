@@ -11,10 +11,14 @@ import { updateSettings } from '../../../store/reducers/userReducer';
 import SortSwitch from '../../ui/SortSwitch/SortSwitch';
 import Search from '../../ui/Search/Search';
 import { Modal, ModalLink } from '../../ui/Modal/Modal';
+import { PageType } from '../../../types/types';
+import Logo from '../../ui/Logo/Logo';
 
-interface HeaderProps extends ComponentProps<'header'> {}
+interface HeaderProps extends ComponentProps<'header'> {
+	type?: PageType
+}
 
-const Header = function({className = ''}: HeaderProps) {
+const Header = function({className = '', type}: HeaderProps) {
 
 	const dispatch = useAppDispatch()
 
@@ -66,8 +70,14 @@ const Header = function({className = ''}: HeaderProps) {
 	// /Show subtasks
 
 
-	return (
-		<header className={`${className} ${classes.header}`}>
+	const defaultTypeContent =
+		<div className={classes.part}>
+			<Logo />
+		</div>
+
+	const tasksTypeContent =
+		<div className={classes.part}>
+			<Logo />
 			<ModalLink>
 				<button className={classes.headerButton} onClick={createTask}>
 					<Icon name='icon-cross-bold' />
@@ -87,6 +97,12 @@ const Header = function({className = ''}: HeaderProps) {
 				</span>
 			</button>
 			<SortSwitch className={classes.sortSwitch} />
+		</div>
+
+
+	return (
+		<header className={`${className} ${classes.header}`}>
+			{type === PageType.tasks ? tasksTypeContent : defaultTypeContent}
 			<div className={classes.search}>
 				<Search />
 			</div>

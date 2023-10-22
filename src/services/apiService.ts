@@ -1,4 +1,4 @@
-import { api, ApiData, ApiGetResponse } from '../api/api'
+import { api, ApiData, ApiGetResponse, ApiResponse } from '../api/api'
 import { Id, IComment, IProject, ITask, IUserSettings } from '../types/types'
 import { _waitServerResponse } from '../utilities/utilities'
 
@@ -9,10 +9,10 @@ const SETTINGS_PATH = '/api/settings'
 
 
 class Actions<T extends ApiData> {
-	get: () => ReturnType<typeof api.get<T>>
-	add: (data: T) => ReturnType<typeof api.post>
-	edit: (data: T) => ReturnType<typeof api.put>
-	delete: (id: Id) => ReturnType<typeof api.delete>
+	get: () => Promise<ApiGetResponse<T>>
+	add: (data: T) => Promise<ApiGetResponse<T>>
+	edit: (data: T) => Promise<ApiGetResponse<T>>
+	delete: (id: Id) => Promise<ApiResponse>
 	constructor(request: string) {
 		this.get = async () => await api.get<T>(request)
 		this.add = async (data) => await api.post(request, {data})

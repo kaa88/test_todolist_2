@@ -1,13 +1,12 @@
 import ErrorContent from "../../components/parts/ErrorContent/ErrorContent"
-import PageTitle from "../PageTitle"
+import PageLayout from "../PageLayout"
 
 function ErrorPage() {
 
 	return (
-		<>
-			<PageTitle value="Not found" />
+		<PageLayout pageTitle="Not found">
 			<ErrorContent />
-		</>
+		</PageLayout>
 	)
 }
 

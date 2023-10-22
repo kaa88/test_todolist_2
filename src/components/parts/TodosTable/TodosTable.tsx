@@ -168,7 +168,7 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 	return (
 		<Container className={classes.container}>
 
-			<Header className={classes.header} />
+			{/* <Header className={classes.header} /> */}
 			
 			<DragDropContext onDragStart={handleDragStart} onDragUpdate={handleDragUpdate} onDragEnd={handleDragEnd}>
 				<div className={`${className} ${classes.table} ${isDragging ? classes.isDragging : ''}`}>

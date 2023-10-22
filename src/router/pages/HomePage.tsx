@@ -1,13 +1,13 @@
 import Projects from "../../components/parts/Projects/Projects"
-import PageTitle from "../PageTitle"
+import { PageType } from "../../types/types"
+import PageLayout from "../PageLayout"
 
 function HomePage() {
 
 	return (
-		<>
-			<PageTitle />
+		<PageLayout pageType={PageType.projects}>
 			<Projects />
-		</>
+		</PageLayout>
 	)
 }
 

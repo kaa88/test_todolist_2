@@ -6,6 +6,9 @@ import { useAppDispatch, useAppSelector } from "../../hooks/typedReduxHooks"
 import ErrorPage from "./ErrorPage"
 import { setCurrentProject } from "../../store/reducers/projectReducer"
 import { closeAllModals } from '../../store/reducers/modalReducer'
+import Header from '../../components/parts/Header/Header'
+import PageLayout from '../PageLayout'
+import { PageType } from '../../types/types'
 
 function ProjectPage() {
 
@@ -21,10 +24,10 @@ function ProjectPage() {
 	let content = <ErrorPage />
 	if (currentProject) {
 		pageTitle = currentProject.name
-		content = <>
-			<PageTitle value={pageTitle} />
-			<Todos project={id} />
-		</>
+		content =
+			<PageLayout pageTitle={pageTitle} pageType={PageType.tasks}>
+				<Todos project={id} />
+			</PageLayout>
 	}
 
 	useEffect(() => {

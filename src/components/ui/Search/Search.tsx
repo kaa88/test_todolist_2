@@ -32,7 +32,7 @@ const Search = function({className = '', ...props}: SearchProps) {
 	let [result, setResult] = useState<ITask[]>([])
 
 	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		if (isLoading) return;
+		if (isLoading || loadError) return;
 		setInputValue(e.target.value)
 		setResult(searchTasks(e.target.value))
 	}

@@ -58,3 +58,9 @@ export interface IUserSettings {
 	sortBy?: TaskSort
 	taskGroupAscendingOrder?: {[key: string]: boolean}
 }
+
+export enum PageType {
+	default = '',
+	projects = 'projects',
+	tasks = 'tasks',
+}
