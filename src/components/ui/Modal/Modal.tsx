@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useState, MouseEvent, cloneElement, ReactElement } from 'react';
+import { ComponentProps, useEffect, useState, MouseEvent, cloneElement, ReactElement, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import classes from './Modal.module.scss';
 import { getCssVariable } from '../../../utilities/utilities';
@@ -25,6 +25,7 @@ export const Modal = function({variant = 'default', className = '', children, is
 	useEffect(() => onClose(), [modalCloseTrigger])
 
 	let [isContentVisible, setIsContentVisible] = useState(false)
+	let [contentClone, setContentClone] = useState<null | ReactNode>(null)
 
 	useEffect(() => {
 		if (isActive) {
@@ -41,7 +42,14 @@ export const Modal = function({variant = 'default', className = '', children, is
 	
 
 	const closeModal = () => {
-		if (!transitionIsLocked(timeout)) onClose()
+		if (transitionIsLocked(timeout)) return;
+		onClose()
+		// set content clone to provide smooth modal transition without instant content disappearing
+		const content = children as ReactElement
+		setContentClone((typeof children === 'object' && children !== null) ? cloneElement(content) : children)
+		setTimeout(() => {
+			setContentClone(null)
+		}, timeout + 100)
 	}
 
 	if (!modalContainerEl) {
@@ -58,7 +66,7 @@ export const Modal = function({variant = 'default', className = '', children, is
 						<Icon name='icon-cross' />
 					</div>
 					<div className={classes.content}>
-						{children}
+						{contentClone || children}
 					</div>
 				</div>
 			</>}

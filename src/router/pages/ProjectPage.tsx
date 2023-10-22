@@ -4,8 +4,8 @@ import Todos from "../../components/parts/TodosTable/TodosTable"
 import { useParams } from "react-router"
 import { useAppDispatch, useAppSelector } from "../../hooks/typedReduxHooks"
 import ErrorPage from "./ErrorPage"
-// import Modal from "../../components/ui/Modal/Modal"
 import { setCurrentProject } from "../../store/reducers/projectReducer"
+import { closeAllModals } from '../../store/reducers/modalReducer'
 
 function ProjectPage() {
 
@@ -24,13 +24,14 @@ function ProjectPage() {
 		content = <>
 			<PageTitle value={pageTitle} />
 			<Todos project={id} />
-			{/* <Modal /> */}
 		</>
 	}
 
 	useEffect(() => {
 		if (currentProject && current !== id) dispatch(setCurrentProject(currentProject.id))
 	}, [currentProject, id, current])
+
+	useEffect(() => {dispatch(closeAllModals())}) // if any opened
 
 	return (
 		isLoading

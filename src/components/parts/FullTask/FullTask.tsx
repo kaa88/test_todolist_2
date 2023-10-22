@@ -2,7 +2,7 @@ import { ComponentProps, useState } from 'react';
 import classes from './FullTask.module.scss';
 import { ITask, TaskPriority, TaskStatus } from '../../../types/types';
 import Subtasks from '../Subtasks/Subtasks';
-import { useAppDispatch } from '../../../hooks/typedReduxHooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
 import InteractiveInput, { InteractiveInputCallback } from '../../ui/InteractiveInput/InteractiveInput';
 import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
 import { deleteTask, updateTask } from '../../../store/reducers/taskReducer';
@@ -10,6 +10,7 @@ import RadioButtons from '../../ui/RadioButtons/RadioButtons';
 import TaskTime, { Dates } from '../TaskTime/TaskTime';
 import Comments from '../Comments/Comments';
 import { closeAllModals } from '../../../store/reducers/modalReducer';
+import { Link } from 'react-router-dom';
 
 interface TaskProps extends ComponentProps<'div'> {
 	taskObject: ITask
@@ -60,6 +61,10 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 		}
 	}
 
+	const projects = useAppSelector(state => state.projects.list)
+	const currentProject = projects.find(p => p.id === task.projectId)
+	const currentProjectName = currentProject?.name || ''
+
 	return (
 		<div className={`${className} ${classes.wrapper}`}>
 			<div className={classes.textBlock}>
@@ -75,37 +80,47 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 				</InteractiveInput>
 			</div>
 
-			<div className={classes.taskDetails}>
-				<TaskTime
-					className={classes.dateTime}
-					dates={dates}
-					callback={updateDates}
-				/>
-				<div className={classes.radioButtonsWrapper}>
-					<p className={classes.blockTitle}>Priority:</p>
-					<RadioButtons<TaskPriority>
-						className={classes.radioButtons}
-						modif='priority'
-						buttons={priorityRadioButtons}
-						active={task.priority}
-						callback={updatePriority}
-					/>
+			<div className={classes.info}>
+				<div className={classes.infoId}>{`ID: ${task.id}`}</div>
+				<div className={classes.infoProject}>
+					<span>Project: </span>
+					<Link className={classes.projectLink} to={'/project/' + task.projectId}>{currentProjectName}</Link>
 				</div>
-				<div className={classes.radioButtonsWrapper}>
-					<p className={classes.blockTitle}>Status:</p>
-					<RadioButtons<TaskStatus>
-						className={classes.radioButtons}
-						modif='status'
-						buttons={statusRadioButtons}
-						active={task.status}
-						callback={updateStatus}
+				<button className={classes.deleteTaskButton} onClick={deleteCurrentTask}>
+					Delete task
+				</button>
+			</div>
+
+			<div className={classes.taskDetails}>
+				<div className={classes.taskDetailsContainer}>
+					<TaskTime
+						className={classes.dateTime}
+						dates={dates}
+						callback={updateDates}
 					/>
+					<div className={classes.radioButtonsWrapper}>
+						<p className={classes.blockTitle}>Priority:</p>
+						<RadioButtons<TaskPriority>
+							className={classes.radioButtons}
+							modif='priority'
+							buttons={priorityRadioButtons}
+							active={task.priority}
+							callback={updatePriority}
+						/>
+					</div>
+					<div className={classes.radioButtonsWrapper}>
+						<p className={classes.blockTitle}>Status:</p>
+						<RadioButtons<TaskStatus>
+							className={classes.radioButtons}
+							modif='status'
+							buttons={statusRadioButtons}
+							active={task.status}
+							callback={updateStatus}
+						/>
+					</div>
 				</div>
 			</div>
 			<Subtasks className={classes.subtasks} parentId={task.id} />
-			<button className={classes.deleteTaskButton} onClick={deleteCurrentTask}>
-				Delete task
-			</button>
 			<div className={classes.attachments}>
 				<p className={classes.blockTitle}>Attachments:</p>
 			</div>

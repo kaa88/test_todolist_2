@@ -1,12 +1,19 @@
-import { ComponentProps, ChangeEvent, useEffect, useState, useRef } from 'react';
+import { ComponentProps, ChangeEvent, useEffect, useState, useRef, MouseEvent } from 'react';
 import classes from './Search.module.scss';
 import Icon from '../Icon/Icon';
-import { ITask } from '../../../types/types';
+import { ITask, Id } from '../../../types/types';
 import { useFetching } from '../../../hooks/useFetching';
 import Loader from '../Loader/Loader';
 import LoadError from '../Loader/LoadError';
 import { ApiService } from '../../../services/ApiService';
 import { Modal, ModalLink } from '../Modal/Modal';
+import FullTask from '../../parts/FullTask/FullTask';
+
+enum ActiveModalType {
+	none = '',
+	search = 'search',
+	task = 'task'
+}
 
 interface SearchProps extends ComponentProps<'div'> {}
 
@@ -30,49 +37,70 @@ const Search = function({className = '', ...props}: SearchProps) {
 		setResult(searchTasks(e.target.value))
 	}
 
-	let [isModalActive, setIsModalActive] = useState(false)
+	let [activeModalType, setActiveModalType] = useState(ActiveModalType.none)
+	let [currentTaskId, setCurrentTaskId] = useState<Id>(0)
 	const handleModalOpen = () => {
-		setIsModalActive(true)
+		setActiveModalType(ActiveModalType.search)
 	}
 	const handleModalClose = () => {
-		setIsModalActive(false)
+		setActiveModalType(ActiveModalType.none)
 		setInputValue('')
 		setResult([])
 	}
+	const openTask = (e: MouseEvent<HTMLButtonElement>) => {
+		const taskId = Number(e.currentTarget.dataset.id)
+		if (!isNaN(taskId)) {
+			setCurrentTaskId(taskId)
+			setActiveModalType(ActiveModalType.task)
+		}
+	}
 	useEffect(() => {
-		if (isModalActive) {
+		if (activeModalType === ActiveModalType.search) {
 			fetch()
 			setTimeout(() => {
 				const inputEl = inputRef.current
 				if (inputEl) inputEl.focus()
 			}, 100)
 		}
-	}, [isModalActive])
+	}, [activeModalType])
 
 
-	const modalContent =
-		<div className={classes.modalContent}>
+	const searchModalContent =
+		<div className={classes.searchModalContent}>
 			{isLoading && <Loader className={classes.loader} />}
 			{loadError && <LoadError className={classes.loadError} message='Search module error' />}
-			{(!isLoading || !loadError) && <>
+			<div className={classes.inputWrapper}>
+				<Icon className={classes.inputIcon} name='icon-search' />
 				<input
 					className={classes.input}
 					type="text"
 					value={inputValue}
 					onChange={handleInputChange}
+					placeholder='Search by task ID or title'
 					ref={inputRef}
 				/>
-				<div className={classes.results}>
-					<p>results:</p>
-					{result.map((item, index) =>
-						<div className={classes.resultItem} key={index}>
-							result: {`${item.id} ${item.title}`}
-						</div>
-					)}
-				</div>
-			</>}
+			</div>
+			<div className={classes.results}>
+				{result.map((item, index) =>
+					<button
+						className={classes.resultItem}
+						onClick={openTask}
+						data-id={item.id}
+						key={index}
+					>
+						{`#${item.id} - ${item.title}`}
+					</button>
+				)}
+			</div>
 		</div>
 
+	const currentTask = result.find(item => item.id === currentTaskId)
+	const taskModalContent = currentTask ? <FullTask taskObject={currentTask} /> : null
+
+	const modalContent = {
+		[ActiveModalType.search]: searchModalContent,
+		[ActiveModalType.task]: taskModalContent
+	}
 
 	return (
 		<div className={`${className} ${classes.wrapper}`} {...props}>
@@ -82,13 +110,14 @@ const Search = function({className = '', ...props}: SearchProps) {
 					<span>Search tasks</span>
 				</button>
 			</ModalLink>
-			<Modal isActive={isModalActive} onClose={handleModalClose}>
-				{modalContent}
+			<Modal isActive={activeModalType ? true : false} onClose={handleModalClose}>
+				{activeModalType ? modalContent[activeModalType] : null}
 			</Modal>
 		</div>
 	)
 }
 export default Search
+
 
 
 let allFetchedTasks: ITask[] = []
@@ -97,7 +126,6 @@ const searchTasks = (value: string) => {
 	if (!value) return []
 	let matchedTasks = allFetchedTasks.filter(item =>{
 		return new RegExp(value, 'i').test(item.id.toString()) || new RegExp(value, 'i').test(item.title)
-	}
-	)
+	})
 	return matchedTasks
 }

@@ -87,7 +87,9 @@ const Header = function({className = ''}: HeaderProps) {
 				</span>
 			</button>
 			<SortSwitch className={classes.sortSwitch} />
-			<Search />
+			<div className={classes.search}>
+				<Search />
+			</div>
 		</header>
 )
 }
