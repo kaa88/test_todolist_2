@@ -74,20 +74,24 @@
 		transform: rotate(90deg);
 	}
 }
-.addCommentButtonBig {
-	padding: 6px 10px;
-	display: flex;
-	align-items: center;
-	font-size: 16px;
-	border-radius: 8px;
-	background-color: pink;
+body .addCommentButtonBig {
+	// padding: 6px 10px;
+	// display: flex;
+	// align-items: center;
+	height: 32px;
+	font-size: 15px;
+	// border-radius: 8px;
+	background-color: var(--color-accent-03);
+	&:hover {
+		background-color: var(--color-accent-04);
+	}
 	svg {
 		margin-right: 7px;
 		margin-bottom: 2px;
 		width: 10px;
 		height: 10px;
 		transform: rotate(45deg);
-		fill: var(--color-icons-main);
+		// fill: var(--color-icons-main);
 	}
 }
 .content {

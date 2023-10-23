@@ -2,18 +2,18 @@ import type { ComponentPropsWithoutRef } from 'react';
 import classes from './Button.module.scss';
 
 interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
-	modif?: 'default' | 'negative'
+	variant?: 'default' | 'negative'
 }
 
 const Button = function({
 	className = '',
-	modif = 'default',
+	variant = 'default',
 	children = 'button',
 	...props
 }: ButtonProps) {
 
 	return (
-		<button className={`${className} ${classes[modif]}`} {...props}>
+		<button className={`${className} ${classes[variant]}`} {...props}>
 			{children}
 		</button>
 	)

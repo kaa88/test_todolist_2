@@ -1,44 +1,40 @@
-@use "/src/styles/variables" as *;
-
+@import '/src/styles/variables.scss';
 
 .default, .negative {
 	@include text-max-lines(2);
 	max-width: rem(250);
-	height: rem(43);
-	padding: 0 rem(10);
-	border-radius: rem(45);
-	font-family: var(--font01);
-	font-size: rem(16);
-	// white-space: nowrap;
+	height: rem(40);
+	line-height: 0.9;
+	padding: 0 rem(15);
+	border-radius: rem(10);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: rem(18);
 	word-break: break-word;
-	border: solid rem(1) var(--color03);
 	user-select: none;
 	transition: background-color $timer-hover, color $timer-hover, fill $timer-hover;
+	svg {
+		margin-right: 8px;
+		width: 20px;
+		height: 20px;
+	}
 	@media print {
 		display: none;
 	}
 }
 .default {
-	background-color: var(--color03);
-	color: var(--color01);
-	fill: var(--color01);
+	background-color: var(--color-button-bg);
+	color: var(--color-button-content);
+	fill: var(--color-button-content);
 }
-.negative:hover {
-	@media (min-width: $media-tl+1+px) {
-		background-color: var(--color03);
-		color: var(--color01);
-		fill: var(--color01);
-	}
+.default:hover, .negative:hover {
+	background-color: var(--color-button-bg-hover);
+	color: var(--color-button-content-hover);
+	fill: var(--color-button-content-hover);
 }
 .negative {
-	background-color: var(--color01);
-	color: var(--color02);
-	fill: var(--color02);
-}
-.default:hover {
-	@media (min-width: $media-tl+1+px) {
-		background-color: var(--color01);
-		color: var(--color02);
-		fill: var(--color02);
-	}
+	background-color: var(--color-button-content);
+	color: var(--color-button-content-hover);
+	fill: var(--color-button-content-hover);
 }

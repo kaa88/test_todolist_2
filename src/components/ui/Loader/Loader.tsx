@@ -3,13 +3,13 @@ import Icon from '../Icon/Icon';
 import classes from './Loader.module.scss';
 
 interface LoaderProps extends ComponentProps<'div'> {
-	modif?: 'dark' | 'light'
+	variant?: 'dark' | 'light'
 }
 
-const Loader = function({modif = 'dark', className = '', ...props}: LoaderProps) {
+const Loader = function({variant = 'dark', className = '', ...props}: LoaderProps) {
 
 	return (
-		<div className={`${className} ${classes[modif]}`} {...props}>
+		<div className={`${className} ${classes[variant]}`} {...props}>
 			<Icon className={classes.loadIcon} name='icon-spinner' />
 		</div>
 	)

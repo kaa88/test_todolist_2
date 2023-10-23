@@ -8,6 +8,7 @@ import Icon from '../../ui/Icon/Icon';
 import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
 import Loader from '../../ui/Loader/Loader';
 import LoadError from '../../ui/Loader/LoadError';
+import Button from '../../ui/Button/Button';
 
 interface CommentsProps extends ComponentProps<'div'> {
 	taskId: Id
@@ -113,10 +114,10 @@ const Comments = function({className = '', taskId, ...props}: CommentsProps) {
 			{!!loadError && <LoadError className={classes.loadError} message={loadError} />}
 
 			<div className={classes.header}>
-				<button className={classes.addCommentButtonBig} onClick={showNewCommentForm}>
+				<Button className={classes.addCommentButtonBig} variant='negative' onClick={showNewCommentForm}>
 					<Icon name='icon-cross-bold' />
 					<span>Add comment</span>
-				</button>
+					</Button>
 				{activeNewCommentForm === null && getNewCommentForm(null)}
 			</div>
 

@@ -6,6 +6,14 @@
 	background-color: var(--color-bg-secondary);
 	height: em(40);
 	overflow: hidden;
+	&:hover {
+		.big {
+			color: var(--color-button-bg-hover);
+		}
+		.small {
+			background-color: var(--color-button-bg-hover);
+		}
+	}
 }
 .big {
 	height: em(30);
@@ -15,6 +23,7 @@
 	letter-spacing: em(-1);
 	text-transform: uppercase;
 	color: var(--color-text-negative);
+	transition: all $timer-hover;
 }
 .small {
 	position: absolute;
@@ -29,4 +38,5 @@
 	border-radius: em(10);
 	border: solid em(4) var(--color-bg-secondary);
 	color: var(--color-bg-secondary);
+	transition: all $timer-hover;
 }

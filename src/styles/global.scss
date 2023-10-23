@@ -22,6 +22,7 @@ body {
 	font-family: var(--font01);
 	font-size: inherit;
 	color: var(--color-text-main);
+	fill: var(--color-text-main);
 	background-color: var(--color-bg-secondary);
 	// &.scroll-is-locked, &.loadscreen--locked {
 	// 	overflow: hidden;
@@ -52,7 +53,8 @@ body {
 // }
 
 #root {
-	height: 100vh;
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template-columns: 100%;
+	grid-template-rows: 50px calc(100vh - 50px);
+	overflow: hidden;
 }

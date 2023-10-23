@@ -15,12 +15,14 @@
 
 .dark {
 	background-color: var(--color-bg-main-alpha);
+	color: var(--color-icons-main);
 	fill: var(--color-icons-main);
 }
-// .light {
-// 	background-color: var(--color02a);
-// 	fill: var(--color01);
-// }
+.light {
+	background-color: var(--color-bg-secondary-alpha);
+	color: var(--color-icons-negative);
+	fill: var(--color-icons-negative);
+}
 
 .loadIcon {
 	max-width: rem(30);

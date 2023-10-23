@@ -24,6 +24,7 @@ body { // theme-default
 	--color-bg-main: #fff;
 	--color-bg-main-alpha: #ffffff88;
 	--color-bg-secondary: #2d4d35;
+	--color-bg-secondary-alpha: #2d4d3588;
 	--color-bg-tertiary: #fafafa;
 	--color-todos-bg: var(--color-accent-01);
 	--color-todos-border: #555;
@@ -49,6 +50,15 @@ body { // theme-default
 	--color-priority-top: #ff3535;
 
 	--color-radio-btn-active: #0225ee;
+
+	--color-button-bg: var(--color-bg-secondary);
+	--color-button-content: var(--color-text-negative);
+	// --color-button-bg-hover: var(--color-textfield-bg);
+	--color-button-bg-hover: var(--color-accent-03);
+	--color-button-content-hover: var(--color-text-main);
+
+	--color-new-project-button: var(--color-status-done);
+	--color-new-project-button-hover: var(--color-accent-03);
 }
 
 // body.theme-dark {}

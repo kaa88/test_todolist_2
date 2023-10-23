@@ -3,6 +3,7 @@ import classes from './SortSwitch.module.scss';
 import { TaskSort } from '../../../types/types';
 import { updateSettings } from '../../../store/reducers/userReducer';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
+import Button from '../Button/Button';
 
 interface SortSwitchProps extends ComponentProps<'div'> {}
 
@@ -31,9 +32,9 @@ const SortSwitch = function({className = '', ...props}: SortSwitchProps) {
 	
 	return (
 		<div className={`${className} ${classes.wrapper}`} {...props}>
-			<button className={classes.button} onClick={toggleSortVisibility}>
-				<span>Sort by</span>
-			</button>
+			<Button className={classes.button} variant='negative' onClick={toggleSortVisibility}>
+				Sort by
+			</Button>
 			<div className={`${classes.popup} ${isSortPopupVisible ? classes.visible: ''}`} onClick={(e) => e.stopPropagation()}>
 				{sortItems.map((item, index) =>
 					<label className={classes.sortInput} key={index}>

@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, MouseEvent, useState, useEffect, useRef, ChangeEvent } from 'react';
+import { ComponentPropsWithoutRef, MouseEvent, useState, useEffect, useRef, ChangeEvent, KeyboardEvent } from 'react';
 import classes from './Projects.module.scss';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
@@ -89,9 +89,19 @@ const Projects = function({className = '', children, ...props}: ProjectsProps) {
 		if (!isNaN(projectId)) {
 			let current = projects.find(p => p.id === projectId)
 			if (current) {
-				let isConfirm = window.confirm(`Are you sure you want to delete project: ${current.name}?`)
+				let isConfirm = window.confirm(`Are you sure you want to delete project "${current.name}"?`)
 				if (isConfirm) dispatch(deleteProject(current))
 			}
+		}
+	}
+
+	const handleInputKeydown = (e: KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter') {
+			if (activeModalType === ActiveModalType.create) createProject()
+			if (activeModalType === ActiveModalType.edit) editProject()
+		}
+		if (e.key === 'Escape') {
+			handleModalClose()
 		}
 	}
 
@@ -105,6 +115,7 @@ const Projects = function({className = '', children, ...props}: ProjectsProps) {
 				type="text"
 				value={inputValue}
 				onChange={handleInputChange}
+				onKeyDown={handleInputKeydown}
 				ref={inputRef}
 			/>
 			<div className={classes.modalButtons}>
@@ -118,27 +129,38 @@ const Projects = function({className = '', children, ...props}: ProjectsProps) {
 		</div>
 
 	return (
-		<Container modif="flex">
-			<div className={`${className} ${classes.wrapper}`} {...props}>
-				{isLoading && <Loader />}
-				{loadError && <LoadError message='Error on loading' />}
+		<div className={`${className} ${classes.wrapper}`} {...props}>
+			<Container className={classes.container}>
+				{isLoading && <Loader className={classes.loader} variant='light' />}
+				{loadError && <LoadError className={classes.loadError} variant='light' message='Error on loading' />}
 				{(!loadError) &&
 					<>
-						<ModalLink>
-							<button className={classes.newProjectButton} onClick={handleModalOpen}>
-								<Icon name='icon-cross-bold' />
-							</button>
-						</ModalLink>
 						<div className={classes.list}>
+							<ModalLink>
+								<button className={classes.newProjectButton} onClick={handleModalOpen}>
+									<Icon name='icon-cross-bold' />
+									<span>Create Project</span>
+								</button>
+							</ModalLink>
 							{projects?.map((item, index) =>
-								<div className={classes.project} key={index}>
+								<div className={classes.projectButton} key={index}>
+									<div className={classes.projectInfo}>
+										<p className={classes.projectId}>
+											{`#${item.id}`}
+										</p>
+										<p className={classes.taskCount}>
+											{`${item.taskCount} task${item.taskCount === 1 ? '' : 's'}`}
+										</p>
+									</div>
 									<Link to={`/project/${item.id}`} className={classes.link}>
-										<span>{item.name}</span>
-										<span className={classes.taskCount}>{`${item.taskCount} task${item.taskCount === 1 ? '' : 's'}`}</span>
+										{`project${item.id}`}
 									</Link>
+									<p className={classes.projectName}>
+										{item.name}
+									</p>
 									<div className={classes.buttons}>
 										<button className={classes.editButton} onClick={handleModalOpen} data-id={item.id}>
-											<Icon name='icon-globe' />
+											<Icon name='icon-pen' />
 										</button>
 										<button className={classes.deleteButton} onClick={deleteCurrentProject} data-id={item.id}>
 											<Icon name='icon-cross' />
@@ -149,11 +171,11 @@ const Projects = function({className = '', children, ...props}: ProjectsProps) {
 						</div>
 					</>
 				}
-			</div>
+			</Container>
 			<Modal isActive={activeModalType ? true : false} onClose={handleModalClose}>
 				{modalContent}
 			</Modal>
-		</Container>
+		</div>
 	)
 }
 export default Projects

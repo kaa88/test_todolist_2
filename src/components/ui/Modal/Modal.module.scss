@@ -20,6 +20,9 @@
 		opacity: 1;
 		visibility: visible;
 	}
+	@media (max-width: $media-ml+px) {
+		padding: 0;
+	}
 }
 .closeArea {
 	position: absolute;
@@ -71,12 +74,12 @@
 	max-height: 100vh;
 	overflow-y: auto;
 	overflow-x: hidden;
-	@media (max-width: $media-ml+px) {
-		display: flex;
-		justify-content: center;
-	}
+	// @media (max-width: $media-ml+px) {
+	// 	display: flex;
+	// 	justify-content: center;
+	// }
 	overflow-x: hidden;
-	overflow-y: scroll;
+	overflow-y: auto;
 	scrollbar-width: thin; // = 8px
 	scrollbar-color: var(--color-icons-inactive) transparent; // thumb track
 	&::-webkit-scrollbar {

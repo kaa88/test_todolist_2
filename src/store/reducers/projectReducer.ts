@@ -10,6 +10,11 @@ type LoadError = string
 interface IProjectWithCount extends IProject {
 	taskCount: number
 }
+interface ProjectWithCountPayload {
+	projectId: Id
+	increment?: boolean
+	decrement?: boolean
+}
 
 interface ProjectState {
 	isLoading: LoadingState
@@ -24,6 +29,7 @@ type Actions =
 	| CustomAction<CurrentProject>
 	| CustomAction<IProjectWithCount>
 	| CustomAction<IProjectWithCount[]>
+	| CustomAction<ProjectWithCountPayload>
 
 const initialState: ProjectState = {
 	isLoading: false,
@@ -39,9 +45,10 @@ const SET_CURRENT_PROJECT = 'SET_CURRENT_PROJECT'
 const CREATE_PROJECT = 'CREATE_PROJECT'
 const DELETE_PROJECT = 'DELETE_PROJECT'
 const UPDATE_PROJECT = 'UPDATE_PROJECT'
+const UPDATE_PROJECT_TASK_COUNT = 'UPDATE_PROJECT_TASK_COUNT'
 
 export const projectReducer: Reducer<ProjectState, Actions> = (state = initialState, action) => {
-	let newList: IProjectWithCount[] | null
+	let newList: IProjectWithCount[] | null, index: number
 	switch(action.type) {
 		case SET_PROJECTS_LOADING:
 			return {...state, isLoading: action.payload as LoadingState}
@@ -69,12 +76,27 @@ export const projectReducer: Reducer<ProjectState, Actions> = (state = initialSt
 
 		case UPDATE_PROJECT:
 			const updatedProject = action.payload as IProjectWithCount
-			let index = state.list.findIndex(p => p.id === updatedProject.id)
+			index = state.list.findIndex(p => p.id === updatedProject.id)
 			if (index < 0) return state
 			newList = [...state.list]
 			newList[index] = updatedProject
 			ApiService.projects.edit(updatedProject)
 			return {...state, list: newList}
+
+		case UPDATE_PROJECT_TASK_COUNT:
+			const payload = action.payload as ProjectWithCountPayload
+			index = state.list.findIndex(p => p.id === payload.projectId)
+			if (index < 0) return state
+			newList = [...state.list]
+			let count = newList[index].taskCount || 0
+			if (payload.increment) count += 1
+			if (payload.decrement) count = count > 0 ? count - 1 : count
+			if (newList[index].taskCount !== count) {
+				newList[index].taskCount = count
+				ApiService.projects.edit(newList[index])
+				return {...state, list: newList}
+			}
+			else return state
 
 		default:
 			return state
@@ -85,6 +107,7 @@ export const projectReducer: Reducer<ProjectState, Actions> = (state = initialSt
 export const setCurrentProject: CustomActionCreator<CurrentProject> = (payload) => ({type: SET_CURRENT_PROJECT, payload})
 export const updateProject: CustomActionCreator<IProjectWithCount> = (payload) => ({type: UPDATE_PROJECT, payload})
 export const deleteProject: CustomActionCreator<IProjectWithCount> = (payload) => ({type: DELETE_PROJECT, payload})
+export const updateProjectTaskCount: CustomActionCreator<ProjectWithCountPayload> = (payload) => ({type: UPDATE_PROJECT_TASK_COUNT, payload})
 
 // Thunk Action Creators
 export const createNewProject = (name: IProject['name']): CustomThunkActionCreator<IProjectWithCount | LoadingState | LoadError> => async (dispatch) => {

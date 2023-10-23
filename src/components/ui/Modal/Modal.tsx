@@ -58,14 +58,14 @@ export const Modal = function({variant = 'default', className = '', children, is
 	}
 
 	const modal =
-		<div className={`${className} ${classes[variant]} ${isActive ? classes.active : ''}`}>
+		<div className={`${classes[variant]} ${isActive ? classes.active : ''}`}>
 			{isContentVisible && <>
 				<div className={classes.closeArea} onClick={closeModal}></div>
 				<div className={classes.wrapper}>
 					<div className={classes.closeButton} onClick={closeModal}>
 						<Icon name='icon-cross' />
 					</div>
-					<div className={classes.content}>
+					<div className={`${className} ${classes.content}`}>
 						{contentClone || children}
 					</div>
 				</div>

@@ -1,4 +1,4 @@
-import { ComponentProps, ChangeEvent, useEffect, useState, useRef, MouseEvent } from 'react';
+import { ComponentProps, ChangeEvent, useEffect, useState, useRef, MouseEvent, KeyboardEvent } from 'react';
 import classes from './Search.module.scss';
 import Icon from '../Icon/Icon';
 import { ITask, Id } from '../../../types/types';
@@ -8,6 +8,7 @@ import LoadError from '../Loader/LoadError';
 import { ApiService } from '../../../services/ApiService';
 import { Modal, ModalLink } from '../Modal/Modal';
 import FullTask from '../../parts/FullTask/FullTask';
+import Button from '../Button/Button';
 
 enum ActiveModalType {
 	none = '',
@@ -64,6 +65,9 @@ const Search = function({className = '', ...props}: SearchProps) {
 		}
 	}, [activeModalType])
 
+	const handleInputKeydown = (e: KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Escape') handleModalClose()
+	}
 
 	const searchModalContent =
 		<div className={classes.searchModalContent}>
@@ -76,6 +80,7 @@ const Search = function({className = '', ...props}: SearchProps) {
 					type="text"
 					value={inputValue}
 					onChange={handleInputChange}
+					onKeyDown={handleInputKeydown}
 					placeholder='Search by task ID or title'
 					ref={inputRef}
 				/>
@@ -105,12 +110,12 @@ const Search = function({className = '', ...props}: SearchProps) {
 	return (
 		<div className={`${className} ${classes.wrapper}`} {...props}>
 			<ModalLink>
-				<button className={classes.mainButton} onClick={handleModalOpen}>
+				<Button className={classes.mainButton} variant='negative' onClick={handleModalOpen}>
 					<Icon name='icon-search' />
 					<span>Search tasks</span>
-				</button>
+					</Button>
 			</ModalLink>
-			<Modal isActive={activeModalType ? true : false} onClose={handleModalClose}>
+			<Modal className={classes.modal} isActive={activeModalType ? true : false} onClose={handleModalClose}>
 				{activeModalType ? modalContent[activeModalType] : null}
 			</Modal>
 		</div>

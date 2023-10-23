@@ -1,9 +1,8 @@
-import { ChangeEvent, ComponentProps, useEffect, useState, MouseEvent, ReactElement } from 'react';
+import { ComponentProps, useEffect, useState, ReactElement } from 'react';
 import classes from './Header.module.scss';
 import Icon from '../../ui/Icon/Icon';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
 import { createNewTask } from '../../../store/reducers/taskReducer';
-// import { setActiveModal } from '../../../store/reducers/modalReducer';
 import Loader from '../../ui/Loader/Loader';
 import FullTask from '../FullTask/FullTask';
 import LoadError from '../../ui/Loader/LoadError';
@@ -13,6 +12,9 @@ import Search from '../../ui/Search/Search';
 import { Modal, ModalLink } from '../../ui/Modal/Modal';
 import { PageType } from '../../../types/types';
 import Logo from '../../ui/Logo/Logo';
+import Container from '../../ui/Container/Container';
+import Button from '../../ui/Button/Button';
+import { updateProjectTaskCount } from '../../../store/reducers/projectReducer';
 
 interface HeaderProps extends ComponentProps<'header'> {
 	type?: PageType
@@ -32,7 +34,7 @@ const Header = function({className = '', type}: HeaderProps) {
 	const createTask = () => {
 		if (typeof currentProject === 'number') {
 			dispatch(createNewTask(currentProject))
-			// dispatch(setActiveModal({name: 'newTask', content: newTaskModalContentLoading}))
+			dispatch(updateProjectTaskCount({projectId: currentProject, increment: true}))
 			setModalContent(newTaskModalContentLoading)
 			setIsModalActive(true)
 			setIsWaitingForResponse(true)
@@ -41,7 +43,6 @@ const Header = function({className = '', type}: HeaderProps) {
 	useEffect(() => {
 		if (isWaitingForResponse) {
 			setIsWaitingForResponse(false)
-			// dispatch(setActiveModal({name: 'newTask', content: getNewTaskContent()}))
 			setModalContent(getNewTaskContent())
 		}
 	}, [lastAddedTaskId])
@@ -54,9 +55,6 @@ const Header = function({className = '', type}: HeaderProps) {
 			: <div className={classes.emptyModal}><LoadError className={classes.modalLoader} message='Error on creating a task' /></div>
 	}
 	let [isModalActive, setIsModalActive] = useState(false)
-	// const handleModalOpen = () => {
-		// setIsModalActive(true)
-	// }
 	const handleModalClose = () => {
 		setIsModalActive(false)
 	}
@@ -71,43 +69,47 @@ const Header = function({className = '', type}: HeaderProps) {
 
 
 	const defaultTypeContent =
-		<div className={classes.part}>
-			<Logo />
+		<div className={classes.middlePart}>
 		</div>
 
 	const tasksTypeContent =
-		<div className={classes.part}>
-			<Logo />
+		<div className={classes.middlePart}>
 			<ModalLink>
-				<button className={classes.headerButton} onClick={createTask}>
+				<Button className={classes.button} variant='negative' onClick={createTask}>
 					<Icon name='icon-cross-bold' />
 					<span>Add task</span>
-				</button>
+				</Button>
 			</ModalLink>
 			<Modal isActive={isModalActive} onClose={handleModalClose}>
 				{modalContent}
 			</Modal>
 
-			<button className={classes.headerButton} onClick={toggleSubtasksVisibility}>
+			<Button className={classes.button} variant='negative' onClick={toggleSubtasksVisibility}>
 				<span>
 					{userSettings.showSubtasks
 						? 'Hide all subtasks'
 						: 'Show all subtasks'
 					}
 				</span>
-			</button>
+			</Button>
+
 			<SortSwitch className={classes.sortSwitch} />
 		</div>
 
 
 	return (
 		<header className={`${className} ${classes.header}`}>
-			{type === PageType.tasks ? tasksTypeContent : defaultTypeContent}
-			<div className={classes.search}>
-				<Search />
-			</div>
+			<Container className={classes.container}>
+				<div className={classes.logo}>
+					<Logo />
+				</div>
+				{type === PageType.tasks ? tasksTypeContent : defaultTypeContent}
+				<div className={classes.search}>
+					<Search />
+				</div>
+			</Container>
 		</header>
-)
+	)
 }
 export default Header
 

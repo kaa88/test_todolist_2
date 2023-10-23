@@ -10,9 +10,15 @@
 	grid-template-columns: 50% 50%;
 	grid-column-gap: 6px;
 	grid-row-gap: 3px;
+	@media (max-width: $media-ml+px) {
+		grid-template-columns: 100%;
+	}
 }
 .textBlock {
 	grid-column: span 2;
+	@media (max-width: $media-ml+px) {
+		grid-column: 1;
+	}
 }
 .blockTitle {
 	margin-left: 11px;
@@ -58,6 +64,10 @@ body .taskDescription {
 
 .subtasks {
 	grid-column: 2;
+	@media (max-width: $media-ml+px) {
+		grid-column: 1;
+		margin-top: 5px;
+	}
 }
 .radioButtonsWrapper {
 	margin-top: 10px;
@@ -65,23 +75,34 @@ body .taskDescription {
 }
 .comments {
 	grid-column: span 2;
-	margin-top: 10px;
+	// margin-top: 10px;
+	@media (max-width: $media-ml+px) {
+		grid-column: 1;
+	}
 }
 
-.deleteTaskButton {
-	// grid-column: span 2;
-	// margin-top: 8px;
-	// justify-self: center;
-	// width: 100%;
+.deleteWrapper {
+	grid-column: span 2;
+	position: relative;
+	height: 0;
+	@media (max-width: $media-ml+px) {
+		grid-column: 1;
+	}
+}
+body .deleteTaskButton {
+	position: absolute;
+	top: calc(100% + 6px);
+	right: 0;
+	z-index: 3;
 	height: 24px;
 	padding: 0 10px;
 	border-radius: 8px;
-	max-width: 150px;
-	background-color: var(--color-accent-03);
-	transition: background-color $timer-hover;
-	&:hover {
-		background-color: var(--color-accent-04);
-	}
+	background-color: var(--color-accent-04);
+	color: var(--color-text-main);
+	font-size: 13px;
+	// &:hover {
+	// 	background-color: ;
+	// }
 }
 .attachments {
 	margin-top: 10px;
@@ -92,9 +113,12 @@ body .taskDescription {
 	display: flex;
 	align-items: center;
 	gap: 30px;
+	@media (max-width: $media-ml+px) {
+		grid-column: 1;
+	}
 }
-.infoProject {
-}
+// .infoProject {
+// }
 .projectLink {
 	position: relative;
 	transition: color $timer-hover;

@@ -2,4 +2,4 @@
 
 TODO:
 - popup module
-- project create / delete / edit
+- task dispatches projectTaskCount

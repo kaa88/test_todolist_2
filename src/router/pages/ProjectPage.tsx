@@ -1,14 +1,13 @@
 import { useEffect } from 'react'
-import PageTitle from "../PageTitle"
 import Todos from "../../components/parts/TodosTable/TodosTable"
 import { useParams } from "react-router"
 import { useAppDispatch, useAppSelector } from "../../hooks/typedReduxHooks"
 import ErrorPage from "./ErrorPage"
 import { setCurrentProject } from "../../store/reducers/projectReducer"
 import { closeAllModals } from '../../store/reducers/modalReducer'
-import Header from '../../components/parts/Header/Header'
 import PageLayout from '../PageLayout'
 import { PageType } from '../../types/types'
+import Loader from '../../components/ui/Loader/Loader'
 
 function ProjectPage() {
 
@@ -38,7 +37,7 @@ function ProjectPage() {
 
 	return (
 		isLoading
-			? <p>LOADING</p>
+			? <Loader variant='light' style={{position: 'absolute'}} />
 			: content
 	)
 }

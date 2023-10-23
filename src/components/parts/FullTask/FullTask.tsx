@@ -11,6 +11,8 @@ import TaskTime, { Dates } from '../TaskTime/TaskTime';
 import Comments from '../Comments/Comments';
 import { closeAllModals } from '../../../store/reducers/modalReducer';
 import { Link } from 'react-router-dom';
+import Button from '../../ui/Button/Button';
+import { updateProjectTaskCount } from '../../../store/reducers/projectReducer';
 
 interface TaskProps extends ComponentProps<'div'> {
 	taskObject: ITask
@@ -57,6 +59,7 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 		let confirm = window.confirm('Are you sure you want to delete this task?')
 		if (confirm) {
 			dispatch(deleteTask(task))
+			dispatch(updateProjectTaskCount({projectId: task.projectId, decrement: true}))
 			dispatch(closeAllModals())
 		}
 	}
@@ -86,9 +89,6 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 					<span>Project: </span>
 					<Link className={classes.projectLink} to={'/project/' + task.projectId}>{currentProjectName}</Link>
 				</div>
-				<button className={classes.deleteTaskButton} onClick={deleteCurrentTask}>
-					Delete task
-				</button>
 			</div>
 
 			<div className={classes.taskDetails}>
@@ -123,6 +123,11 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 			<Subtasks className={classes.subtasks} parentId={task.id} />
 			<div className={classes.attachments}>
 				<p className={classes.blockTitle}>Attachments:</p>
+			</div>
+			<div className={classes.deleteWrapper}>
+				<Button className={classes.deleteTaskButton} onClick={deleteCurrentTask}>
+					Delete task
+				</Button>
 			</div>
 			<Comments className={classes.comments} taskId={task.id} />
 		</div>

@@ -1,27 +1,31 @@
 @import '/src/styles/variables.scss';
 
-body .container {
-	flex: 1 1 auto;
-	padding: 0;
-	max-width: 1240px;
-	// height: 100vh;
-	overflow: hidden;
-	display: flex;
-	flex-direction: column;
+.wrapper {
+	height: 100%;
+	& > .container {
+		height: 100%;
+		padding: 0;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+	}
 }
 .header {
 	flex: 0 0 50px;
 }
 .footer {
-	flex: 0 0 30px;
-	padding: 0 10px;
+	flex: 0 0 25px;
 	display: flex;
-	// justify-content: space-between;
 	align-items: center;
-	column-gap: 30px;
-	row-gap: 5px;
+	.container {
+		display: flex;
+		align-items: center;
+		column-gap: 30px;
+		row-gap: 5px;
+	}
 }
 .footerItem {
+	font-size: 13px;
 	color: var(--color-text-negative);
 }
 .table {
@@ -73,7 +77,7 @@ body .container {
 }
 .cellTitleText {
 	padding: 6px;
-	font-size: 20px;
+	font-size: 18px;
 	text-align: center;
 }
 .sortButton {
