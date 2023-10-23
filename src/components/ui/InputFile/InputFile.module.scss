@@ -1,0 +1,14 @@
+.wrapper {
+	position: relative;
+	overflow: hidden;
+	input[type="file"] {
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		width: 150%;
+		height: 150%;
+		opacity: 0;
+		font-size: 0;
+		cursor: pointer;
+	}
+}

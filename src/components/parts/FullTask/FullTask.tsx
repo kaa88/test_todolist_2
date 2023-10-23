@@ -13,6 +13,7 @@ import { closeAllModals } from '../../../store/reducers/modalReducer';
 import { Link } from 'react-router-dom';
 import Button from '../../ui/Button/Button';
 import { updateProjectTaskCount } from '../../../store/reducers/projectReducer';
+import Attachments from '../Attachments/Attachments';
 
 interface TaskProps extends ComponentProps<'div'> {
 	taskObject: ITask
@@ -122,7 +123,7 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 			</div>
 			<Subtasks className={classes.subtasks} parentId={task.id} />
 			<div className={classes.attachments}>
-				<p className={classes.blockTitle}>Attachments:</p>
+				<Attachments />
 			</div>
 			<div className={classes.deleteWrapper}>
 				<Button className={classes.deleteTaskButton} onClick={deleteCurrentTask}>
