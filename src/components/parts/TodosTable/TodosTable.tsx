@@ -12,6 +12,7 @@ import Icon from '../../ui/Icon/Icon';
 import { updateSettings } from '../../../store/reducers/userReducer';
 import { Modal } from '../../ui/Modal/Modal';
 import FullTask from '../FullTask/FullTask';
+import Slider from '../../ui/Slider/Slider';
 
 interface TodosTableProps extends ComponentPropsWithoutRef<'div'> {
 	project: number
@@ -97,7 +98,7 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 		}))
 	}
 
-
+	const isDragEnabled = true ////////
 	const moveTasksOnDrag = false
 	
 	let [currentDraggedTaskID, setCurrentDraggedTaskID] = useState<Id | null>(null)
@@ -168,47 +169,49 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 		<div className={classes.wrapper}>
 			<Container className={classes.container}>
 				
-				<DragDropContext onDragStart={handleDragStart} onDragUpdate={handleDragUpdate} onDragEnd={handleDragEnd}>
+				<DragDropContext enableDefaultSensors={isDragEnabled} onDragStart={handleDragStart} onDragUpdate={handleDragUpdate} onDragEnd={handleDragEnd}>
 					<div className={`${className} ${classes.table} ${isDragging ? classes.isDragging : ''}`}>
 						
 						{isLoading && <Loader className={classes.loader} />}
 						{!!loadError && <LoadError className={classes.loadError} message={loadError} />}
 
-						{taskGroups.map((group, index) =>
-							<Droppable
-								droppableId={group.status}
-								key={index}
-								renderClone={(provided) => (
-									<div
-										className={classes.taskClone}
-										{...provided.draggableProps}
-										{...provided.dragHandleProps}
-										ref={provided.innerRef}
-									>
-										Drop it!
-									</div>
-								)}
-							>
-								{(provided) => (
-									<div className={`${classes.cell} ${classes[group.status]} ${dragHoveredCell === group.status ? classes.isDragHover : ''}`} ref={provided.innerRef}>
-										<div className={classes.cellTitle}>
-											<p className={classes.cellTitleText}>{group.header}</p>
-											<button
-												className={`${classes.sortButton} ${group.isAscending ? classes.ascending : ''}`}
-												onClick={changeGroupOrder}
-												data-status={group.status}
-											>
-												<Icon name='icon-caret' />
-											</button>
+						<Slider className={classes.slider}>
+							{taskGroups.map((group, index) =>
+								<Droppable
+									droppableId={group.status}
+									key={index}
+									renderClone={(provided) => (
+										<div
+											className={classes.taskClone}
+											{...provided.draggableProps}
+											{...provided.dragHandleProps}
+											ref={provided.innerRef}
+										>
+											Drop it!
 										</div>
-										<div className={`${classes.tasks}`}>
-											{getTaskElements(group.list)}
+									)}
+								>
+									{(provided) => (
+										<div className={`${classes.cell} ${classes[group.status]} ${dragHoveredCell === group.status ? classes.isDragHover : ''}`} ref={provided.innerRef}>
+											<div className={classes.cellTitle}>
+												<p className={classes.cellTitleText}>{group.header}</p>
+												<button
+													className={`${classes.sortButton} ${group.isAscending ? classes.ascending : ''}`}
+													onClick={changeGroupOrder}
+													data-status={group.status}
+												>
+													<Icon name='icon-caret' />
+												</button>
+											</div>
+											<div className={`${classes.tasks}`}>
+												{getTaskElements(group.list)}
+											</div>
+											{provided.placeholder}
 										</div>
-										{provided.placeholder}
-									</div>
-								)}
-							</Droppable>
-						)}
+									)}
+								</Droppable>
+							)}
+						</Slider>
 					</div>
 				</DragDropContext>
 

@@ -30,18 +30,25 @@
 }
 .table {
 	flex: 1 1 auto;
-	position: relative;
-	margin: 0 auto;
-	width: 100%;
-	display: grid;
-	grid-template-columns: repeat(3, 33%);
-	grid-gap: 3px;
-	// padding: 3px;
-	justify-content: space-around;
-	background-color: var(--color-bg-secondary);
-	border-radius: 10px;
 	overflow: hidden;
+	@media (min-width: $media-mxl+1+px) {
+		border-radius: 10px;
+	}
 }
+// .slider {
+// 	@media (min-width: $media-mxl+1+px) {
+// 		position: relative;
+// 		margin: 0 auto;
+// 		width: 100%;
+// 		display: grid;
+// 		grid-template-columns: repeat(3, 33%);
+// 		grid-gap: 3px;
+// 		justify-content: space-around;
+// 		background-color: var(--color-bg-secondary);
+// 		border-radius: 10px;
+// 		overflow: hidden;
+// 	}
+// }
 .cell {
 	position: relative;
 	width: 100%;
