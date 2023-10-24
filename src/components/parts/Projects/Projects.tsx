@@ -132,7 +132,7 @@ const Projects = function({className = '', children, ...props}: ProjectsProps) {
 		<div className={`${className} ${classes.wrapper}`} {...props}>
 			<Container className={classes.container}>
 				{isLoading && <Loader className={classes.loader} variant='light' />}
-				{loadError && <LoadError className={classes.loadError} variant='light' message='Error on loading' />}
+				{!!loadError && <LoadError className={classes.loadError} variant='light' message='Error on loading' />}
 				{(!loadError) &&
 					<>
 						<div className={classes.list}>

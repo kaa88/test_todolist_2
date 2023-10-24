@@ -1,15 +1,8 @@
 @import '/src/styles/variables.scss';
 
 .wrapper {
-	
+	position: relative;
 }
-
-.blockTitle {
-	margin-left: 11px;
-	margin-bottom: 5px;
-	font-size: 15px;
-}
-
 .list {
 	margin-top: 5px;
 	display: flex;
@@ -17,42 +10,39 @@
 	gap: 5px;
 }
 .file {
-	// width: 50px;
-	max-width: 150px;
-	height: 30px;
+	max-width: 250px;
 	padding: 5px;
 	display: flex;
-	// flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	border: solid 1px var(--color-text-inactive);
+	border: solid 1px transparent;
 	border-radius: 10px;
+	transition: all $timer-hover;
+	&:hover {
+		border-color: var(--color-text-inactive);
+	}
 }
 .fileIcon {
-	margin-right: 6px;
-	width: 20px;
-	height: 20px;
+	margin-right: 4px;
+	width: 18px;
+	height: 18px;
 }
 .fileName {
 	@include text-nowrap();
-	font-size: 15px;
-}
-.fileInfo {
-	@include text-max-lines(2);
 	font-size: 13px;
-	display: none;
 }
 
-.inputFile {
-	display: flex;
+.inputFileWrapper {
+	display: grid;
+	grid-template-columns: auto 1fr;
 	align-items: center;
-	gap: 10px;
+	column-gap: 10px;
+	row-gap: 5px;
 }
 .addFileButton {
 	position: relative;
 	height: 32px;
 	font-size: 15px;
-	line-height: 0.9;
 	padding: 0 rem(15);
 	overflow: hidden;
 	display: inline-flex;
@@ -74,19 +64,49 @@
 		transform: rotate(45deg);
 	}
 	span {
-		// @include text-max-lines(2);
-	}
-	input {
-		position: absolute;
-		bottom: 0;
-		right: 0;
-		width: 1000%;
-		height: 1000%;
-		cursor: pointer;
-		opacity: 0;
+		height: 100%;
+		display: flex;
+		align-items: center;
 	}
 }
+.inputFileName {
+	@include text-nowrap();
+	grid-row: 2;
+	margin-left: 11px;
+	font-size: 15px;
+}
+.fileInput {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 1000%;
+	height: 1000%;
+	cursor: pointer;
+	opacity: 0;
+}
+.descriptionInput {
+	grid-row: 3;
+	grid-column: span 2;
+	height: 28px;
+	line-height: 19px;
+	padding: 4px 10px;
+	font-size: 14px;
+	background-color: var(--color-textfield-bg);
+	border-radius: 8px;
+	border: solid 1px transparent;
+	transition: border-color $timer-hover;
+	&:focus {
+		border-color: var(--color-textfield-focus);
+	}
+	&::placeholder {
+		color: var(--color-text-inactive);
+	}
+}
+
 .inputButtons {
+	grid-row: 1;
+	grid-column: 2;
+	justify-self: start;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -121,4 +141,10 @@
 		height: 60%;
 		fill: var(--color-error);
 	}
+}
+body .loader, .loadError {
+	position: absolute;
+	top: 0;
+	left: 0;
+	justify-content: flex-start;
 }

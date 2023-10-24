@@ -1,10 +1,11 @@
 import { api, ApiData, ApiGetResponse, ApiResponse } from '../api/api'
-import { Id, IComment, IProject, ITask, IUserSettings } from '../types/types'
+import { Id, IComment, IProject, ITask, IUserSettings, IFile } from '../types/types'
 import { _waitServerResponse } from '../utilities/utilities'
 
 const PROJECTS_PATH = '/api/projects'
 const TASKS_PATH = '/api/tasks'
 const COMMENTS_PATH = '/api/comments'
+const FILES_PATH = '/api/files'
 const SETTINGS_PATH = '/api/settings'
 
 
@@ -79,6 +80,22 @@ export const ApiService = { // fake fetcher
 		},
 		async delete(commentId: Id) {
 			return await api.delete(`${COMMENTS_PATH}?id=${commentId}`)
+		},
+	},
+	files: {
+		async get(taskId: Id | null) {
+			let files = await api.get<IFile>(FILES_PATH)
+			if (taskId !== null) {
+				let data = files.data ? files.data.filter(file => file.taskId === taskId) : []
+				return {...files, data} as ApiGetResponse<IFile>
+			}
+			return files
+		},
+		async add(file: IFile) {
+			return await api.post(FILES_PATH, {data: file})
+		},
+		async delete(fileId: Id) {
+			return await api.delete(`${FILES_PATH}?id=${fileId}`)
 		},
 	},
 	settings: {

@@ -1,16 +1,18 @@
 // fake API through localStorage
 
 import { _waitServerResponse } from '../utilities/utilities'
-import { IComment, IProject, ITask, IUserSettings } from '../types/types'
+import { IComment, IFile, IProject, ITask, IUserSettings } from '../types/types'
 import defaultProjects from './defaultProjects.json'
 import defaultTasks from './defaultTasks.json'
 import defaultComments from './defaultComments.json'
+import defaultFiles from './defaultFiles.json'
 import defaultUserSettings from './defaultUserSettings.json'
 
 const defaults: {[key: string]: ApiData[]} = {
 	projects: defaultProjects as IProject[],
 	tasks: defaultTasks as ITask[],
 	comments: defaultComments as IComment[],
+	files: defaultFiles as IFile[],
 	settings: defaultUserSettings as IUserSettings[],
 }
 
@@ -21,15 +23,10 @@ interface ParsedUrl {
 	query?: {[key: string]: string | number}
 }
 
-// export enum ApiRequest { //?
-// 	projects = 'projects',
-// 	tasks = 'tasks',
-// 	comments = 'comments'
-// }
-export type ApiData = IProject | ITask | IComment | IUserSettings
+export type ApiData = IProject | ITask | IComment | IFile | IUserSettings
 
 export interface ApiBody<T> {
-	data: T//ApiData
+	data: T
 }
 export interface ApiResponse {
 	ok?: boolean
@@ -38,10 +35,6 @@ export interface ApiResponse {
 export interface ApiGetResponse<T> extends ApiResponse {
 	data?: T[]
 }
-// interface Api {
-// 	[key: string]: (url: Url, body: ApiBody) => Promise<ApiResponse>
-	// get: <T extends ApiData>(url: Url) => Promise<ApiGetResponse<T>>
-// }
 
 export const api = {
 

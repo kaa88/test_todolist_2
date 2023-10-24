@@ -1,6 +1,6 @@
 import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
-import { Id, ISubtask, ITask, TaskPriority, TaskStatus } from "../../types/types"
+import { Id, ITask, TaskPriority, TaskStatus } from "../../types/types"
 import { ApiService } from "../../services/ApiService"
 import { objectIsEmpty } from "../../utilities/utilities"
 
@@ -20,18 +20,14 @@ interface TaskUpdatePayload {
 		subtasks?: ITask['subtasks']
 	}
 }
-export type CommentCountPayload = {
+export type CountPayload = {
 	taskId: Id
 	count?: number
 	increment?: boolean
 	decrement?: boolean
 }
-// interface SubtaskPayload {
-// 	taskId: Id
-// 	subtasks: ISubtask[]
-// }
 
-type Payloads = TaskUpdatePayload | CommentCountPayload // | SubtaskPayload
+type Payloads = TaskUpdatePayload | CountPayload
 
 type Actions =
 	  CustomAction<LoadingState>
@@ -39,8 +35,7 @@ type Actions =
 	| CustomAction<ITask>
 	| CustomAction<ITask[]>
 	| CustomAction<TaskUpdatePayload>
-	// | CustomAction<SubtaskPayload>
-	| CustomAction<CommentCountPayload>
+	| CustomAction<CountPayload>
 
 interface TaskState {
 	isLoading: LoadingState
@@ -62,9 +57,8 @@ const SET_PROJECT_TASK_LIST = 'SET_PROJECT_TASK_LIST'
 const CREATE_TASK = 'CREATE_TASK'
 const DELETE_TASK = 'DELETE_TASK'
 const UPDATE_TASK = 'UPDATE_TASK'
-// const UPDATE_TASK_SUBTASKS = 'UPDATE_TASK_SUBTASKS'
 const UPDATE_TASK_COMMENT_COUNT = 'UPDATE_TASK_COMMENT_COUNT'
-// const UPDATE_TASK_ATTACHED = 'UPDATE_TASK_ATTACHED'
+const UPDATE_TASK_FILE_COUNT = 'UPDATE_TASK_FILE_COUNT'
 
 export const taskReducer: Reducer<TaskState, Actions> = (state = initialState, action) => {
 	let newList: ITask[] | null, newTaskCallback: NewTaskCallback
@@ -98,15 +92,21 @@ export const taskReducer: Reducer<TaskState, Actions> = (state = initialState, a
 			return newList ? {...state, list: newList} : state
 
 		case UPDATE_TASK_COMMENT_COUNT:
-			const commentPayload = action.payload as CommentCountPayload
+			const commentPayload = action.payload as CountPayload
 			newTaskCallback = (task) => {
-				let count = task.commentsCount || 0
-				if (commentPayload.increment) count += 1
-				if (commentPayload.decrement) count = count > 0 ? count - 1 : count
-				if (commentPayload.count) count = commentPayload.count
+				let count = updateCountValue(task.commentsCount, commentPayload)
 				return {...task, commentsCount: count}
 			}
 			newList = getUpdatedList(state.list, commentPayload, newTaskCallback)
+			return newList ? {...state, list: newList} : state
+
+		case UPDATE_TASK_FILE_COUNT:
+			const filePayload = action.payload as CountPayload
+			newTaskCallback = (task) => {
+				let count = updateCountValue(task.filesCount, filePayload)
+				return {...task, filesCount: count}
+			}
+			newList = getUpdatedList(state.list, filePayload, newTaskCallback)
 			return newList ? {...state, list: newList} : state
 
 		default:
@@ -116,7 +116,8 @@ export const taskReducer: Reducer<TaskState, Actions> = (state = initialState, a
 
 // Action Creators
 export const updateTask: CustomActionCreator<TaskUpdatePayload> = (payload) => ({type: UPDATE_TASK, payload})
-export const updateCommentCount: CustomActionCreator<CommentCountPayload> = (payload) => ({type: UPDATE_TASK_COMMENT_COUNT, payload})
+export const updateCommentCount: CustomActionCreator<CountPayload> = (payload) => ({type: UPDATE_TASK_COMMENT_COUNT, payload})
+export const updateFileCount: CustomActionCreator<CountPayload> = (payload) => ({type: UPDATE_TASK_FILE_COUNT, payload})
 export const deleteTask: CustomActionCreator<ITask> = (payload) => ({type: DELETE_TASK, payload})
 
 // Thunk Action Creators
@@ -166,3 +167,10 @@ function getUpdatedList(currentList: ITask[], payload: Payloads, getNewTask: New
 	ApiService.tasks.edit(newTask) // Sorry, I have to put it down here for a while
 	return newList
 }
+function updateCountValue (count: number = 0, payload: CountPayload) {
+	if (payload.increment) count += 1
+	if (payload.decrement) count = count > 0 ? count - 1 : count
+	if (payload.count) count = payload.count
+	return count
+}
+

@@ -22,11 +22,6 @@ interface TaskProps extends ComponentProps<'div'> {
 const FullTask = function({className = '', taskObject: task}: TaskProps) {
 	const dispatch = useAppDispatch()
 
-	// const priority = 'priority_' + task.priority
-	// const comments = task.commentIds
-	// const attached = task.attached
-
-
 	let [title, setTitle] = useState(task.title)
 	let [isTitleError, setIsTitleError] = useState(false)
 	const updateTitle: InteractiveInputCallback = (value) => {
@@ -123,7 +118,7 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 			</div>
 			<Subtasks className={classes.subtasks} parentId={task.id} />
 			<div className={classes.attachments}>
-				<Attachments />
+				<Attachments taskId={task.id} />
 			</div>
 			<div className={classes.deleteWrapper}>
 				<Button className={classes.deleteTaskButton} onClick={deleteCurrentTask}>

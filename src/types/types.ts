@@ -14,6 +14,11 @@ export enum TaskSort {
 	expiration = 'expiration',
 	priority = 'priority',
 }
+export enum PageType {
+	default = '',
+	projects = 'projects',
+	tasks = 'tasks',
+}
 
 export type Id = number
 
@@ -34,6 +39,7 @@ export interface ITask {
 	subtasks: ISubtask[]
 	attached: string[]
 	commentsCount?: number
+	filesCount?: number
 }
 export interface ISubtask {
 	title: string
@@ -44,23 +50,22 @@ export interface INewComment {
 	date: number
 	author: string
 	content: string
-	// isSub: boolean
 }
 export interface IComment extends INewComment {
 	id: Id
 	taskId: Id
-	// subcomments: Id[]
 	rating: number
+}
+export interface IFile {
+	id: Id
+	taskId: Id
+	date: number
+	path: string
+	description: string
 }
 export interface IUserSettings {
 	id: Id
 	showSubtasks?: boolean
 	sortBy?: TaskSort
 	taskGroupAscendingOrder?: {[key: string]: boolean}
-}
-
-export enum PageType {
-	default = '',
-	projects = 'projects',
-	tasks = 'tasks',
 }

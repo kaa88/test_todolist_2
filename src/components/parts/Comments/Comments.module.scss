@@ -75,12 +75,8 @@
 	}
 }
 body .addCommentButtonBig {
-	// padding: 6px 10px;
-	// display: flex;
-	// align-items: center;
 	height: 32px;
 	font-size: 15px;
-	// border-radius: 8px;
 	background-color: var(--color-accent-03);
 	&:hover {
 		background-color: var(--color-accent-04);
@@ -91,14 +87,12 @@ body .addCommentButtonBig {
 		width: 10px;
 		height: 10px;
 		transform: rotate(45deg);
-		// fill: var(--color-icons-main);
 	}
 }
 .content {
 	flex: 1 1 100%;
 	margin-left: 10px;
 }
-
 
 // .newComment {
 // }

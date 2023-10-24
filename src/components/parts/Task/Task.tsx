@@ -75,7 +75,7 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 	const priority = 'priority_' + task.priority
 
 	const comments = task.commentsCount || 0
-	const attachments = 99
+	const attachments = task.filesCount || 0
 	const remainingTime = DateService.getRemainingTime(Date.now(), task.expireDate)
 
 	const expiredClassName = task.expireDate - Date.now() <= 0 ? classes.expired : ''

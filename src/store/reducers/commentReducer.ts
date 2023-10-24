@@ -2,7 +2,7 @@ import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
 import { Id, IComment } from "../../types/types"
 import { ApiService } from "../../services/ApiService"
-import { updateCommentCount, CommentCountPayload } from "./taskReducer"
+import { updateCommentCount, CountPayload } from "./taskReducer"
 
 type LoadingState = boolean
 type LoadError = string
@@ -41,17 +41,22 @@ export const commentReducer: Reducer<CommentState, Actions> = (state = initialSt
 	switch(action.type) {
 		case SET_COMMENTS_LOADING:
 			return {...state, isLoading: action.payload as LoadingState}
+
 		case SET_COMMENTS_ERROR:
 			return {...state, loadError: action.payload as LoadError}
+
 		case UPDATE_ALL_COMMENTS:
 			return {...state, list: action.payload as IComment[]}
+
 		case CLEAR_COMMENT_LIST:
 			return {...state, list: initialState.list}
+
 		case RESTORE_PREV_COMMENT_LIST:
 			const taskId = action.payload as Id
 			if (taskId !== state.prevTaskId)
 				return {...state, list: initialState.list, prevTaskId: taskId}
 			else return state
+
 		case UPDATE_COMMENT:
 			comment = action.payload as IComment
 			index = state.list.findIndex(c => c.id === comment.id)
@@ -60,11 +65,13 @@ export const commentReducer: Reducer<CommentState, Actions> = (state = initialSt
 			newList[index] = comment
 			ApiService.comments.edit(comment)
 			return {...state, list: newList}
+
 		case ADD_COMMENT:
 			const [newComment] = action.payload as IComment[]
 			newList = [...state.list]
 			newList.push(newComment)
 			return {...state, list: newList}
+			
 		default:
 			return state
 	}
@@ -73,7 +80,7 @@ export const commentReducer: Reducer<CommentState, Actions> = (state = initialSt
 export const clearCommentList: CustomActionCreator = () => ({type: CLEAR_COMMENT_LIST, payload: null})
 export const updateComment: CustomActionCreator<IComment> = (payload) => ({type: UPDATE_COMMENT, payload})
 
-export const createComment = (newComment: IComment): CustomThunkActionCreator<IComment[] | LoadingState | LoadError | CommentCountPayload> => async (dispatch) => {
+export const createComment = (newComment: IComment): CustomThunkActionCreator<IComment[] | LoadingState | LoadError | CountPayload> => async (dispatch) => {
 	dispatch({type: SET_COMMENTS_LOADING, payload: true})
 	dispatch({type: SET_COMMENTS_ERROR, payload: ''})
 

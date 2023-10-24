@@ -72,7 +72,7 @@ const Search = function({className = '', ...props}: SearchProps) {
 	const searchModalContent =
 		<div className={classes.searchModalContent}>
 			{isLoading && <Loader className={classes.loader} />}
-			{loadError && <LoadError className={classes.loadError} message='Search module error' />}
+			{!!loadError && <LoadError className={classes.loadError} message='Search module error' />}
 			<div className={classes.inputWrapper}>
 				<Icon className={classes.inputIcon} name='icon-search' />
 				<input
