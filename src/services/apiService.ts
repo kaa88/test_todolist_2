@@ -1,6 +1,5 @@
 import { api, ApiData, ApiGetResponse, ApiResponse } from '../api/api'
 import { Id, IComment, IProject, ITask, IUserSettings, IFile } from '../types/types'
-import { _waitServerResponse } from '../utilities/utilities'
 
 const PROJECTS_PATH = '/api/projects'
 const TASKS_PATH = '/api/tasks'
@@ -23,24 +22,8 @@ class Actions<T extends ApiData> {
 }
 
 
-export const ApiService = { // fake fetcher
+export const ApiService = {
 	projects: new Actions<IProject>(PROJECTS_PATH),
-	// tasks: new Actions<ITask>(ApiRequest.tasks),
-	// comments: new Actions<IComment>(COMMENTS_PATH),
-
-	// // projects
-	// async getProjects() {
-	// 	return await api.get(ApiRequest.projects)
-	// },
-	// async addProject(project: IProject) {
-	// 	return await api.post(ApiRequest.projects, {data: project})
-	// },
-	// async editProject(project: IProject) {
-	// 	return await api.put(ApiRequest.projects, {data: project})
-	// },
-	// async deleteProject(project: IProject) {
-	// 	return await api.delete(ApiRequest.projects, {data: project})
-	// },
 	tasks: {
 		async getAll(projectId: Id | null) {
 			let tasks = await api.get<ITask>(TASKS_PATH)

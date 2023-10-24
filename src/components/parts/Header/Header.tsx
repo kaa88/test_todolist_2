@@ -15,12 +15,20 @@ import Logo from '../../ui/Logo/Logo';
 import Container from '../../ui/Container/Container';
 import Button from '../../ui/Button/Button';
 import { updateProjectTaskCount } from '../../../store/reducers/projectReducer';
+import { transitionIsLocked } from '../../../utilities/transitionLock';
+import { getCssVariable } from '../../../utilities/utilities';
 
 interface HeaderProps extends ComponentProps<'header'> {
 	type?: PageType
 }
 
+let menuTimeout = 0
+let mobileBreakpoint = 0
+
 const Header = function({className = '', type}: HeaderProps) {
+
+	if (!menuTimeout) menuTimeout = getCssVariable('timer-menu') * 1000
+	if (!mobileBreakpoint) mobileBreakpoint = getCssVariable('media-mobile')
 
 	const dispatch = useAppDispatch()
 
@@ -35,6 +43,7 @@ const Header = function({className = '', type}: HeaderProps) {
 		if (typeof currentProject === 'number') {
 			dispatch(createNewTask(currentProject))
 			dispatch(updateProjectTaskCount({projectId: currentProject, increment: true}))
+			closeMenu()
 			setModalContent(newTaskModalContentLoading)
 			setIsModalActive(true)
 			setIsWaitingForResponse(true)
@@ -67,13 +76,40 @@ const Header = function({className = '', type}: HeaderProps) {
 	}
 	// /Show subtasks
 
+	// Menu
+	let [isMenuActive, setIsMenuActive] = useState(false)
+	const toggleMenu = () => {
+		if (transitionIsLocked(menuTimeout)) return;
+		setIsMenuActive(isMenuActive ? false : true)
+	}
+	const closeMenu = () => {
+		setIsMenuActive(false)
+	}
 
-	const defaultTypeContent =
-		<div className={classes.middlePart}>
+	const checkIfMobileView = () => window.innerWidth <= mobileBreakpoint ? true : false
+	const updateViewport = () => setIsMobileState(checkIfMobileView())
+	let [isMobileState, setIsMobileState] = useState(checkIfMobileView())
+
+	useEffect(() => {
+		window.addEventListener('resize', closeMenu)
+		window.addEventListener('resize', updateViewport)
+		return () => {
+			window.removeEventListener('resize', closeMenu)
+			window.removeEventListener('resize', updateViewport)
+		}
+	}, []) // eslint-disable-line react-hooks/exhaustive-deps
+	// /Menu
+
+	
+	const defaultTypeContent = null
+
+	const projectsTypeContent =
+		<div className={classes.content}>
+			<Search />
 		</div>
 
 	const tasksTypeContent =
-		<div className={classes.middlePart}>
+		<div className={classes.content}>
 			<ModalLink>
 				<Button className={classes.button} variant='negative' onClick={createTask}>
 					<Icon name='icon-cross-bold' />
@@ -84,6 +120,8 @@ const Header = function({className = '', type}: HeaderProps) {
 				{modalContent}
 			</Modal>
 
+			<SortSwitch className={classes.sortSwitch} />
+
 			<Button className={classes.button} variant='negative' onClick={toggleSubtasksVisibility}>
 				<span>
 					{userSettings.showSubtasks
@@ -93,19 +131,32 @@ const Header = function({className = '', type}: HeaderProps) {
 				</span>
 			</Button>
 
-			<SortSwitch className={classes.sortSwitch} />
+			<Search closeMenuCallback={closeMenu} />
 		</div>
 
+	let headerContent
+	switch(type) {
+		case PageType.projects: headerContent = projectsTypeContent; break;
+		case PageType.tasks: headerContent = tasksTypeContent; break;
+		default: headerContent = defaultTypeContent
+	}
 
 	return (
 		<header className={`${className} ${classes.header}`}>
 			<Container className={classes.container}>
-				<div className={classes.logo}>
-					<Logo />
+				<div className={classes.logoWrapper}>
+					<Logo className={classes.logo} />
 				</div>
-				{type === PageType.tasks ? tasksTypeContent : defaultTypeContent}
-				<div className={classes.search}>
-					<Search />
+
+				<div className={classes.menu}>
+					{isMobileState &&
+						<button className={`${classes.menuButton} ${isMenuActive ? classes.active : ''}`} onClick={toggleMenu}>
+							<Icon name='icon-menu' />
+						</button>
+					}
+					<div className={`${classes.menuWrapper} ${isMobileState ? classes.mobile : ''} ${isMenuActive ? classes.active : ''}`}>
+						{headerContent}
+					</div>
 				</div>
 			</Container>
 		</header>

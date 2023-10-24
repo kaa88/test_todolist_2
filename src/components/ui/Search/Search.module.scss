@@ -7,6 +7,10 @@
 }
 
 body .mainButton {
+	@media (max-width: $media-mxl+px) {
+		width: 100%;
+		max-width: 999px;
+	}
 	svg {
 		margin-bottom: 2px;
 		margin-right: 8px;

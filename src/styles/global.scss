@@ -57,4 +57,7 @@ body {
 	grid-template-columns: 100%;
 	grid-template-rows: 50px calc(100vh - 50px);
 	overflow: hidden;
+	@media (max-width: $media-mxl+px) {
+		grid-template-rows: 40px calc(100vh - 40px);
+	}
 }

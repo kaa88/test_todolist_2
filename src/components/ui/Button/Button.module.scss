@@ -15,6 +15,7 @@
 	user-select: none;
 	transition: background-color $timer-hover, color $timer-hover, fill $timer-hover;
 	svg {
+		flex: 0 0 auto;
 		margin-right: 8px;
 		width: 20px;
 		height: 20px;

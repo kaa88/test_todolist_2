@@ -33,7 +33,7 @@ function ProjectPage() {
 		if (currentProject && current !== id) dispatch(setCurrentProject(currentProject.id))
 	}, [currentProject, id, current])
 
-	useEffect(() => {dispatch(closeAllModals())}) // if any opened
+	useEffect(() => {dispatch(closeAllModals())}, [current]) // if any opened
 
 	return (
 		isLoading

@@ -16,10 +16,12 @@ enum ActiveModalType {
 	task = 'task'
 }
 
-interface SearchProps extends ComponentProps<'div'> {}
+interface SearchProps extends ComponentProps<'div'> {
+	closeMenuCallback?: () => void
+}
 
 
-const Search = function({className = '', ...props}: SearchProps) {
+const Search = function({className = '', closeMenuCallback, ...props}: SearchProps) {
 
 	const loadData = async () => {
 		let response = await ApiService.tasks.getAll(null)
@@ -42,6 +44,7 @@ const Search = function({className = '', ...props}: SearchProps) {
 	let [currentTaskId, setCurrentTaskId] = useState<Id>(0)
 	const handleModalOpen = () => {
 		setActiveModalType(ActiveModalType.search)
+		if (closeMenuCallback) closeMenuCallback()
 	}
 	const handleModalClose = () => {
 		setActiveModalType(ActiveModalType.none)

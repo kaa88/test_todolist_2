@@ -1,6 +1,8 @@
 @import '/src/styles/variables.scss';
 
 .header {
+	position: relative;
+	z-index: 59;
 	height: 100%;
 	display: flex;
 	align-items: center;
@@ -10,29 +12,87 @@
 }
 .container {
 	// padding: 0 10px;
+	height: 100%;
 	display: flex;
 	column-gap: 30px;
 	justify-content: space-between;
 	align-items: center;
 }
-.logo {
+.logoWrapper {
 	flex: 0 0 auto;
+}
+body .logo {
+	@media (max-width: $media-mxl+px) {
+		font-size: 13px;
+	}
 }
 .search {
 	flex: 0 0 auto;
 	display: flex;
 	justify-content: flex-end;
 }
-.middlePart {
+.menu {
+	height: 100%;
+	display: flex;
+	align-items: center;
+}
+.menuButton {
+	width: 50px;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: transparent;
+	fill: var(--color-icons-negative);
+	transition: fill $timer-hover;
+	&:hover {
+		fill: var(--color-button-bg-hover);
+	}
+	svg {
+		width: 74%;
+		height: 74%;
+	}
+	&.active {
+		fill: var(--color-button-bg-hover);
+	}
+}
+.menuWrapper {
+	background-color: var(--color-bg-secondary);
+	@media (max-width: $media-mxl+px) {
+		position: absolute;
+		top: 100%;
+		right: 0;
+		width: 100vw;
+		height: 100vh;
+		padding: 5px 10px;
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity $timer-menu, visibility $timer-menu;
+	}
+	&.active {
+		opacity: 1;
+		visibility: visible;
+	}
+}
+
+.content {
 	flex: 1 1 auto;
 	display: flex;
 	justify-content: center;
 	column-gap: 30px;
+	@media (max-width: $media-mxl+px) {
+		width: 250px;
+		margin: 0 auto;
+		flex-direction: column;
+		gap: 20px;
+	}
 }
-.headerItem {
-	background-color: var(--color-bg-main);
-}
+
 body .button {
+	@media (max-width: $media-mxl+px) {
+		width: 100%;
+		max-width: 999px;
+	}
 	svg {
 		margin-bottom: 2px;
 		margin-right: 10px;
