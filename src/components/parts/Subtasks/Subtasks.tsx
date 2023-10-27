@@ -135,8 +135,8 @@ const Subtask = forwardRef<HTMLDivElement, SubtaskProps>(function({
 	}
 
 	return (
-		<div className={`${className} ${classes.subtask} ${isDone ? classes.status_done : ''} ${noSwipingClass}`} {...props} ref={ref}>
-			<div className={classes.dragButton} {...dragHandleProps}>
+		<div className={`${className} ${classes.subtask} ${isDone ? classes.status_done : ''}`} {...props} ref={ref}>
+			<div className={`${classes.dragButton} ${noSwipingClass}`} {...dragHandleProps}>
 				<Icon name='icon-drag' />
 			</div>
 			<button
@@ -146,7 +146,7 @@ const Subtask = forwardRef<HTMLDivElement, SubtaskProps>(function({
 				<Icon name='icon-ok' />
 			</button>
 			<InteractiveInput value={value === null ? title : value} confirmCallback={updateTitle}>
-				<AutoResizeTextarea className={`${classes.subtaskTitle} ${noSwipingClass}`} wrapperClassName={classes.autoResizeTextareaWrapper} />
+				<AutoResizeTextarea className={`${classes.subtaskTitle}`} wrapperClassName={classes.autoResizeTextareaWrapper} />
 			</InteractiveInput>
 			<button
 				className={classes.deleteButton}
@@ -199,7 +199,7 @@ const NewSubtask = function({ createCallback, className = '', ...props }: NewSub
 	}, [isComfirm])
 
 	return (
-		<div className={`${className} ${classes.newSubtask} ${noSwipingClass}`} {...props}>
+		<div className={`${className} ${classes.newSubtask}`} {...props}>
 			<div className={classes.newSubtaskIcon}>
 				<Icon name='icon-cross-bold' />
 			</div>

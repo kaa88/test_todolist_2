@@ -16,6 +16,9 @@
 	&::-webkit-scrollbar {
 		width: 0;
 	}
+}
+.input {
+	overflow: hidden;
 	&:focus + .inputsBackground {
 		border-color: var(--color-focus);
 	}

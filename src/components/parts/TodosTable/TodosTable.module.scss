@@ -75,6 +75,18 @@
 	height: var(--table-main-height);
 	overflow-y: auto;
 	background-color: var(--color-bg-secondary);
+	
+	scrollbar-width: thin; // = 8px
+	scrollbar-color: var(--color-icons-inactive) transparent; // thumb track
+	&::-webkit-scrollbar {
+		width: 8px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: var(--color-icons-inactive);
+	}
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
 }
 .cellsWrapper {
 	height: auto;
