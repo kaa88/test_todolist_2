@@ -131,6 +131,9 @@ $col-gap: 4px;
 		height: 20px;
 		fill: var(--color-icons-inactive);
 	}
+	@media (max-width: $media-mxl+px) {
+		display: none;
+	}
 }
 .spoilerButton {
 	margin-right: $col-gap;

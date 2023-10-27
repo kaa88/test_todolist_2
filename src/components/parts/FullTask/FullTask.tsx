@@ -1,4 +1,4 @@
-import { ComponentProps, useState } from 'react';
+import { ComponentProps, useState, memo } from 'react';
 import classes from './FullTask.module.scss';
 import { ITask, TaskPriority, TaskStatus } from '../../../types/types';
 import Subtasks from '../Subtasks/Subtasks';
@@ -19,7 +19,7 @@ interface TaskProps extends ComponentProps<'div'> {
 	taskObject: ITask
 }
 
-const FullTask = function({className = '', taskObject: task}: TaskProps) {
+const FullTask = memo(function({className = '', taskObject: task}: TaskProps) {
 	const dispatch = useAppDispatch()
 
 	let [title, setTitle] = useState(task.title)
@@ -128,7 +128,7 @@ const FullTask = function({className = '', taskObject: task}: TaskProps) {
 			<Comments className={classes.comments} taskId={task.id} />
 		</div>
 	)
-}
+})
 export default FullTask
 
 

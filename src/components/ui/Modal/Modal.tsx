@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useState, MouseEvent, cloneElement, ReactElement, ReactNode } from 'react';
+import { ComponentProps, useEffect, useState, MouseEvent, cloneElement, ReactElement, ReactNode, memo } from 'react';
 import { createPortal } from 'react-dom';
 import classes from './Modal.module.scss';
 import { getCssVariable } from '../../../utilities/utilities';
@@ -17,7 +17,7 @@ const modalContainerEl = document.getElementById('modal')
 let timeout = 0
 
 
-export const Modal = function({variant = 'default', className = '', children, isActive, onClose}: ModalProps) {
+export const Modal = memo(function({variant = 'default', className = '', children, isActive, onClose}: ModalProps) {
 
 	if (!timeout) timeout = getCssVariable('timer-modal') * 1000
 
@@ -73,7 +73,7 @@ export const Modal = function({variant = 'default', className = '', children, is
 		</div>
 
 	return createPortal(modal, modalContainerEl)
-}
+})
 
 
 

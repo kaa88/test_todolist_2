@@ -1,11 +1,11 @@
-import { ComponentPropsWithoutRef, useEffect, useState, MouseEvent } from 'react';
+import { ComponentPropsWithoutRef, useEffect, useState, MouseEvent, useRef, RefObject } from 'react';
 import classes from './TodosTable.module.scss';
 import Container from '../../ui/Container/Container';
 import { ITask, Id, TaskPriority, TaskSort, TaskStatus } from '../../../types/types';
 import Task from '../Task/Task';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
 import { updateTask, updateTaskList } from '../../../store/reducers/taskReducer';
-import { DragDropContext, Droppable, Draggable, OnDragEndResponder, OnDragUpdateResponder, OnDragStartResponder } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, OnDragEndResponder, OnDragUpdateResponder, OnDragStartResponder, DraggableProvided, DroppableProvided } from 'react-beautiful-dnd';
 import LoadError from '../../ui/Loader/LoadError';
 import Loader from '../../ui/Loader/Loader';
 import Icon from '../../ui/Icon/Icon';
@@ -13,12 +13,18 @@ import { updateSettings } from '../../../store/reducers/userReducer';
 import { Modal } from '../../ui/Modal/Modal';
 import FullTask from '../FullTask/FullTask';
 import Slider from '../../ui/Slider/Slider';
+import { getCssVariable } from '../../../utilities/utilities';
+import Footer from '../Footer/Footer';
 
 interface TodosTableProps extends ComponentPropsWithoutRef<'div'> {
 	project: number
 }
 
+let mobileBreakpoint = 0
+
 const TodosTable = function({project, className = ''}: TodosTableProps) {
+
+	if (!mobileBreakpoint) mobileBreakpoint = getCssVariable('media-mobile')
 
 	const dispatch = useAppDispatch()
 
@@ -46,19 +52,19 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 			status: TaskStatus.queue,
 			header: 'Queue',
 			list: [],
-			isAscending: groupAscendingOrder[TaskStatus.queue]
+			isAscending: groupAscendingOrder[TaskStatus.queue],
 		},
 		{
 			status: TaskStatus.dev,
 			header: 'Development',
 			list: [],
-			isAscending: groupAscendingOrder[TaskStatus.dev]
+			isAscending: groupAscendingOrder[TaskStatus.dev],
 		},
 		{
 			status: TaskStatus.done,
 			header: 'Done',
 			list: [],
-			isAscending: groupAscendingOrder[TaskStatus.done]
+			isAscending: groupAscendingOrder[TaskStatus.done],
 		},
 	]
 	tasks.forEach(task => {
@@ -98,7 +104,18 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 		}))
 	}
 
-	const isDragEnabled = true ////////
+	const checkIfMobileView = () => window.innerWidth <= mobileBreakpoint ? true : false
+	const updateViewport = () => setIsMobileState(checkIfMobileView())
+	let [isMobileState, setIsMobileState] = useState(checkIfMobileView())
+
+	useEffect(() => {
+		window.addEventListener('resize', updateViewport)
+		return () => {
+			window.removeEventListener('resize', updateViewport)
+		}
+	}, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+	const isDragEnabled = !isMobileState
 	const moveTasksOnDrag = false
 	
 	let [currentDraggedTaskID, setCurrentDraggedTaskID] = useState<Id | null>(null)
@@ -145,92 +162,147 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 	}
 	// /Modal
 
-	const getTaskElements = (group: ITask[]) =>
-		group.map((task, index) =>
-			<Draggable
-				draggableId={getDraggableID(task.id)}
+
+	// Slider
+	let [activeSlideIndex, setActiveSlideIndex] = useState(0)
+	const handleSlideChange = (activeIndex: number) => {
+		setActiveSlideIndex(activeIndex)
+	}
+	// /Slider
+
+
+	const getTaskEl = (task: ITask, index: number | string, provided?: DraggableProvided) => {
+		const dndTaskProps = provided
+			? {
+				...provided.draggableProps,
+				ref: provided.innerRef,
+				dragHandleProps: provided.dragHandleProps,
+			}
+			: {}
+		return (
+			<Task
+				className={`${classes.task} ${(!moveTasksOnDrag && isDragging && task.id !== currentDraggedTaskID) ? classes.preventedDragMove : ''}`}
+				taskObject={task}
+				onFullTaskOpen={handleModalOpen}
 				key={index}
+				{...dndTaskProps}
+			/>
+		)
+	}
+	const getTaskElements = (group: ITask[]) =>
+		group.map((task, index) => {
+			const uniqueId = getDraggableID(task.id)
+			return isDragEnabled
+			? <Draggable
+				draggableId={uniqueId}
+				key={uniqueId}
 				index={index}
 			>
-				{(provided, snapshot) =>
-					<Task
-						className={`${classes.task} ${(!moveTasksOnDrag && task.id !== currentDraggedTaskID) ? classes.preventedDragMove : ''}`}
-						taskObject={task}
-						ref={provided.innerRef}
-						{...provided.draggableProps}
-						dragHandleProps={provided.dragHandleProps}
-						onFullTaskOpen={handleModalOpen}
-					/>
-				}
+				{(provided) => getTaskEl(task, uniqueId, provided)}
 			</Draggable>
+			: getTaskEl(task, index)
+		})
+
+		const getCellEl = (group: TaskGroup, index: number, provided?: DroppableProvided) => {
+			const dndCellProps = provided
+				? { ref: provided.innerRef }
+				: {}
+			return (
+				<div
+					className={`${classes.cell} ${classes[group.status]} ${activeSlideIndex === index ? classes.activeSlideCell : ''} ${dragHoveredCell === group.status ? classes.isDragHover : ''}`}
+					key={index} {...dndCellProps}
+				>
+					<div className={classes.tasks}>
+						{getTaskElements(group.list)}
+					</div>
+					{provided ? provided.placeholder : null}
+				</div>
+			)
+		}
+	const getCellElements = (taskGroups: TaskGroup[], isDragEnabled: boolean) =>
+		taskGroups.map((group, index) =>
+			isDragEnabled
+			? <Droppable
+				droppableId={group.status}
+				key={index}
+			>
+				{(provided) => getCellEl(group, index, provided)}
+			</Droppable>
+			: getCellEl(group, index)
+		)
+
+	const getTableHeader = () =>
+		taskGroups.map((group, index) =>
+			<div className={`${classes.cellTitle} ${classes[group.status]}`} key={index}>
+				<p className={classes.cellTitleText}>{group.header}</p>
+				<button
+					className={`${classes.sortButton} ${group.isAscending ? classes.ascending : ''}`}
+					onClick={changeGroupOrder}
+					data-status={group.status}
+				>
+					<Icon name='icon-caret' />
+				</button>
+			</div>
 		)
 
 	return (
 		<div className={classes.wrapper}>
 			<Container className={classes.container}>
-				
-				<DragDropContext enableDefaultSensors={isDragEnabled} onDragStart={handleDragStart} onDragUpdate={handleDragUpdate} onDragEnd={handleDragEnd}>
-					<div className={`${className} ${classes.table} ${isDragging ? classes.isDragging : ''}`}>
-						
-						{isLoading && <Loader className={classes.loader} />}
-						{!!loadError && <LoadError className={classes.loadError} message={loadError} />}
 
-						<Slider className={classes.slider}>
-							{taskGroups.map((group, index) =>
-								<Droppable
-									droppableId={group.status}
-									key={index}
-									renderClone={(provided) => (
-										<div
-											className={classes.taskClone}
-											{...provided.draggableProps}
-											{...provided.dragHandleProps}
-											ref={provided.innerRef}
-										>
-											Drop it!
-										</div>
-									)}
+				<div className={`${className} ${classes.table} ${isDragging ? classes.isDragging : ''}`}>
+
+					{isLoading && <Loader className={classes.loader} />}
+					{!!loadError && <LoadError className={classes.loadError} message={loadError} />}
+
+					{isDragEnabled
+						?  <div className={classes.tableHeader}>
+								{getTableHeader()}
+							</div>
+						:  <Slider
+								className={classes.tableHeader}
+								containerClassName='swiper-controller-header'
+								controls='.swiper-controller-cells'
+							>
+								{getTableHeader()}
+							</Slider>
+					}
+
+					<div className={classes.tableMain}>
+						{isDragEnabled
+							?  <DragDropContext
+									onDragStart={handleDragStart}
+									onDragUpdate={handleDragUpdate}
+									onDragEnd={handleDragEnd}
 								>
-									{(provided) => (
-										<div className={`${classes.cell} ${classes[group.status]} ${dragHoveredCell === group.status ? classes.isDragHover : ''}`} ref={provided.innerRef}>
-											<div className={classes.cellTitle}>
-												<p className={classes.cellTitleText}>{group.header}</p>
-												<button
-													className={`${classes.sortButton} ${group.isAscending ? classes.ascending : ''}`}
-													onClick={changeGroupOrder}
-													data-status={group.status}
-												>
-													<Icon name='icon-caret' />
-												</button>
-											</div>
-											<div className={`${classes.tasks}`}>
-												{getTaskElements(group.list)}
-											</div>
-											{provided.placeholder}
-										</div>
-									)}
-								</Droppable>
-							)}
-						</Slider>
+									<div className={classes.cellsWrapper}>
+										{getCellElements(taskGroups, isDragEnabled)}
+									</div>
+								</DragDropContext>
+							:  <Slider
+									className={`${classes.cellsWrapper}`}
+									containerClassName='swiper-controller-cells'
+									controls='.swiper-controller-header'
+									slideChageCallback={handleSlideChange}
+								>
+									{getCellElements(taskGroups, isDragEnabled)}
+								</Slider>
+						}
 					</div>
-				</DragDropContext>
 
-				<footer className={classes.footer}>
-					<Container className={classes.container}>
-						<p className={classes.footerItem}>
-							{`Project: ${currentProject?.name}`}
-						</p>
-						<p className={classes.footerItem}>
-							{`Total tasks: ${tasks.length}`}
-						</p>
-					</Container>
-				</footer>
+				</div>
 
-				<Modal isActive={isModalActive} onClose={handleModalClose}>
-					{currentTask && <FullTask taskObject={currentTask} />}
-				</Modal>
+
+				<Footer
+					className={classes.footer}
+					project={currentProject?.name}
+					tasksCount={tasks.length}
+				/>
 
 			</Container>
+
+			<Modal isActive={isModalActive} onClose={handleModalClose}>
+				{currentTask && <FullTask taskObject={currentTask} />}
+			</Modal>
 		</div>
 	)
 }

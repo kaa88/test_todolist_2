@@ -1,8 +1,8 @@
-import { ChangeEvent, ComponentProps, KeyboardEvent, useEffect, useState, forwardRef } from 'react';
+import { ChangeEvent, ComponentProps, KeyboardEvent, useEffect, useState, forwardRef, memo } from 'react';
 import classes from './Subtasks.module.scss';
 import Icon from '../../ui/Icon/Icon';
 import { Id } from '../../../types/types';
-import { DragDropContext, Droppable, Draggable, OnDragEndResponder, DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, OnDragEndResponder, DraggableProvidedDragHandleProps, OnDragStartResponder } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
 import { updateTask } from '../../../store/reducers/taskReducer';
 import InteractiveInput, { InteractiveInputCallback } from '../../ui/InteractiveInput/InteractiveInput';
@@ -15,8 +15,9 @@ type UpdateSubtaskFunction = (id: Id, title: string, isDone: boolean) => void
 type CreateSubtaskFunction = (title: string) => void
 type DeleteSubtaskFunction = (id: Id) => void
 
+const noSwipingClass = 'swiper-no-swiping'
 
-const Subtasks = forwardRef<HTMLDivElement, SubtasksProps>(function({parentId, className = ''}: SubtasksProps, ref) {
+const Subtasks = memo(forwardRef<HTMLDivElement, SubtasksProps>(function({parentId, className = ''}: SubtasksProps, ref) {
 
 	const dispatch = useAppDispatch()
 	const taskList = useAppSelector(state => state.tasks.list)
@@ -31,7 +32,7 @@ const Subtasks = forwardRef<HTMLDivElement, SubtasksProps>(function({parentId, c
 	}
 	const createSubtask: CreateSubtaskFunction = (title) => {
 		let newSubtasks = [...subtasks]
-		let newSub = {title, isDone: false}
+		let newSub = {id: Date.now(), title, isDone: false}
 		newSubtasks.push(newSub)
 		dispatch(updateTask({taskId: parentId, values: {subtasks: newSubtasks}}))
 	}
@@ -41,7 +42,14 @@ const Subtasks = forwardRef<HTMLDivElement, SubtasksProps>(function({parentId, c
 		dispatch(updateTask({taskId: parentId, values: {subtasks: newSubtasks}}))
 	}
 
+	let [currentDraggedTaskID, setCurrentDraggedTaskID] = useState<Id | null>(null)
+
+	const handleDragStart: OnDragStartResponder = (start) => {
+		let id = parseDraggableID(start.draggableId)
+		setCurrentDraggedTaskID(typeof id === 'number' ? id : null)
+	}
 	const handleDragEnd: OnDragEndResponder = ({source, destination}) => {
+		setCurrentDraggedTaskID(null)
 		if (!destination) return; // dropped outside the list
 		const newSubtasks = [...subtasks]
 		const [removed] = newSubtasks.splice(source.index, 1)
@@ -51,18 +59,19 @@ const Subtasks = forwardRef<HTMLDivElement, SubtasksProps>(function({parentId, c
 
 	return (
 		<div className={`${className} ${classes.wrapper}`} ref={ref}>
-			<DragDropContext onDragEnd={handleDragEnd}>
-				<Droppable droppableId={`subtaskOfTask_${parentId}`}>
+			<DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+				<Droppable droppableId={`subtaskOfTask${parentId}`}>
 					{(provided) => (
 						<div className={classes.list} ref={provided.innerRef}>
-							{subtasks.map(({title, isDone}, index) =>
+							{subtasks.map(({id, title, isDone}, index) =>
 								<Draggable
-									draggableId={getDraggableID(index)} //?
-									key={Date.now() + index}
+									draggableId={getDraggableID(id)}
+									key={id}
 									index={index}
 								>
-									{(provided, snapshot) =>
+									{(provided) =>
 										<Subtask
+											className={`${currentDraggedTaskID === id ? classes.currentDragging : ''}`}
 											title={title}
 											isDone={isDone}
 											updateCallback={updateSubtask}
@@ -79,12 +88,11 @@ const Subtasks = forwardRef<HTMLDivElement, SubtasksProps>(function({parentId, c
 						</div>
 					)}
 				</Droppable>
-				</DragDropContext>
+			</DragDropContext>
 			<NewSubtask createCallback={createSubtask} />
 		</div>
 	)
-}
-)
+}))
 export default Subtasks
 
 
@@ -127,7 +135,7 @@ const Subtask = forwardRef<HTMLDivElement, SubtaskProps>(function({
 	}
 
 	return (
-		<div className={`${classes.subtask} ${isDone ? classes.status_done : ''}`} {...props} ref={ref}>
+		<div className={`${className} ${classes.subtask} ${isDone ? classes.status_done : ''} ${noSwipingClass}`} {...props} ref={ref}>
 			<div className={classes.dragButton} {...dragHandleProps}>
 				<Icon name='icon-drag' />
 			</div>
@@ -138,7 +146,7 @@ const Subtask = forwardRef<HTMLDivElement, SubtaskProps>(function({
 				<Icon name='icon-ok' />
 			</button>
 			<InteractiveInput value={value === null ? title : value} confirmCallback={updateTitle}>
-				<AutoResizeTextarea className={classes.subtaskTitle} wrapperClassName={classes.autoResizeTextareaWrapper} />
+				<AutoResizeTextarea className={`${classes.subtaskTitle} ${noSwipingClass}`} wrapperClassName={classes.autoResizeTextareaWrapper} />
 			</InteractiveInput>
 			<button
 				className={classes.deleteButton}
@@ -191,7 +199,7 @@ const NewSubtask = function({ createCallback, className = '', ...props }: NewSub
 	}, [isComfirm])
 
 	return (
-		<div className={`${className} ${classes.newSubtask}`} {...props}>
+		<div className={`${className} ${classes.newSubtask} ${noSwipingClass}`} {...props}>
 			<div className={classes.newSubtaskIcon}>
 				<Icon name='icon-cross-bold' />
 			</div>
@@ -220,9 +228,9 @@ const NewSubtask = function({ createCallback, className = '', ...props }: NewSub
 function getDraggableID(id: string | number) {
 	return 'draggableSubtask_' + id
 }
-// function parseDraggableID(fullId: string) {
-// 	let id = fullId.split('_')[1]
-// 	return isNaN(Number(id)) ? id : Number(id)
-// }
+function parseDraggableID(fullId: string) {
+	let id = fullId.split('_')[1]
+	return isNaN(Number(id)) ? id : Number(id)
+}
 
 

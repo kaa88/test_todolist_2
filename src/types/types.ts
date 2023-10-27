@@ -42,6 +42,7 @@ export interface ITask {
 	filesCount?: number
 }
 export interface ISubtask {
+	id: Id
 	title: string
 	isDone: boolean
 }

@@ -1,0 +1,16 @@
+@import '/src/styles/variables.scss';
+
+.footer {
+	display: flex;
+	align-items: center;
+	.container {
+		display: flex;
+		align-items: center;
+		column-gap: 30px;
+		row-gap: 5px;
+	}
+}
+.footerItem {
+	font-size: 13px;
+	color: var(--color-text-negative);
+}

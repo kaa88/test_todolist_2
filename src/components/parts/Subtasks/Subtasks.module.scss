@@ -25,6 +25,9 @@
 		position: relative;
 		z-index: 2;
 	}
+	&.currentDragging {
+		background-color: var(--color-text-inactive);
+	}
 }
 .subtaskStatusButton {
 	cursor: pointer;

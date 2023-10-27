@@ -1,8 +1,8 @@
 @import '/src/styles/variables.scss';
 
-.swiper, swiper-container, swiper-slide {
+swiper-container, swiper-slide {
 	height: 100%;
 }
-// swiper-container {
-// 	height: 100%;
-// }
+.swiper-vertical swiper-slide {
+	height: auto;
+}

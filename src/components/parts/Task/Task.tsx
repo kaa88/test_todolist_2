@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef, forwardRef, useEffect, useRef, useState } from 'react';
+import { ComponentPropsWithRef, forwardRef, useEffect, useRef, useState, memo } from 'react';
 import classes from './Task.module.scss';
 import { ITask, TaskStatus } from '../../../types/types';
 import Icon from '../../ui/Icon/Icon';
@@ -18,7 +18,7 @@ interface TaskProps extends ComponentPropsWithRef<'div'> {
 let spoilerTimeout = 0
 
 
-const Task = forwardRef<HTMLDivElement, TaskProps>(function({
+const Task = memo(forwardRef<HTMLDivElement, TaskProps>(function({
 	taskObject: task,
 	className = '',
 	dragHandleProps,
@@ -133,5 +133,5 @@ const Task = forwardRef<HTMLDivElement, TaskProps>(function({
 			</div>
 		</div>
 	)
-})
+}))
 export default Task
