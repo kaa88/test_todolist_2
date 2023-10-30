@@ -116,6 +116,7 @@ const Subtasks = memo(forwardRef<HTMLDivElement, SubtasksProps>(function({
 		<div className={`${className} ${classes.wrapper}`} ref={ref}>
 			{isFulltask
 				?  <DragDropContext
+						// Subtasks that are located in Fulltask have their own DragDropContext because Fulltask can be moved to Modal, that is rendered with React Portal
 						onBeforeCapture={handleBeforeCapture}
 						onDragEnd={handleDragEnd}
 					>

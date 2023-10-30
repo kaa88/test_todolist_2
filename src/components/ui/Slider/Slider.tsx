@@ -1,5 +1,4 @@
 import { useRef, useEffect, ReactNode } from 'react';
-import './Slider.scss';
 import { getCssVariable } from '../../../utilities/utilities';
 
 declare global {

@@ -37,6 +37,8 @@ const Projects = function({className = '', children, ...props}: ProjectsProps) {
 	let [activeModalType, setActiveModalType] = useState(ActiveModalType.none)
 	let [currentProjectId, setCurrentProjectId] = useState<Id>(0)
 
+	console.log(activeModalType)
+
 	const handleModalOpen = (e: MouseEvent<HTMLButtonElement>) => {
 		if (isInputError) setIsInputError(false)
 		const targetDataId = e.currentTarget.dataset.id
@@ -105,10 +107,13 @@ const Projects = function({className = '', children, ...props}: ProjectsProps) {
 		}
 	}
 
+	let modalTitle = ''
+	if (activeModalType === ActiveModalType.create) modalTitle = 'New Project'
+	if (activeModalType === ActiveModalType.edit) modalTitle = 'Edit Project'
 
 	const modalContent =
 		<div className={classes.modalContent}>
-			<p className={classes.modalTitle}>{activeModalType === ActiveModalType.create ? 'New Project' : 'Edit Project'}</p>
+			<p className={classes.modalTitle}>{modalTitle}</p>
 			<p className={classes.modalInputTitle}>Project name</p>
 			<input
 				className={`${classes.modalInput} ${isInputError ? classes.inputError : ''}`}

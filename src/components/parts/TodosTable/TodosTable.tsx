@@ -5,7 +5,7 @@ import { ITask, TaskPriority, TaskSort, TaskStatus } from '../../../types/types'
 import Task from '../Task/Task';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
 import { updateTask, updateTaskList } from '../../../store/reducers/taskReducer';
-import { DragDropContext, Droppable, Draggable, OnDragEndResponder, OnDragUpdateResponder, OnDragStartResponder, DraggableProvided, DroppableProvided, OnBeforeCaptureResponder } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, OnDragEndResponder, OnDragUpdateResponder, OnDragStartResponder, OnBeforeCaptureResponder } from 'react-beautiful-dnd';
 import LoadError from '../../ui/Loader/LoadError';
 import Loader from '../../ui/Loader/Loader';
 import Icon from '../../ui/Icon/Icon';
@@ -126,7 +126,6 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 	let [currentTask, setCurrentTask] = useState<ITask | null>(null)
 	let [isModalActive, setIsModalActive] = useState(false)
 	const handleModalOpen = (taskObject: ITask) => {
-		console.log('handleModalOpen')
 		setCurrentTask(taskObject)
 		setIsModalActive(true)
 	}
@@ -169,7 +168,7 @@ const TodosTable = function({project, className = ''}: TodosTableProps) {
 		const draggable = parseDragDropID(before.draggableId)
 		setCurrentDraggedElement(draggable)
 	}
-	const handleDragStart: OnDragStartResponder = (start) => {
+	const handleDragStart: OnDragStartResponder = () => {
 		setIsDragging(true)
 	}
 	const handleDragUpdate: OnDragUpdateResponder = (update) => {

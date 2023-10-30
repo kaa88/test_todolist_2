@@ -9,7 +9,6 @@ $col-gap: 4px;
 	grid-template-rows: repeat(5, auto);
 	grid-column-gap: $col-gap;
 	grid-row-gap: 3px;
-	// border-top: solid 1px var(--color-bg-secondary);
 	border-bottom: solid 2px var(--color-bg-secondary);
 	overflow: hidden;
 	transition: background-color $timer-hover;
@@ -36,11 +35,6 @@ $col-gap: 4px;
 		grid-column: span 3;
 		height: 16px;
 	}
-	// @media (max-width: $media-ms+px) {
-	// 	grid-row: 1;
-	// 	grid-column: span 3;
-	// 	height: 16px;
-	// }
 	&_normal {
 		background-color: var(--color-priority-normal);
 	}
@@ -89,13 +83,10 @@ $col-gap: 4px;
 	grid-column: 2 / span 2;
 	margin-right: $col-gap;
 	padding: 1px $col-gap;
-	// background-color: var(--color-bg-main);
 	word-break: break-word;
 	text-align: left;
 	font-size: 14px;
 	line-height: 18px;
-	// min-height: 18px;
-	// max-height: calc((3 * 18px) + 2px);
 	color: var(--color-text-inactive);
 }
 
@@ -106,7 +97,6 @@ $col-gap: 4px;
 	flex-wrap: wrap;
 	align-items: center;
 	row-gap: 3px;
-	// background-color: skyblue;
 	cursor: default;
 }
 .detailsItem {
@@ -131,10 +121,8 @@ $col-gap: 4px;
 
 
 .dragButton {
-	// background-color: var(--color-bg-main);
 	display: flex;
 	justify-content: center;
-	// padding-top: 6px;
 	svg {
 		width: 20px;
 		height: 20px;
@@ -147,7 +135,6 @@ $col-gap: 4px;
 .spoilerButton {
 	margin-right: $col-gap;
 	height: auto;
-	// background-color: var(--color-bg-main);
 	background-color: transparent;
 }
 .spoilerButtonIconBox {
@@ -185,14 +172,12 @@ $col-gap: 4px;
 }
 
 
-
 .subtasksWrapper {
 	grid-column: 2 / span 2;
 	margin-right: $col-gap;
 	height: 0;
 	overflow: hidden;
 	transition: height $timer-spoiler;
-	// background-color: var(--color-bg-main);
 }
 .subtasks {
 	margin: 5px 0;

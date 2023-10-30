@@ -1,14 +1,7 @@
 @import '/src/styles/variables.scss';
 
 .wrapper {
-	// grid-column: span 2;
 	overflow: hidden;
-	// &.hidden {
-	// 	height: 0;
-	// }
-	// &.visible {
-	// 	height: auto;
-	// }
 }
 .list {
 	position: relative;
@@ -30,7 +23,7 @@
 	}
 	@media (max-width: $media-mxl+px) {
 		&.currentDragging {
-			opacity: 0;
+			visibility: hidden;
 		}
 	}
 }

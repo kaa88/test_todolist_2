@@ -1,6 +1,5 @@
 import { ComponentProps, MouseEvent, useState } from 'react';
 import classes from './RadioButtons.module.scss';
-import { ITask, TaskPriority, TaskStatus } from '../../../types/types';
 import { RadioButtonsContent } from '../../parts/FullTask/FullTask';
 
 interface RadioButtonsProps<T> extends ComponentProps<'div'> {
@@ -10,10 +9,6 @@ interface RadioButtonsProps<T> extends ComponentProps<'div'> {
 	callback: (value: T) => void
 }
 
-// interface StatusItem {
-// 	id: TaskStatus
-// 	textContent: string
-// }
 
 const RadioButtons = function<T>({modif = 'default', buttons, active, callback, className = '', ...props}: RadioButtonsProps<T>) {
 

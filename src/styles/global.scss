@@ -17,7 +17,6 @@ body {
 	--timer-select: #{$timer-select}; //REQ!
 	--timer-popup: #{$timer-popup}; //REQ!
 	--timer-spoiler: #{$timer-spoiler}; //REQ!
-	// --timer-new-comment: #{$timer-new-comment}; //REQ!
 
 	--header-height: 50px;
 	--footer-height: 25px;
@@ -35,28 +34,6 @@ body {
 	// 	padding-right: var(--scrollbar-width);
 	// } //REQ!
 }
-
-// Window scrollbar
-// html { // Firefox scrollbar is setting up in 'html'
-// 	scrollbar-width: thin; // = 8px
-// 	scrollbar-color: coral darkred; // thumb track
-// }
-// body {
-// 	&::-webkit-scrollbar {
-// 		width: 8px;
-// 	}
-// 	&::-webkit-scrollbar-thumb {
-// 		background: coral;
-// 	}
-// 	&::-webkit-scrollbar-track {
-// 		background: darkred;
-// 	}
-// }
-
-
-// .undefined {
-// 	box-shadow: 0 0 5px 5px red !important;
-// }
 
 #root {
 	display: grid;

@@ -37,7 +37,6 @@ export interface ITask {
 	priority: TaskPriority
 	status: TaskStatus
 	subtasks: ISubtask[]
-	attached: string[]
 	commentsCount?: number
 	filesCount?: number
 }

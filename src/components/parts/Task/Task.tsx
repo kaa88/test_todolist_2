@@ -38,7 +38,6 @@ const Task = memo(forwardRef<HTMLDivElement, TaskProps>(function({
 	const subtasksAutoHeight = 'auto'
 	let [subtasksHeight, setSubtasksHeight] = useState(isSubtasksVisible ? subtasksAutoHeight : defaultSubtasksHeight)
 	let [isSubtasksRender, setIsSubtasksRender] = useState(false)
-	// TODO: make it as a hook
 
 	useEffect(() => {
 		setSubtasksHeight(isSubtasksVisible ? subtasksAutoHeight : defaultSubtasksHeight)
@@ -81,7 +80,6 @@ const Task = memo(forwardRef<HTMLDivElement, TaskProps>(function({
 	const expiredClassName = task.expireDate - Date.now() <= 0 ? classes.expired : ''
 
 	const openFullTask = () => {
-		console.log('openFullTask')
 		onFullTaskOpen(task)
 	}
 
