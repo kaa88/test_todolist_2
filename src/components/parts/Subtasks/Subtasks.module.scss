@@ -28,6 +28,11 @@
 	&.currentDragging {
 		background-color: var(--color-text-inactive);
 	}
+	@media (max-width: $media-mxl+px) {
+		&.currentDragging {
+			opacity: 0;
+		}
+	}
 }
 .subtaskStatusButton {
 	cursor: pointer;

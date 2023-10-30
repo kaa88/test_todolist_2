@@ -116,7 +116,7 @@ const FullTask = memo(function({className = '', taskObject: task}: TaskProps) {
 					</div>
 				</div>
 			</div>
-			<Subtasks className={classes.subtasks} parentId={task.id} />
+			<Subtasks className={classes.subtasks} isFulltask={true} parentId={task.id} />
 			<div className={classes.attachments}>
 				<Attachments taskId={task.id} />
 			</div>

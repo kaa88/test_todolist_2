@@ -1,15 +1,18 @@
 import { ChangeEvent, ComponentProps, KeyboardEvent, useEffect, useState, forwardRef, memo } from 'react';
 import classes from './Subtasks.module.scss';
-import Icon from '../../ui/Icon/Icon';
 import { Id } from '../../../types/types';
-import { DragDropContext, Droppable, Draggable, OnDragEndResponder, DraggableProvidedDragHandleProps, OnDragStartResponder } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, OnDragEndResponder, DraggableProvidedDragHandleProps, OnBeforeCaptureResponder } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
 import { updateTask } from '../../../store/reducers/taskReducer';
 import InteractiveInput, { InteractiveInputCallback } from '../../ui/InteractiveInput/InteractiveInput';
 import AutoResizeTextarea from '../../ui/AutoResizeTextarea/AutoResizeTextarea';
+import Icon from '../../ui/Icon/Icon';
+import { CurrentDraggedElement, DraggableType, parseDragDropID } from '../TodosTable/TodosTable';
 
 interface SubtasksProps extends ComponentProps<'div'> {
+	isFulltask?: boolean
 	parentId: Id
+	currentDraggedElement?: CurrentDraggedElement
 }
 type UpdateSubtaskFunction = (id: Id, title: string, isDone: boolean) => void
 type CreateSubtaskFunction = (title: string) => void
@@ -17,7 +20,13 @@ type DeleteSubtaskFunction = (id: Id) => void
 
 const noSwipingClass = 'swiper-no-swiping'
 
-const Subtasks = memo(forwardRef<HTMLDivElement, SubtasksProps>(function({parentId, className = ''}: SubtasksProps, ref) {
+
+const Subtasks = memo(forwardRef<HTMLDivElement, SubtasksProps>(function({
+	isFulltask,
+	parentId,
+	currentDraggedElement,
+	className = ''
+}: SubtasksProps, ref) {
 
 	const dispatch = useAppDispatch()
 	const taskList = useAppSelector(state => state.tasks.list)
@@ -42,58 +51,91 @@ const Subtasks = memo(forwardRef<HTMLDivElement, SubtasksProps>(function({parent
 		dispatch(updateTask({taskId: parentId, values: {subtasks: newSubtasks}}))
 	}
 
-	let [currentDraggedTaskID, setCurrentDraggedTaskID] = useState<Id | null>(null)
+	// Drag & drop
+	const defaultCurrentDraggedElement = {id: null, type: null}
+	let [currentDraggedSubtaskFulltaskMode, setCurrentDraggedSubtaskFulltaskMode] = useState<CurrentDraggedElement>(defaultCurrentDraggedElement)
 
-	const handleDragStart: OnDragStartResponder = (start) => {
-		let id = parseDraggableID(start.draggableId)
-		setCurrentDraggedTaskID(typeof id === 'number' ? id : null)
+	const currentDraggedSubtask = (!isFulltask && currentDraggedElement) ? currentDraggedElement : currentDraggedSubtaskFulltaskMode
+
+	const handleBeforeCapture: OnBeforeCaptureResponder = (before) => {
+		const draggable = parseDragDropID(before.draggableId)
+		setCurrentDraggedSubtaskFulltaskMode(draggable)
 	}
 	const handleDragEnd: OnDragEndResponder = ({source, destination}) => {
-		setCurrentDraggedTaskID(null)
+		setCurrentDraggedSubtaskFulltaskMode(defaultCurrentDraggedElement)
 		if (!destination) return; // dropped outside the list
 		const newSubtasks = [...subtasks]
 		const [removed] = newSubtasks.splice(source.index, 1)
 		newSubtasks.splice(destination.index, 0, removed)
 		dispatch(updateTask({taskId: parentId, values: {subtasks: newSubtasks}}))
 	}
+	// /Drag & drop
+
+
+	const subtaskEl = (
+		<Droppable
+			droppableId={createDroppableID(parentId)}
+			type={DraggableType.subtask + parentId}
+		>
+			{(provided) => (
+				<div
+					className={classes.list}
+					ref={provided.innerRef}
+				>
+					<div className={classes.innerList}>
+						{subtasks.map((subtask, index) =>
+							<Draggable
+								draggableId={createDraggableID(subtask.id)}
+								index={index}
+								key={subtask.id}
+							>
+								{(provided) =>
+									<Subtask
+										className={currentDraggedSubtask?.id === subtask.id ? classes.currentDragging : ''}
+										title={subtask.title}
+										isDone={subtask.isDone}
+										updateCallback={updateSubtask}
+										deleteCallback={deleteSubtask}
+										// dnd props:
+										index={index}
+										ref={provided.innerRef}
+										{...provided.draggableProps}
+										dragHandleProps={provided.dragHandleProps}
+									/>
+								}
+							</Draggable>
+						)}
+					</div>
+				{provided.placeholder}
+				</div>
+			)}
+		</Droppable>
+	)
 
 	return (
 		<div className={`${className} ${classes.wrapper}`} ref={ref}>
-			<DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-				<Droppable droppableId={`subtaskOfTask${parentId}`}>
-					{(provided) => (
-						<div className={classes.list} ref={provided.innerRef}>
-							{subtasks.map(({id, title, isDone}, index) =>
-								<Draggable
-									draggableId={getDraggableID(id)}
-									key={id}
-									index={index}
-								>
-									{(provided) =>
-										<Subtask
-											className={`${currentDraggedTaskID === id ? classes.currentDragging : ''}`}
-											title={title}
-											isDone={isDone}
-											updateCallback={updateSubtask}
-											deleteCallback={deleteSubtask}
-											index={index}
-											ref={provided.innerRef}
-											{...provided.draggableProps}
-											dragHandleProps={provided.dragHandleProps}
-										/>
-									}
-								</Draggable>
-							)}
-							{provided.placeholder}
-						</div>
-					)}
-				</Droppable>
-			</DragDropContext>
+			{isFulltask
+				?  <DragDropContext
+						onBeforeCapture={handleBeforeCapture}
+						onDragEnd={handleDragEnd}
+					>
+						{subtaskEl}
+					</DragDropContext>
+				:  subtaskEl
+			}
 			<NewSubtask createCallback={createSubtask} />
 		</div>
 	)
 }))
 export default Subtasks
+
+
+function createDraggableID(id: string | number) {
+	return `${DraggableType.subtask}_draggable_${id}`
+}
+function createDroppableID(id: string | number) {
+	return `${DraggableType.subtask}_droppable_${id}`
+}
 
 
 
@@ -221,16 +263,3 @@ const NewSubtask = function({ createCallback, className = '', ...props }: NewSub
 		</div>
 	)
 }
-
-
-
-
-function getDraggableID(id: string | number) {
-	return 'draggableSubtask_' + id
-}
-function parseDraggableID(fullId: string) {
-	let id = fullId.split('_')[1]
-	return isNaN(Number(id)) ? id : Number(id)
-}
-
-

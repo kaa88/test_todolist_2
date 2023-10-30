@@ -3,15 +3,17 @@ import classes from './Task.module.scss';
 import { ITask, TaskStatus } from '../../../types/types';
 import Icon from '../../ui/Icon/Icon';
 import Subtasks from '../Subtasks/Subtasks';
-import { useAppDispatch, useAppSelector } from '../../../hooks/typedReduxHooks';
+import { useAppSelector } from '../../../hooks/typedReduxHooks';
 import { DateService } from '../../../services/DateService';
 import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 import { getCssVariable, getPlural } from '../../../utilities/utilities';
 import { ModalLink } from '../../ui/Modal/Modal';
+import { CurrentDraggedElement } from '../TodosTable/TodosTable';
 
 interface TaskProps extends ComponentPropsWithRef<'div'> {
 	taskObject: ITask
 	dragHandleProps?: DraggableProvidedDragHandleProps | null
+	currentDraggedElement?: CurrentDraggedElement
 	onFullTaskOpen: (taskObject: ITask) => void
 }
 
@@ -22,16 +24,14 @@ const Task = memo(forwardRef<HTMLDivElement, TaskProps>(function({
 	taskObject: task,
 	className = '',
 	dragHandleProps,
+	currentDraggedElement,
 	onFullTaskOpen,
 	...props
 }: TaskProps, ref) {
 
 	if (!spoilerTimeout) spoilerTimeout = getCssVariable('timer-spoiler') * 1000
 
-	const dispatch = useAppDispatch()
-
 	const isSubtasksVisible = useAppSelector(state => state.user.showSubtasks)
-
 	const subtasksWrapperRef = useRef<HTMLDivElement>(null)
 	const subtasksRef = useRef<HTMLDivElement>(null)
 	const defaultSubtasksHeight = '0'
@@ -81,9 +81,11 @@ const Task = memo(forwardRef<HTMLDivElement, TaskProps>(function({
 	const expiredClassName = task.expireDate - Date.now() <= 0 ? classes.expired : ''
 
 	const openFullTask = () => {
+		console.log('openFullTask')
 		onFullTaskOpen(task)
 	}
 
+	
 	return (
 		<div className={`${className} ${classes.wrapper}`} {...props} ref={ref}>
 			<div className={`${classes.priority} ${classes[priority]}`} {...dragHandleProps}></div>
@@ -129,7 +131,12 @@ const Task = memo(forwardRef<HTMLDivElement, TaskProps>(function({
 				</span>
 			</button>
 			<div className={classes.subtasksWrapper} ref={subtasksWrapperRef} style={{height: subtasksHeight}}>
-				<Subtasks className={classes.subtasks} parentId={task.id} ref={subtasksRef} />
+				<Subtasks
+					className={classes.subtasks}
+					parentId={task.id}
+					currentDraggedElement={currentDraggedElement}
+					ref={subtasksRef}
+				/>
 			</div>
 		</div>
 	)

@@ -9,17 +9,17 @@ $col-gap: 4px;
 	grid-template-rows: repeat(5, auto);
 	grid-column-gap: $col-gap;
 	grid-row-gap: 3px;
-	border-top: solid 1px var(--color-bg-secondary);
-	border-bottom: solid 1px var(--color-bg-secondary);
+	// border-top: solid 1px var(--color-bg-secondary);
+	border-bottom: solid 2px var(--color-bg-secondary);
 	overflow: hidden;
 	transition: background-color $timer-hover;
 	&:hover {
 		background-color: var(--color-bg-main);
 	}
-	&:first-child {
-		border-top-width: 0;
+	&:last-child {
+		border-bottom-width: 0;
 	}
-	@media (max-width: $media-ts+px) {
+	@media ((max-width: $media-ts+px) and (min-width: $media-mxl+1+px)), (max-width: $media-ms+px) {
 		grid-template-columns: 0 1fr 34px;
 	}
 }
@@ -29,11 +29,16 @@ $col-gap: 4px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	@media (max-width: $media-ts+px) {
+	@media ((max-width: $media-ts+px) and (min-width: $media-mxl+1+px)), (max-width: $media-ms+px) {
 		grid-row: 1;
 		grid-column: span 3;
 		height: 16px;
 	}
+	// @media (max-width: $media-ms+px) {
+	// 	grid-row: 1;
+	// 	grid-column: span 3;
+	// 	height: 16px;
+	// }
 	&_normal {
 		background-color: var(--color-priority-normal);
 	}

@@ -1,4 +1,5 @@
 # Getting Started with Create React App
 
 TODO:
-- swiper touch action bug
+- add tests
+- disable mobile hover animation
