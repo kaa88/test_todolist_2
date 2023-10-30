@@ -4,7 +4,7 @@
 		"taskId": 1,
 		"date": 1697265664900,
 		"path": "document.docx",
-		"description": "doc 1"
+		"description": ""
 	},
 	{
 		"id": 2,
@@ -32,6 +32,6 @@
 		"taskId": 1,
 		"date": 16972655699900,
 		"path": "img5555555.png",
-		"description": "image 5"
+		"description": "png file"
 	}
 ]
