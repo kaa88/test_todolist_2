@@ -100,9 +100,6 @@ body .deleteTaskButton {
 	background-color: var(--color-accent-04);
 	color: var(--color-text-main);
 	font-size: 13px;
-	// &:hover {
-	// 	background-color: ;
-	// }
 }
 .attachments {
 	margin-top: 10px;
@@ -138,10 +135,12 @@ body .deleteTaskButton {
 		background-color: transparent;
 		transition: background-color $timer-hover;
 	}
-	&:hover {
-		color: var(--color-hover);
-		&:before {
-			background-color: var(--color-hover);
+	@media (hover: hover) {
+		&:hover {
+			color: var(--color-hover);
+			&:before {
+				background-color: var(--color-hover);
+			}
 		}
 	}
 }

@@ -13,8 +13,10 @@ $col-gap: 4px;
 	border-bottom: solid 2px var(--color-bg-secondary);
 	overflow: hidden;
 	transition: background-color $timer-hover;
-	&:hover {
-		background-color: var(--color-bg-main);
+	@media (hover: hover) {
+		&:hover {
+			background-color: var(--color-bg-main);
+		}
 	}
 	&:last-child {
 		border-bottom-width: 0;
@@ -76,8 +78,10 @@ $col-gap: 4px;
 	min-height: 34px;
 	background-color: transparent;
 	transition: color $timer-hover;
-	&:hover {
-		color: var(--color-hover);
+	@media (hover: hover) {
+		&:hover {
+			color: var(--color-hover);
+		}
 	}
 }
 .description {

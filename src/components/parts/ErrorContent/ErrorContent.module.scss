@@ -1,7 +1,6 @@
 @import '/src/styles/variables.scss';
 
 .default {
-	// margin: 0 auto;
 	height: calc(100% - 50px);
 	.container {
 		height: 100%;
@@ -30,6 +29,6 @@
 	font-size: 14px;
 	transition: color $timer-hover;
 	&:hover {
-		color: var(--color-text-inactive);
+		color: var(--color-button-bg-hover);
 	}
 }

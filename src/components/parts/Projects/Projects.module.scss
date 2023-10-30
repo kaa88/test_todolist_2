@@ -49,9 +49,11 @@
 	overflow: hidden;
 	transition: all $timer-hover;
 	box-shadow: 0 0 0 2px transparent;
-	&:hover {
-		border-color: var(--color-bg-secondary);
-		box-shadow: 0 0 0 2px var(--color-button-bg-hover);
+	@media (hover: hover) {
+		&:hover {
+			border-color: var(--color-bg-secondary);
+			box-shadow: 0 0 0 2px var(--color-button-bg-hover);
+		}
 	}
 }
 .newProjectButton {
@@ -124,9 +126,11 @@
 	fill: var(--color-icons-inactive);
 	transition: fill $timer-hover;
 	background-color: transparent;
-	&:hover {
-		fill: var(--color-icons-main);
-	}
+	@media (hover: hover) {
+		&:hover {
+			fill: var(--color-icons-main);
+		}
+}
 	svg {
 		width: 15px;
 		height: 15px;
@@ -182,9 +186,11 @@
 	svg {
 		transition: transform $timer-hover;
 	}
-	&:hover {
-		svg {
-			transform: scale(1.2);
+	@media (hover: hover) {
+		&:hover {
+			svg {
+				transform: scale(1.2);
+			}
 		}
 	}
 }

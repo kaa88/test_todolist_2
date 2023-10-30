@@ -18,8 +18,10 @@
 	border: solid 1px transparent;
 	border-radius: 10px;
 	transition: all $timer-hover;
-	&:hover {
-		border-color: var(--color-text-inactive);
+	@media (hover: hover) {
+		&:hover {
+			border-color: var(--color-text-inactive);
+		}
 	}
 }
 .fileIcon {
@@ -53,8 +55,10 @@
 	transition: background-color $timer-hover, color $timer-hover, fill $timer-hover;
 	border-radius: 8px;
 	background-color: var(--color-accent-03);
-	&:hover {
-		background-color: var(--color-accent-04);
+	@media (hover: hover) {
+		&:hover {
+			background-color: var(--color-accent-04);
+		}
 	}
 	svg {
 		margin-right: 7px;
@@ -123,10 +127,12 @@
 		transition: transform $timer-hover;
 	}
 	&:hover {
-		svg {
-			transform: scale(1.2);
+		@media (hover: hover) {
+			svg {
+				transform: scale(1.2);
+			}
 		}
-	}
+}
 }
 .confirmButton {
 	svg {

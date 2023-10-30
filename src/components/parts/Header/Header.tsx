@@ -105,7 +105,7 @@ const Header = function({className = '', type}: HeaderProps) {
 
 	const projectsTypeContent =
 		<div className={classes.content}>
-			<Search />
+			<Search closeMenuCallback={closeMenu} />
 		</div>
 
 	const tasksTypeContent =

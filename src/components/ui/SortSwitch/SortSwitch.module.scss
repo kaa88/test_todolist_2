@@ -16,8 +16,9 @@ body .button {
 	background-color: var(--color-bg-main);
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
+	gap: 15px;
 	padding: 10px;
+	padding-top: 0;
 	border-radius: 0 0 10px 10px;
 	label {
 		cursor: pointer;
@@ -34,6 +35,8 @@ body .button {
 		left: calc(50% - 75px);
 		z-index: 5;
 		width: 150px;
+		gap: 5px;
+		padding: 10px;
 		background-color: var(--color-bg-secondary);
 		border-radius: 10px;
 		box-shadow: 0 0 5px 0 var(--color-shadow);

@@ -33,7 +33,7 @@
 	border-bottom: solid 2px var(--color-bg-secondary);
 	@media (min-width: $media-mxl+1+px) {
 		display: grid;
-		grid-template-columns: repeat(3, 33.1%);
+		grid-template-columns: repeat(3, 33.2%);
 		justify-content: space-between;
 	}
 }
@@ -113,7 +113,7 @@
 		height: 100%;
 		overflow: hidden;
 		display: grid;
-		grid-template-columns: repeat(3, 33.1%);
+		grid-template-columns: repeat(3, 33.2%);
 		justify-content: space-between;
 	}
 }

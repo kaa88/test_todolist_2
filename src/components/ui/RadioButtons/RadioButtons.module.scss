@@ -24,8 +24,10 @@
 		opacity: 0;
 		transition: opacity $timer-hover;
 	}
-	&:hover::before {
-		opacity: 0.5;
+	@media (hover: hover) {
+		&:hover::before {
+			opacity: 0.5;
+		}
 	}
 	.status & {
 		&:nth-child(1) {

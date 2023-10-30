@@ -17,6 +17,9 @@
 	column-gap: 30px;
 	justify-content: space-between;
 	align-items: center;
+	@media (max-width: $media-mxl+px) {
+		max-width: $media-ml+px;
+	}
 }
 .logoWrapper {
 	flex: 0 0 auto;
@@ -45,8 +48,10 @@ body .logo {
 	background-color: transparent;
 	fill: var(--color-icons-negative);
 	transition: fill $timer-hover;
-	&:hover {
-		fill: var(--color-button-bg-hover);
+	@media (hover: hover) {
+		&:hover {
+			fill: var(--color-button-bg-hover);
+		}
 	}
 	svg {
 		width: 74%;
@@ -63,11 +68,12 @@ body .logo {
 		top: 100%;
 		right: 0;
 		width: 100vw;
-		height: 100vh;
+		height: calc(100vh - var(--header-height));
 		padding: 5px 10px;
 		opacity: 0;
 		visibility: hidden;
 		transition: opacity $timer-menu, visibility $timer-menu;
+		overflow-y: auto;
 	}
 	&.active {
 		opacity: 1;

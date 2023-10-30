@@ -29,10 +29,12 @@
 	color: var(--color-button-content);
 	fill: var(--color-button-content);
 }
-.default:hover, .negative:hover {
-	background-color: var(--color-button-bg-hover);
-	color: var(--color-button-content-hover);
-	fill: var(--color-button-content-hover);
+@media (hover: hover) {
+	.default:hover, .negative:hover {
+		background-color: var(--color-button-bg-hover);
+		color: var(--color-button-content-hover);
+		fill: var(--color-button-content-hover);
+	}
 }
 .negative {
 	background-color: var(--color-button-content);

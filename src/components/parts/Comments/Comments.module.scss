@@ -78,8 +78,10 @@ body .addCommentButtonBig {
 	height: 32px;
 	font-size: 15px;
 	background-color: var(--color-accent-03);
-	&:hover {
-		background-color: var(--color-accent-04);
+	@media (hover: hover) {
+		&:hover {
+			background-color: var(--color-accent-04);
+		}
 	}
 	svg {
 		margin-right: 7px;
@@ -149,9 +151,11 @@ body .addCommentButtonBig {
 	svg {
 		transition: transform $timer-hover;
 	}
-	&:hover {
-		svg {
-			transform: scale(1.2);
+	@media (hover: hover) {
+		&:hover {
+			svg {
+				transform: scale(1.2);
+			}
 		}
 	}
 }
