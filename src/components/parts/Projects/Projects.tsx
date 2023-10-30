@@ -37,8 +37,6 @@ const Projects = function({className = '', children, ...props}: ProjectsProps) {
 	let [activeModalType, setActiveModalType] = useState(ActiveModalType.none)
 	let [currentProjectId, setCurrentProjectId] = useState<Id>(0)
 
-	console.log(activeModalType)
-
 	const handleModalOpen = (e: MouseEvent<HTMLButtonElement>) => {
 		if (isInputError) setIsInputError(false)
 		const targetDataId = e.currentTarget.dataset.id
