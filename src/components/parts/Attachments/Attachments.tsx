@@ -38,7 +38,7 @@ const Attachments = function({taskId, className = '', children, ...props}: Attac
 			id: 0,
 			taskId,
 			date: Date.now(),
-			path: inputValue,
+			path: getFileName(inputValue),
 			description
 		}
 		dispatch(createFile(newFile))

@@ -56,23 +56,24 @@ const Comments = function({className = '', taskId, ...props}: CommentsProps) {
 	}
 
 
-	const getNewCommentForm = (parentId: ParentID) =>
+	const getNewCommentForm = (parentCommentId: ParentID) =>
 		<div className={classes.newCommentContainer}>
 			<NewComment
 				className={classes.newComment}
-				parentId={parentId}
+				parentCommentId={parentCommentId}
 				createCallback={addComment}
 				cancelCallback={hideNewCommentForm}
 			/>
 		</div>
 
-	const sortList = (list: IComment[]) => list.sort((a,b) => b.date - a.date)
+	const sortList = (list: IComment[], asc: boolean) => list.sort((a,b) => asc ? b.date - a.date : a.date - b.date)
 
-	const getComments = (parentId?: ParentID) => {
-		if (parentId === undefined) parentId = null
-		const list = comments.filter(com => com.parentId === parentId)
+	const getComments = (parentCommentId?: ParentID) => {
+		if (parentCommentId === undefined) parentCommentId = null
+		const list = comments.filter(com => com.parentCommentId === parentCommentId)
 		if (!list.length) return null
-		sortList(list)
+		const isNewFirst = parentCommentId ? false : true
+		sortList(list, isNewFirst)
 
 		return list.map((com, index) => {
 			const subcomments = getComments(com.id)
@@ -136,16 +137,16 @@ export default Comments
 
 type ParentID = Id | null
 type NewCommentCallback = (comment: INewComment) => void
-type CancelNewCommentCallback = (parentId: Id | null) => void
+type CancelNewCommentCallback = (parentCommentId: Id | null) => void
 
 interface NewCommentProps extends ComponentProps<'div'> {
-	parentId: ParentID
+	parentCommentId: ParentID
 	createCallback?: NewCommentCallback
 	cancelCallback?: CancelNewCommentCallback
 }
 
 const NewComment = function({
-	parentId,
+	parentCommentId,
 	createCallback,
 	cancelCallback,
 	className = '',
@@ -181,14 +182,14 @@ const NewComment = function({
 				date: Date.now(),
 				author,
 				content: text,
-				parentId
+				parentCommentId
 			}
 			createCallback(comment)
 		}
 		clearFields()
 	}
 	const cancelCreation = () => {
-		if (cancelCallback) cancelCallback(parentId)
+		if (cancelCallback) cancelCallback(parentCommentId)
 		clearFields()
 	}
 

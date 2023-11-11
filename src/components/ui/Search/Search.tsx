@@ -9,6 +9,9 @@ import { ApiService } from '../../../services/ApiService';
 import { Modal, ModalLink } from '../Modal/Modal';
 import FullTask from '../../parts/FullTask/FullTask';
 import Button from '../Button/Button';
+import { AxiosError } from 'axios';
+import { getClientTask } from '../../../store/reducers/taskReducer';
+
 
 enum ActiveModalType {
 	none = '',
@@ -20,12 +23,17 @@ interface SearchProps extends ComponentProps<'div'> {
 	closeMenuCallback?: () => void
 }
 
+const DEFAULT_ERROR = 'Unknown error'
 
 const Search = function({className = '', closeMenuCallback, ...props}: SearchProps) {
 
 	const loadData = async () => {
 		let response = await ApiService.tasks.getAll(null)
-		if (response.data) allFetchedTasks = response.data
+		if (response instanceof AxiosError) {
+			let message = response.response?.data.message || DEFAULT_ERROR
+			throw new Error(message)
+		}
+		else if (response.data) allFetchedTasks = response.data.map(item => getClientTask(item))
 	}
 	let {fetch, isLoading, error: loadError} = useFetching(loadData)
 
@@ -75,7 +83,7 @@ const Search = function({className = '', closeMenuCallback, ...props}: SearchPro
 	const searchModalContent =
 		<div className={classes.searchModalContent}>
 			{isLoading && <Loader className={classes.loader} />}
-			{!!loadError && <LoadError className={classes.loadError} message='Search module error' />}
+			{!!loadError && <LoadError className={classes.loadError} message={loadError} />}
 			<div className={classes.inputWrapper}>
 				<Icon className={classes.inputIcon} name='icon-search' />
 				<input

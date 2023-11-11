@@ -1,8 +1,11 @@
 import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
-import { Id, IComment } from "../../types/types"
+import { Id, IComment, IServerComment } from "../../types/types"
 import { ApiService } from "../../services/ApiService"
 import { updateCommentCount, CountPayload } from "./taskReducer"
+import { AxiosError } from "axios"
+
+const DEFAULT_ERROR = 'Unknown error'
 
 type LoadingState = boolean
 type LoadError = string
@@ -63,11 +66,11 @@ export const commentReducer: Reducer<CommentState, Actions> = (state = initialSt
 			if (index < 0) return state
 			newList = [...state.list]
 			newList[index] = comment
-			ApiService.comments.edit(comment)
+			ApiService.comments.edit(getServerComment(comment))
 			return {...state, list: newList}
 
 		case ADD_COMMENT:
-			const [newComment] = action.payload as IComment[]
+			const newComment = action.payload as IComment
 			newList = [...state.list]
 			newList.push(newComment)
 			return {...state, list: newList}
@@ -84,11 +87,14 @@ export const createComment = (newComment: IComment): CustomThunkActionCreator<IC
 	dispatch({type: SET_COMMENTS_LOADING, payload: true})
 	dispatch({type: SET_COMMENTS_ERROR, payload: ''})
 
-	let response = await ApiService.comments.add(newComment)
-	if (response.error) dispatch({type: SET_COMMENTS_ERROR, payload: response.error.message})
+	let response = await ApiService.comments.add(getServerComment(newComment))
+	if (response instanceof AxiosError) {
+		let message = response.response?.data.message || DEFAULT_ERROR
+		dispatch({type: SET_COMMENTS_ERROR, payload: message})
+	}
 	else if (response.data) {
 		dispatch({type: ADD_COMMENT, payload: response.data})
-		dispatch(updateCommentCount({taskId: response.data[0].taskId, increment: true}))
+		dispatch(updateCommentCount({taskId: response.data.taskId, increment: true}))
 	}
 	dispatch({type: SET_COMMENTS_LOADING, payload: false})
 }
@@ -98,8 +104,22 @@ export const updateCommentList = (taskId: Id): CustomThunkActionCreator<IComment
 	dispatch({type: RESTORE_PREV_COMMENT_LIST, payload: taskId})
 
 	let response = await ApiService.comments.get(taskId)
-	if (response.error) dispatch({type: SET_COMMENTS_ERROR, payload: response.error.message})
-	else if (response.data) dispatch({type: UPDATE_ALL_COMMENTS, payload: response.data})
+	if (response instanceof AxiosError) {
+		let message = response.response?.data.message || DEFAULT_ERROR
+		dispatch({type: SET_COMMENTS_ERROR, payload: message})
+	}
+	else if (response.data) {
+		let correctComment = response.data.map(item => getClientComment(item))
+		dispatch({type: UPDATE_ALL_COMMENTS, payload: correctComment})
+	}
 
 	dispatch({type: SET_COMMENTS_LOADING, payload: false})
+}
+
+
+const getClientComment = (com: IServerComment) => {
+	return {...com, date: new Date(com.date).getTime()}
+}
+const getServerComment = (com: IComment) => {
+	return {...com, date: new Date(com.date)}
 }

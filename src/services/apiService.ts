@@ -1,92 +1,193 @@
-import { api, ApiData, ApiGetResponse, ApiResponse } from '../api/api'
-import { Id, IComment, IProject, ITask, IUserSettings, IFile } from '../types/types'
+import { api, ApiError, ApiMessage } from '../api/api'
+import { Id, IServerComment, IProject, IServerTask, IUserServerSettings, IServerFile } from '../types/types'
 
-const PROJECTS_PATH = '/api/projects'
-const TASKS_PATH = '/api/tasks'
-const COMMENTS_PATH = '/api/comments'
-const FILES_PATH = '/api/files'
-const SETTINGS_PATH = '/api/settings'
-
-
-class Actions<T extends ApiData> {
-	get: () => Promise<ApiGetResponse<T>>
-	add: (data: T) => Promise<ApiGetResponse<T>>
-	edit: (data: T) => Promise<ApiGetResponse<T>>
-	delete: (id: Id) => Promise<ApiResponse>
-	constructor(request: string) {
-		this.get = async () => await api.get<T>(request)
-		this.add = async (data) => await api.post(request, {data})
-		this.edit = async (data) => await api.put(request, {data})
-		this.delete = async (id) => await api.delete(`${request}?id=${id}`)
-	}
-}
+const USER_PATH = '/user'
+const PROJECTS_PATH = '/project'
+const TASKS_PATH = '/task'
+const COMMENTS_PATH = '/comment'
+const FILES_PATH = '/file'
 
 
 export const ApiService = {
-	projects: new Actions<IProject>(PROJECTS_PATH),
+	projects: {
+		async get(userId: Id) {
+			try {
+				return await api.get<IProject[]>(`${PROJECTS_PATH}?userId=${userId}`)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
+		},
+		async add(project: IProject) {
+			try {
+				return await api.post<IProject>(PROJECTS_PATH, project)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
+		},
+		async edit(project: IProject) {
+			try {
+				return await api.put<ApiMessage>(PROJECTS_PATH, project)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
+		},
+		async delete(projectId: Id) {
+			try {
+				return await api.delete<ApiMessage>(`${PROJECTS_PATH}?id=${projectId}`)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
+		},
+	},
 	tasks: {
 		async getAll(projectId: Id | null) {
-			let tasks = await api.get<ITask>(TASKS_PATH)
-			if (projectId !== null) {
-				let data = tasks.data ? tasks.data.filter(task => task.projectId === projectId) : []
-				return {...tasks, data} as ApiGetResponse<ITask>
+			try {
+				const query = projectId === null ? '' : `?projectId=${projectId}`
+				return await api.get<IServerTask[]>(`${TASKS_PATH}${query}`)
 			}
-			return tasks
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
 		async get(taskId: Id) {
-			return await api.get<ITask>(`${TASKS_PATH}?id=${taskId}`)
+			try {
+				return await api.get<IServerTask[]>(`${TASKS_PATH}?id=${taskId}`)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
-		async add(task: ITask) {
-			return await api.post(TASKS_PATH, {data: task})
+		async add(task: IServerTask) {
+			try {
+				return await api.post<IServerTask>(TASKS_PATH, task)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
-		async edit(task: ITask) {
-			return await api.put(TASKS_PATH, {data: task})
+		async edit(task: IServerTask) {
+			try {
+				return await api.put<ApiMessage>(TASKS_PATH, task)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
 		async delete(taskId: Id) {
-			return await api.delete(`${TASKS_PATH}?id=${taskId}`)
+			try {
+				return await api.delete<ApiMessage>(`${TASKS_PATH}?id=${taskId}`)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
 	},
 	comments: {
 		async get(taskId: Id | null) {
-			let comments = await api.get<IComment>(COMMENTS_PATH)
-			if (taskId !== null) {
-				let data = comments.data ? comments.data.filter(comment => comment.taskId === taskId) : []
-				return {...comments, data} as ApiGetResponse<IComment>
+			try {
+				const query = taskId === null ? '' : `?taskId=${taskId}`
+				return await api.get<IServerComment[]>(`${COMMENTS_PATH}${query}`)
 			}
-			return comments
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
-		async add(comment: IComment) {
-			return await api.post(COMMENTS_PATH, {data: comment})
+		async add(comment: IServerComment) {
+			try {
+				return await api.post<IServerComment>(COMMENTS_PATH, comment)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
-		async edit(comment: IComment) {
-			return await api.put(COMMENTS_PATH, {data: comment})
+		async edit(comment: IServerComment) {
+			try {
+				return await api.put<ApiMessage>(COMMENTS_PATH, comment)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
 		async delete(commentId: Id) {
-			return await api.delete(`${COMMENTS_PATH}?id=${commentId}`)
+			try {
+				return await api.delete<ApiMessage>(`${COMMENTS_PATH}?id=${commentId}`)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
 	},
 	files: {
 		async get(taskId: Id | null) {
-			let files = await api.get<IFile>(FILES_PATH)
-			if (taskId !== null) {
-				let data = files.data ? files.data.filter(file => file.taskId === taskId) : []
-				return {...files, data} as ApiGetResponse<IFile>
+			try {
+				const query = taskId === null ? '' : `?taskId=${taskId}`
+				return await api.get<IServerFile[]>(`${FILES_PATH}${query}`)
 			}
-			return files
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
-		async add(file: IFile) {
-			return await api.post(FILES_PATH, {data: file})
+		async add(file: IServerFile) {
+			try {
+				return await api.post<IServerFile>(FILES_PATH, file)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
 		async delete(fileId: Id) {
-			return await api.delete(`${FILES_PATH}?id=${fileId}`)
+			try {
+				return await api.delete<ApiMessage>(`${FILES_PATH}?id=${fileId}`)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
 	},
-	settings: {
+	user: {
 		async get(userId: Id) {
-			return await api.get<IUserSettings>(`${SETTINGS_PATH}?id=${userId}`)
+			try {
+				return await api.get<IUserServerSettings[]>(`${USER_PATH}?id=${userId}`)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
-		async edit(settings: IUserSettings) {
-			return await api.put(SETTINGS_PATH, {data: settings})
+		async add() {
+			try {
+				return await api.post<IUserServerSettings>(USER_PATH)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
+		},
+		async edit(settings: IUserServerSettings) {
+			try {
+				return await api.put<ApiMessage>(USER_PATH, settings)
+			}
+			catch (err: any) {
+				return err as ApiError<ApiMessage>
+			}
 		},
 	}
 }
+
+// TODO: create common class like this:
+// class Actions<T> {
+// 	get: () => Promise<ApiResponse<T>>
+// 	add: (data: T) => Promise<ApiResponse<T>>
+// 	edit: (data: T) => Promise<ApiResponse<T>>
+// 	delete: (id: Id) => Promise<ApiResponse>
+// 	constructor(request: string) {
+// 		this.get = async () => await api.get<T>(request)
+// 		this.add = async (data) => await api.post(request, {data})
+// 		this.edit = async (data) => await api.put(request, {data})
+// 		this.delete = async (id) => await api.delete(`${request}?id=${id}`)
+// 	}
+// }
+
+// projects: new Actions<IProject>(PROJECTS_PATH),

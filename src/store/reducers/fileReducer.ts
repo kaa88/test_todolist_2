@@ -1,8 +1,11 @@
 import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
-import { Id, IFile } from "../../types/types"
+import { Id, IFile, IServerFile } from "../../types/types"
 import { ApiService } from "../../services/ApiService"
 import { updateFileCount, CountPayload } from "./taskReducer"
+import { AxiosError } from "axios"
+
+const DEFAULT_ERROR = 'Unknown error'
 
 type LoadingState = boolean
 type LoadError = string
@@ -58,7 +61,7 @@ export const fileReducer: Reducer<FileState, Actions> = (state = initialState, a
 			else return state
 
 		case ADD_FILE:
-			const [newFile] = action.payload as IFile[]
+			const newFile = action.payload as IFile
 			newList = [...state.list]
 			newList.push(newFile)
 			return {...state, list: newList}
@@ -80,11 +83,14 @@ export const createFile = (newFile: IFile): CustomThunkActionCreator<IFile[] | L
 	dispatch({type: SET_FILES_LOADING, payload: true})
 	dispatch({type: SET_FILES_ERROR, payload: ''})
 
-	let response = await ApiService.files.add(newFile)
-	if (response.error) dispatch({type: SET_FILES_ERROR, payload: response.error.message})
+	let response = await ApiService.files.add(getServerFile(newFile))
+	if (response instanceof AxiosError) {
+		let message = response.response?.data.message || DEFAULT_ERROR
+		dispatch({type: SET_FILES_ERROR, payload: message})
+	}
 	else if (response.data) {
 		dispatch({type: ADD_FILE, payload: response.data})
-		dispatch(updateFileCount({taskId: response.data[0].taskId, increment: true}))
+		dispatch(updateFileCount({taskId: response.data.taskId, increment: true}))
 	}
 	dispatch({type: SET_FILES_LOADING, payload: false})
 }
@@ -94,8 +100,21 @@ export const updateFileList = (taskId: Id): CustomThunkActionCreator<IFile[] | L
 	dispatch({type: RESTORE_PREV_FILE_LIST, payload: taskId})
 
 	let response = await ApiService.files.get(taskId)
-	if (response.error) dispatch({type: SET_FILES_ERROR, payload: response.error.message})
-	else if (response.data) dispatch({type: UPDATE_ALL_FILES, payload: response.data})
+	if (response instanceof AxiosError) {
+		let message = response.response?.data.message || DEFAULT_ERROR
+		dispatch({type: SET_FILES_ERROR, payload: message})
+	}
+	else if (response.data) {
+		let correctFile = response.data.map(item => getClientFile(item))
+		dispatch({type: UPDATE_ALL_FILES, payload: correctFile})
+	}
 
 	dispatch({type: SET_FILES_LOADING, payload: false})
+}
+
+const getClientFile = (file: IServerFile) => {
+	return {...file, date: new Date(file.date).getTime()}
+}
+const getServerFile = (file: IFile) => {
+	return {...file, date: new Date(file.date)}
 }

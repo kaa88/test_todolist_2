@@ -22,6 +22,8 @@ interface ProjectsProps extends ComponentPropsWithoutRef<'div'> {}
 const Projects = function({className = '', children, ...props}: ProjectsProps) {
 
 	const dispatch = useAppDispatch()
+
+	const user = useAppSelector(state => state.user)
 	
 	let {isLoading, loadError, list} = useAppSelector(state => state.projects)
 	const projects = [...list].reverse()
@@ -67,10 +69,9 @@ const Projects = function({className = '', children, ...props}: ProjectsProps) {
 	}, [activeModalType])
 
 
-
 	const createProject = () => {
 		if (!inputValue) return setIsInputError(true)
-		dispatch(createNewProject(inputValue))
+		if (user.id !== null) dispatch(createNewProject(user.id, inputValue))
 		setActiveModalType(ActiveModalType.none)
 		setInputValue('')
 }
@@ -134,9 +135,9 @@ const Projects = function({className = '', children, ...props}: ProjectsProps) {
 	return (
 		<div className={`${className} ${classes.wrapper}`} {...props}>
 			<Container className={classes.container}>
-				{isLoading && <Loader className={classes.loader} variant='light' />}
-				{!!loadError && <LoadError className={classes.loadError} variant='light' message='Error on loading' />}
-				{(!loadError) &&
+				{(isLoading || user.isLoading) && (!loadError && !user.loadError) && <Loader className={classes.loader} variant='light' />}
+				{(!!loadError || !!user.loadError) && <LoadError className={classes.loadError} variant='light' message={user.loadError || ''} />}
+				{(!loadError && !user.loadError) &&
 					<>
 						<div className={classes.list}>
 							<ModalLink>

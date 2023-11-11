@@ -1,8 +1,12 @@
 import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
-import { Id, ITask, TaskPriority, TaskStatus } from "../../types/types"
+import { Id, IServerTask, ITask, TaskPriority, TaskStatus } from "../../types/types"
 import { ApiService } from "../../services/ApiService"
 import { objectIsEmpty } from "../../utilities/utilities"
+import { AxiosError } from "axios"
+import dayjs from "dayjs"
+
+const DEFAULT_ERROR = 'Unknown error'
 
 type LoadingState = boolean
 type LoadError = string
@@ -73,7 +77,7 @@ export const taskReducer: Reducer<TaskState, Actions> = (state = initialState, a
 			return {...state, list: action.payload as ITask[]}
 
 		case CREATE_TASK:
-			const [createdTask] = action.payload as ITask[]
+			const createdTask = action.payload as ITask
 			newList = [...state.list]
 			newList.push(createdTask)
 			return {...state, list: newList, lastAddedTaskId: createdTask.id}
@@ -121,25 +125,32 @@ export const updateFileCount: CustomActionCreator<CountPayload> = (payload) => (
 export const deleteTask: CustomActionCreator<ITask> = (payload) => ({type: DELETE_TASK, payload})
 
 // Thunk Action Creators
-export const createNewTask = (projectId: Id): CustomThunkActionCreator<ITask[] | LoadingState | LoadError> => async (dispatch) => {
+export const createNewTask = (projectId: Id): CustomThunkActionCreator<ITask | LoadingState | LoadError> => async (dispatch) => {
 	dispatch({type: SET_TASKS_LOADING, payload: true})
 	dispatch({type: SET_TASKS_ERROR, payload: ''})
 
+	const createDate = dayjs()
+	const expireDate = createDate.add(1, 'day')
 	const newTask = {
 		id: 0,
 		projectId,
 		title: '',
 		description: '',
-		createDate: Date.now(),
-		expireDate: Date.now() + 24*60*60*1000, // +1d
+		createDate: createDate.toDate(),
+		expireDate: expireDate.toDate(),
 		priority: TaskPriority.normal,
 		status: TaskStatus.queue,
 		subtasks: [],
 		attached: [],
 	}
 	let response = await ApiService.tasks.add(newTask)
-	if (response.error) dispatch({type: SET_TASKS_ERROR, payload: response.error.message})
-	else if (response.data) dispatch({type: CREATE_TASK, payload: response.data})
+	if (response instanceof AxiosError) {
+		let message = response.response?.data.message || DEFAULT_ERROR
+		dispatch({type: SET_TASKS_ERROR, payload: message})
+	}
+	else if (response.data) {
+		dispatch({type: CREATE_TASK, payload: getClientTask(response.data)})
+	}
 
 	dispatch({type: SET_TASKS_LOADING, payload: false})
 }
@@ -149,8 +160,14 @@ export const updateTaskList = (projectId: Id): CustomThunkActionCreator<ITask[] 
 	dispatch({type: SET_PROJECT_TASK_LIST, payload: []})
 
 	let response = await ApiService.tasks.getAll(projectId)
-	if (response.error) dispatch({type: SET_TASKS_ERROR, payload: response.error.message})
-	else if (response.data) dispatch({type: SET_PROJECT_TASK_LIST, payload: response.data})
+	if (response instanceof AxiosError) {
+		let message = response.response?.data.message || DEFAULT_ERROR
+		dispatch({type: SET_TASKS_ERROR, payload: message})
+	}
+	else if (response.data) {
+		let correctTask = response.data.map(item => getClientTask(item))
+		dispatch({type: SET_PROJECT_TASK_LIST, payload: correctTask})
+	}
 
 	dispatch({type: SET_TASKS_LOADING, payload: false})
 }
@@ -164,7 +181,7 @@ function getUpdatedList(currentList: ITask[], payload: Payloads, getNewTask: New
 	let newTask = getNewTask(currentList[taskIndex])
 	let newList = [...currentList]
 	newList[taskIndex] = newTask
-	ApiService.tasks.edit(newTask) // Sorry, I have to put it down here for a while
+	ApiService.tasks.edit(getServerTask(newTask)) // Sorry, I have to put it down here for a while
 	return newList
 }
 function updateCountValue (count: number = 0, payload: CountPayload) {
@@ -174,3 +191,11 @@ function updateCountValue (count: number = 0, payload: CountPayload) {
 	return count
 }
 
+export const getClientTask = (task: IServerTask) => {
+	let {createDate, expireDate, ...rest} = task
+	return {...rest, createDate: new Date(createDate).getTime(), expireDate: new Date(expireDate).getTime()}
+}
+const getServerTask = (task: ITask) => {
+	let {createDate, expireDate, ...rest} = task
+	return {...rest, createDate: new Date(createDate), expireDate: new Date(expireDate)}
+}

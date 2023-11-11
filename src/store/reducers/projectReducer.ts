@@ -2,6 +2,9 @@ import { Reducer } from "redux"
 import { CustomAction, CustomActionCreator, CustomThunkActionCreator } from "../../types/reduxTypes"
 import { IProject, Id } from "../../types/types"
 import { ApiService } from "../../services/ApiService"
+import { AxiosError } from "axios"
+
+const DEFAULT_ERROR = 'Unknown error'
 
 type CurrentProject = Id | null
 type LoadingState = boolean
@@ -32,7 +35,7 @@ type Actions =
 	| CustomAction<ProjectWithCountPayload>
 
 const initialState: ProjectState = {
-	isLoading: false,
+	isLoading: true,
 	loadError: '',
 	list: [],
 	current: null
@@ -110,40 +113,39 @@ export const deleteProject: CustomActionCreator<IProjectWithCount> = (payload) =
 export const updateProjectTaskCount: CustomActionCreator<ProjectWithCountPayload> = (payload) => ({type: UPDATE_PROJECT_TASK_COUNT, payload})
 
 // Thunk Action Creators
-export const createNewProject = (name: IProject['name']): CustomThunkActionCreator<IProjectWithCount | LoadingState | LoadError> => async (dispatch) => {
+export const createNewProject = (userId: Id, name: IProject['name']): CustomThunkActionCreator<IProjectWithCount | LoadingState | LoadError> => async (dispatch) => {
 	dispatch({type: SET_PROJECTS_LOADING, payload: true})
 	dispatch({type: SET_PROJECTS_ERROR, payload: ''})
 
 	const newProject = {
 		id: 0,
 		name: name || 'New Project',
+		userId
 	}
 	let response = await ApiService.projects.add(newProject)
-	if (response.error) dispatch({type: SET_PROJECTS_ERROR, payload: response.error.message})
+	if (response instanceof AxiosError) {
+		let message = response.response?.data.message || DEFAULT_ERROR
+		dispatch({type: SET_PROJECTS_ERROR, payload: message})
+	}
 	else if (response.data) {
-		let projectWithCount: IProjectWithCount = {...response.data[0], taskCount: 0}
+		let projectWithCount: IProjectWithCount = {...response.data, taskCount: 0}
 		dispatch({type: CREATE_PROJECT, payload: projectWithCount})
 	}
 
 	dispatch({type: SET_PROJECTS_LOADING, payload: false})
 }
 
-export const updateProjectList = (): CustomThunkActionCreator<IProject[] | LoadingState | LoadError> => async (dispatch) => {
+export const updateProjectList = (userId: Id): CustomThunkActionCreator<IProject[] | LoadingState | LoadError> => async (dispatch) => {
+	if (!userId) return dispatch({type: SET_PROJECTS_ERROR, payload: 'Error on user identification'})
 	dispatch({type: SET_PROJECTS_LOADING, payload: true})
 	dispatch({type: SET_PROJECTS_ERROR, payload: ''})
 
-	let projects = await ApiService.projects.get()
-	if (projects.error) dispatch({type: SET_PROJECTS_ERROR, payload: projects.error.message})
-	else {
-		let tasks = await ApiService.tasks.getAll(null)
-		if (projects.data) {
-			let projectsWithCount = projects.data.map(proj => {
-				let taskCount = tasks.data ? tasks.data.reduce((count, task) => task.projectId === proj.id ? count + 1 : count, 0) : 0
-				return {...proj, taskCount}
-			})
-			dispatch({type: SET_PROJECT_LIST, payload: projectsWithCount})
-		}
+	let projects = await ApiService.projects.get(userId)
+	if (projects instanceof AxiosError) {
+		let message = projects.response?.data.message || DEFAULT_ERROR
+		dispatch({type: SET_PROJECTS_ERROR, payload: message})
 	}
+	else if (projects.data) dispatch({type: SET_PROJECT_LIST, payload: projects.data})
 
 	dispatch({type: SET_PROJECTS_LOADING, payload: false})
 }

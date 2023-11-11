@@ -75,6 +75,7 @@
 }
 .inputFileName {
 	@include text-nowrap();
+	grid-column: span 2;
 	grid-row: 2;
 	margin-left: 11px;
 	font-size: 15px;
