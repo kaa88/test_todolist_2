@@ -34,17 +34,18 @@ interface TaskProto {
 	description: string
 	priority: TaskPriority
 	status: TaskStatus
-	subtasks: ISubtask[]
 	commentsCount?: number
 	filesCount?: number
 }
 export interface ITask extends TaskProto {
 	createDate: number
 	expireDate: number
+	subtasks: ISubtask[]
 }
 export interface IServerTask extends TaskProto {
 	createDate: Date
 	expireDate: Date
+	subtasks: string | object
 }
 export interface ISubtask {
 	id: Id

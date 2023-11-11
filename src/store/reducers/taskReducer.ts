@@ -136,14 +136,14 @@ export const createNewTask = (projectId: Id): CustomThunkActionCreator<ITask | L
 		projectId,
 		title: '',
 		description: '',
-		createDate: createDate.toDate(),
-		expireDate: expireDate.toDate(),
+		createDate: createDate.valueOf(),
+		expireDate: expireDate.valueOf(),
 		priority: TaskPriority.normal,
 		status: TaskStatus.queue,
 		subtasks: [],
 		attached: [],
 	}
-	let response = await ApiService.tasks.add(newTask)
+	let response = await ApiService.tasks.add(getServerTask(newTask))
 	if (response instanceof AxiosError) {
 		let message = response.response?.data.message || DEFAULT_ERROR
 		dispatch({type: SET_TASKS_ERROR, payload: message})
@@ -192,10 +192,19 @@ function updateCountValue (count: number = 0, payload: CountPayload) {
 }
 
 export const getClientTask = (task: IServerTask) => {
-	let {createDate, expireDate, ...rest} = task
-	return {...rest, createDate: new Date(createDate).getTime(), expireDate: new Date(expireDate).getTime()}
+	let {createDate, expireDate, subtasks, ...rest} = task
+	return {
+		...rest,
+		createDate: new Date(createDate).getTime(),
+		expireDate: new Date(expireDate).getTime(),
+		subtasks: typeof subtasks === 'string' ? JSON.parse(subtasks) : subtasks
+	}
 }
 const getServerTask = (task: ITask) => {
 	let {createDate, expireDate, ...rest} = task
-	return {...rest, createDate: new Date(createDate), expireDate: new Date(expireDate)}
+	return {
+		...rest,
+		createDate: new Date(createDate),
+		expireDate: new Date(expireDate),
+	}
 }
